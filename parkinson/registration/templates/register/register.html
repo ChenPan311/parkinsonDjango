@@ -1,0 +1,14 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Create an Account{% endblock %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <h1>Create An Account</h1>
+    <hr class="mt-0 mb-4">
+    <form method="POST" class="form-group">
+        {% csrf_token %}
+        {{form|crispy}}
+        {{ourform|crispy }}
+        <button type="submit" class="btn btn-success">Register</button>
+    </form>
+{% endblock %}
