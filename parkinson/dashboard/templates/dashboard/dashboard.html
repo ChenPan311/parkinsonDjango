@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Bootstrap Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js"
+            integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s"
+            crossorigin="anonymous"></script>
+    <style>
+        /* Remove the navbar's default margin-bottom and rounded borders */
+        .navbar {
+            background: #005b96;
+            margin-bottom: 0;
+            border-radius: 0;
+        }
+
+
+        /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
+        .row.content {
+            height: 500px
+        }
+
+        /* Set gray background color and 100% height */
+        .sidenav {
+            padding-top: 20px;
+            background-color: #6497b1;
+            height: 100%;
+        }
+
+
+
+        /* Set black background color, white text and some padding */
+        footer {
+            background-color: #005b96;
+            color: white;
+            padding: 15px;
+        }
+
+        .card {
+            margin-right: 5%;
+            margin-left: 20%;
+            border-radius: 10px;
+            background: #005b96;
+        }
+
+        #search_div {
+            horiz-align: center;
+            vertical-align: middle;
+            width: 250px;
+            padding: 1em;
+            margin-top: 2%;
+            border: 1px solid #e5e5e5;
+        }
+
+        div#search_div {
+            margin: 5% auto;
+        }
+
+
+        #search_div {
+            background: white;
+        }
+
+       .container-fluid.text-center{
+           height: auto;
+            position: relative;
+        }
+
+
+        /* On small screens, set height to 'auto' for sidenav and grid */
+        @media screen and (max-width: 767px) {
+            .sidenav {
+                height: auto;
+                padding: 15px;
+            }
+
+    footer {
+      background-color: #555;
+      color: white;
+      padding: 15px;
+    }
+
+
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">Logo</a>
+        </div>
+    </div>
+</nav>
+
+
+<div class="container-fluid text-center">
+    <div class="row content">
+        <div class="col-sm-2 sidenav" id="nav-sidebar">
+            <p><a href="#">Link</a></p>
+            <p><a href="#">Link</a></p>
+            <p><a href="#">Link</a></p>
+            <a href="#" class="btn btn-info btn-lg" id="log-out">
+                <span class="glyphicon glyphicon-log-out"></span> Log out</a>
+        </div>
+        <div class="card" style="text-align: end; padding: 1em; margin-top: 2%">
+            <h3 class="card-header" style="color: white">שלום ד"ר משהו</h3>
+            <div class="card-body" style="color: white">
+                <p class="card-text">להלן לוח המטופלים שלך</p>
+            </div>
+        </div>
+
+        <div class="card border-primary" id="search_div">
+            <div class="card-body">
+                <h4 class="card-title">Card title</h4>
+                <p class="card-text">Some example text. Some example text.</p>
+
+            </div>
+            <form class="form-inline d-flex justify-content-center md-form form-sm mt-0">
+                <i class="fas fa-search" aria-hidden="true"></i>
+                <input class="form-control form-control-sm ml-3 w-75" type="text" placeholder="Search"
+                       aria-label="Search">
+            </form>
+        </div>
+    </div>
+
+
+</div>
+
+
+</body>
+<footer class="container-fluid text-center">
+  <p>Footer Text</p>
+</footer>
+</html>
