@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
@@ -7,25 +8,11 @@ from django.shortcuts import render, redirect
 from .forms import Login, EmailBackend
 
 
-# def user_login(response):
-#     if response.method == "POST":
-#         form = Login(response.POST)
-#         if form.is_valid():
-#             n = form.cleaned_data["username"]
-#             p = form.cleaned_data["password"]
-#             u = User(username=n, password=p)
-#             u.save()
-#             return HttpResponseRedirect("/%i" % u.id)
-#     else:
-#         print("else")
-#         form = Login()
-#     return render(response, "register/login.html", {"form": form})
-
 def home(response):
     form = Login()
     if response.method == "GET":
-        # if response.user.is_active:
-        # return redirect("/myaccount")
+        if response.user.is_active:
+            return redirect("/dashboard")
         return render(response, "register/login.html", {"form": form})
     else:
         if response.method == "POST":
@@ -36,15 +23,22 @@ def home(response):
 
                 user = authenticate(username=username, password=password)
                 if user:
-                    # if user.is_active:
-                    #     login(response, user)
-                    #     response.session['username'] = username
+                    if user.is_active:
+                        login(response, user)
+                        response.session['username'] = username
                     return redirect("/dashboard")  # here  we  need to send the dictinoary and puplate it
                 else:
                     return render(response, "register/login.html",
                                   {"form": form, 'error': "Username and Password did not match"})
 
 
-def dashboard(response):
-    if response.method == "GET":
-        return render(response, "dashboard/dashboard.html")
+@login_required
+def dashboard(request):
+    if request.method == "GET":
+        return render(request, "dashboard/dashboard.html", )
+
+
+@login_required
+def user_logout(request):
+    logout(request)
+    return redirect("/")

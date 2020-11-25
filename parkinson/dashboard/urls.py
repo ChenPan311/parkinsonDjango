@@ -8,6 +8,7 @@ urlpatterns = [
     path('', d_views.home, name="login"),
     path('register/', r_views.register_new_doctor, name="login"),
     path('dashboard/', d_views.dashboard, name="dashboard"),
+    path('logout/', d_views.user_logout, name="logout"),
     # path("myaccount/",views.my_account,name="my_account"),
     # path("addcontact/", views.add_contact, name="add_contact"),
     # path("edit/<int:contact_id>", views.editcontact, name="edit_contact"),
