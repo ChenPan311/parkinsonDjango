@@ -5,7 +5,7 @@ from registration import views as r_views
 
 urlpatterns = [
     # path("<int:id>", views.index, name="index"),
-    path('', d_views.home, name="login"),
+    path('', d_views.postsign, name="login"),
     path('register/', r_views.register_new_doctor, name="login"),
     path('dashboard/', d_views.dashboard, name="dashboard"),
     path('logout/', d_views.user_logout, name="logout"),
