@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib import auth
+from google.cloud import firestore
 
 import pyrebase
 
@@ -21,6 +22,7 @@ config = {
 firebase = pyrebase.initialize_app(config)
 
 auth_fb = firebase.auth()
+db = firestore.Client()
 
 # Create your views here.
 from .forms import Login, EmailBackend
@@ -48,29 +50,27 @@ def postsign(request):
         return render(request,"dashboard/dashboard.html",{'email':email})
 
 
-def home(response):
-    form = Login()
-
-    if response.method == "GET":
-        if response.user.is_active:
-            return redirect("/dashboard")
-        return render(response, "register/login.html", {"form": form})
-    else:
-        if response.method == "POST":
-            form = Login(response.POST)
-            if form.is_valid():
-                username = form.cleaned_data['username']
-                password = form.cleaned_data['password']
-
-                user = authenticate(username=username, password=password)
-                if user:
-                    if user.is_active:
-                        login(response, user)
-                        response.session['username'] = username
-                    return redirect("/dashboard")  # here  we  need to send the dictinoary and puplate it
-                else:
-                    return render(response, "register/login.html",
-                                  {"form": form, 'error': "Username and Password did not match"})
+# def home(response):
+#     form = Login()
+#     if response.method == "GET":
+#         if response.user.is_active:
+#             return redirect("/dashboard")
+#         return render(response, "register/login.html", {"form": form})
+#     else:
+#         if response.method == "POST":
+#             form = Login(response.POST)
+#             if form.is_valid():
+#                 username = form.cleaned_data['username']
+#                 password = form.cleaned_data['password']
+#                 user = authenticate(username=username, password=password)
+#                 if user:
+#                     if user.is_active:
+#                         login(response, user)
+#                         response.session['username'] = username
+#                     return redirect("/dashboard")  # here  we  need to send the dictinoary and puplate it
+#                 else:
+#                     return render(response, "register/login.html",
+#                                   {"form": form, 'error': "Username and Password did not match"})
 
 
 @login_required

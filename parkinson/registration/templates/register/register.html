@@ -1,16 +1,18 @@
 {% extends 'dashboard/base.html' %}
 
-{% block title %}Create an Account{% endblock %}
+{% block title %}צור משתמש{% endblock %}
 {% load crispy_forms_tags %}
 {% block content %}
 
-<h1>Create An Account</h1>
+
+
+<h1>צור משתמש</h1>
 
 <hr class="mt-0 mb-4">
-<form method="POST" class="form-group">
+<form method="POST" class="form-group" dir="rtl" lang="he" style="text-align:right;">
     {% csrf_token %}
     {{form|crispy}}
-    {{ourform|crispy }}
-    <button type="submit" class="btn btn-success">Register</button>
+    {{ourform|crispy}}
+    <button type="submit" class="btn btn-success">הרשם</button>
 </form>
 {% endblock %}
