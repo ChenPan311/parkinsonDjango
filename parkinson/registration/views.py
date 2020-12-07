@@ -1,25 +1,16 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from .forms import RegisterForm,DoctorRegisterForm
-from django.contrib import auth
-from google.cloud import firestore
-import pyrebase
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
+from firebase_admin import auth
 
-config = {
-   "apiKey": "AIzaSyClOwdD-d0Ex6KK1pajH-6NU0SlnlPicO4",
-   "authDomain": "parkinsonhit-1ac54.firebaseapp.com",
-   "databaseURL": "https://parkinsonhit-1ac54.firebaseio.com",
-   "projectId": "parkinsonhit-1ac54",
-   "storageBucket":"parkinsonhit-1ac54.appspot.com",
-   "messagingSenderId": "155781604374",
-   "appId": "1:155781604374:web:b3d4d411ae691c14e10137",
-   "measurementId": "G-T6N1PP9BHW"
-}
 
-firebase = pyrebase.initialize_app(config)
+cred=credentials.Certificate('parkinsonhit.json')
+firebase_admin.initialize_app(cred)
 
-auth_fb = firebase.auth()
-db = firestore.Client()
+db=firestore.client()
 
 
 # Create your views here.
@@ -34,14 +25,29 @@ def register_new_doctor(response):
             name=first_name+" "+last_name
             email=django_form.cleaned_data["email"]
             password=django_form.cleaned_data["password1"]
-            user=auth_fb.create_user_with_email_and_password(email,password)
-            uid=user["localId"]
-            data={"name":name}
-            # user=django_form.save()
-            # user.save()
-            # profile=doctor_form.save(commit=False)
-            # profile.user=user
-            # profile.save()
+
+            gender=doctor_form.cleaned_data["gender"]
+            office_Phone=doctor_form.cleaned_data["Office_Phone"]
+            mobile_Phone=doctor_form.cleaned_data["Mobile_Phone"]
+            organization=doctor_form.cleaned_data["Organization"]
+
+            user = auth.create_user(
+                email=email,
+                password=password,
+                display_name=name,
+                disabled=False
+            )
+            if(user):
+                uid=user.uid
+                db.collection('Doctors').document(uid).set({
+                    'email': email,
+                    'first_name': first_name,
+                    'last_name': last_name,
+                    'gender':gender,
+                    'office_Phone':office_Phone,
+                    'mobile_Phone':mobile_Phone,
+                    'organization':organization
+                })
         else:
             return HttpResponse("Invalid")
         return redirect("/")

@@ -13,18 +13,13 @@ class RegisterForm(UserCreationForm):  # django registration form
         super().__init__(*args, **kwargs)
         self.fields['password1'].label = 'סיסמא'
         self.fields['password2'].label = 'אישור סיסמא'
-
         self.fields[
             'password1'].help_text = "<li>הסיסמה שלך לא יכולה להיות דומה מדי למידע האישי האחר שלך.</li>" \
                                     "<li>הסיסמה שלך חייבת להכיל לפחות 8 תווים.</li>" \
                                      "<li>הסיסמה שלך לא יכולה להיות סיסמה נפוצה.</li>" \
                                      "<li>הסיסמה שלך חייבת להכיל אותיות ומספרים לחלוטין.</li>"
 
-
-
-
         self.fields['password2'].help_text = '<li>אנא הזן סיסמא בשנית.</li>'
-
     class Meta:
         model = User
         fields = ("email", "password1", "password2", "first_name", "last_name")
@@ -44,7 +39,6 @@ class DoctorRegisterForm(forms.ModelForm):
         ('F','נקבה')
     )
     gender = forms.ChoiceField(choices=GENDER_CHOICES, label= "מין")
-
     class Meta:
         model = Doctor
         fields = ("gender","Office_Phone","Mobile_Phone","Organization")
