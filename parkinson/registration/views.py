@@ -1,58 +1,66 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from .forms import RegisterForm,DoctorRegisterForm
-import firebase_admin
+from .forms import RegisterForm, DoctorRegisterForm
 from firebase_admin import credentials
-from firebase_admin import firestore
-from firebase_admin import auth
+from firebase_repo import auth_fb,db
+# cred=credentials.Certificate('parkinsonhit.json')
+# firebase_admin.initialize_app(cred)
 
 
-cred=credentials.Certificate('parkinsonhit.json')
-firebase_admin.initialize_app(cred)
 
-db=firestore.client()
 
+# .document(u'alovelace')
+# doc_ref.set({
+#     u'first': u'Ada',
+#     u'last': u'Lovelace',
+#     u'born': 1815
+# })
+
+
+# user = auth.create_user(
+#     email='user@example.com',
+#     email_verified=False,
+#     phone_number='+15555550100',
+#     password='secretPassword',
+#     display_name='John Doe',
+#     photo_url='http://www.example.com/12345678/photo.png',
+#     disabled=False)
+# print('Sucessfully created new user: {0}'.format(user.uid))
 
 # Create your views here.
 
 def register_new_doctor(response):
     if response.method == "POST":
-        django_form = RegisterForm(response.POST)#django User
-        doctor_form=DoctorRegisterForm(response.POST)#our user
+        django_form = RegisterForm(response.POST)  # django User
+        doctor_form = DoctorRegisterForm(response.POST)  # our user
         if django_form.is_valid() and doctor_form.is_valid():
-            first_name=django_form.cleaned_data["first_name"]
-            last_name=django_form.cleaned_data["last_name"]
-            name=first_name+" "+last_name
-            email=django_form.cleaned_data["email"]
-            password=django_form.cleaned_data["password1"]
+            first_name = django_form.cleaned_data["first_name"]
+            last_name = django_form.cleaned_data["last_name"]
+            name = first_name + " " + last_name
+            email = django_form.cleaned_data["email"]
+            password = django_form.cleaned_data["password1"]
 
-            gender=doctor_form.cleaned_data["gender"]
-            office_Phone=doctor_form.cleaned_data["Office_Phone"]
-            mobile_Phone=doctor_form.cleaned_data["Mobile_Phone"]
-            organization=doctor_form.cleaned_data["Organization"]
-
-            user = auth.create_user(
-                email=email,
-                password=password,
-                display_name=name,
-                disabled=False
-            )
-            if(user):
-                uid=user.uid
-                db.collection('Doctors').document(uid).set({
+            gender = doctor_form.cleaned_data["gender"]
+            office_Phone = doctor_form.cleaned_data["Office_Phone"]
+            mobile_Phone = doctor_form.cleaned_data["Mobile_Phone"]
+            organization = doctor_form.cleaned_data["Organization"]
+            user = auth_fb.create_user_with_email_and_password(email=email,password=password)
+            if (user):
+                data={
                     'email': email,
                     'first_name': first_name,
                     'last_name': last_name,
-                    'gender':gender,
-                    'office_Phone':office_Phone,
-                    'mobile_Phone':mobile_Phone,
-                    'organization':organization
-                })
+                    'gender': gender,
+                    'office_Phone': office_Phone,
+                    'mobile_Phone': mobile_Phone,
+                    'organization': organization,
+
+                }
+                db.child("Doctors").child(user['localId']).child("details").set(data)
         else:
             return HttpResponse("Invalid")
         return redirect("/")
     else:
         form = RegisterForm()
-        doctor_form=DoctorRegisterForm()
-    return render(response, "register/register.html", {'form': form,'ourform':doctor_form})
-
+        doctor_form = DoctorRegisterForm()
+    return render(response, "register/register.html", {'form': form, 'ourform': doctor_form})

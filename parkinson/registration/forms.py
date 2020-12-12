@@ -35,8 +35,8 @@ class RegisterForm(UserCreationForm):  # django registration form
 
 class DoctorRegisterForm(forms.ModelForm):
     GENDER_CHOICES = (
-        ('M','זכר'),
-        ('F','נקבה')
+        ('זכר','זכר'),
+        ('נקבה','נקבה')
     )
     gender = forms.ChoiceField(choices=GENDER_CHOICES, label= "מין")
     class Meta:

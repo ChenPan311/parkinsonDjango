@@ -1,11 +1,7 @@
 
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
-from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
+from firebase_repo import auth_fb,db
 from django.contrib import auth
-from firebase import Firebase
 
 
 
@@ -14,7 +10,7 @@ from firebase import Firebase
 
 
 # Create your views here.
-from .forms import Login, EmailBackend
+from .forms import Login
 
 
 def postsign(request):
@@ -26,19 +22,22 @@ def postsign(request):
     if request.method == "POST":
         form = Login(request.POST)
         if form.is_valid():
-            email = form.cleaned_data['username']
+            email = form.cleaned_data['email']
             password = form.cleaned_data['password']
     try:
-        user = auth_fb.sign_in_with_email_and_password(email=email,password=password)
+        user = auth_fb.sign_in_with_email_and_password(email,password)
     except:
         message = "invalid cerediantials"
         return render(request, "register/login.html",{'msg':message,'form':form})
-
     if (user):
-        request.session['uid']=str(user['localId'])
-        return render(request,"dashboard/dashboard.html",{'email':email})
+        request.session['uid']=str(user['idToken'])
+        current_doctor_id = db.child("Doctors").child(user['localId']).child("details").get()
+        name=current_doctor_id.val()['first_name']+" "+current_doctor_id.val()['last_name']
+        request.session['name'] = name
+        # print(auth_fb.get_account_info(user['idToken']))
+        return redirect("/home",)
 
-
+#
 # def home(response):
 #     form = Login()
 #     if response.method == "GET":
@@ -62,13 +61,12 @@ def postsign(request):
 #                                   {"form": form, 'error': "Username and Password did not match"})
 
 
-@login_required
-def dashboard(request):
+def home(request):
     if request.method == "GET":
-        return render(request, "dashboard/dashboard.html", )
+        name=request.session.get('name')
+        return render(request, "dashboard/dashboard.html",{'name':name})
 
 
 def user_logout(request):
-    print("hello")
     auth.logout(request)
     return redirect("/")
