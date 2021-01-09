@@ -2,7 +2,7 @@
 from django.shortcuts import render, redirect
 from firebase_repo import auth_fb,db
 from django.contrib import auth
-
+from django.contrib.auth import logout
 
 
 
@@ -17,6 +17,8 @@ def postsign(request):
     form = Login()
     email, password = None, None
     if request.method == "GET":
+        if request.session.get('uid'):
+            return redirect("/home")
         return render(request, "register/login.html", {"form": form})
 
     if request.method == "POST":
@@ -68,5 +70,11 @@ def home(request):
 
 
 def user_logout(request):
-    auth.logout(request)
-    return redirect("/")
+   try:
+       del request.session['uid']
+       return redirect("/")
+   except KeyError:
+    pass
+
+
+
