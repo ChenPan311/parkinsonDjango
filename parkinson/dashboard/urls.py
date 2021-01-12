@@ -7,6 +7,7 @@ urlpatterns = [
     # path("<int:id>", views.index, name="index"),
     path('', d_views.postsign, name="login"),
     path('register/', r_views.register_new_doctor, name="register"),
+    path('add_patient/', r_views.register_new_Patient, name="add_patient"),
     path('home/', d_views.home, name="home"),
     path('logout/', d_views.user_logout, name="logout"),
     # path("myaccount/",views.my_account,name="my_account"),

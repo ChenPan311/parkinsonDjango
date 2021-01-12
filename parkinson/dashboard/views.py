@@ -17,8 +17,9 @@ def postsign(request):
     form = Login()
     email, password = None, None
     if request.method == "GET":
-        if request.session.get('uid'):
-            return redirect("/home")
+
+        if request.session.get('uid') is not None:
+            return redirect("/home",)
         return render(request, "register/login.html", {"form": form})
 
     if request.method == "POST":
@@ -36,42 +37,31 @@ def postsign(request):
         current_doctor_id = db.child("Doctors").child(user['localId']).child("details").get()
         name=current_doctor_id.val()['first_name']+" "+current_doctor_id.val()['last_name']
         request.session['name'] = name
-        # print(auth_fb.get_account_info(user['idToken']))
+        request.session['email']=user['email']
+        print(auth_fb.get_account_info(user['idToken']))
         return redirect("/home",)
 
-#
-# def home(response):
-#     form = Login()
-#     if response.method == "GET":
-#         if response.user.is_active:
-#             return redirect("/dashboard")
-#         return render(response, "register/login.html", {"form": form})
-#     else:
-#         if response.method == "POST":
-#             form = Login(response.POST)
-#             if form.is_valid():
-#                 username = form.cleaned_data['username']
-#                 password = form.cleaned_data['password']
-#                 user = authenticate(username=username, password=password)
-#                 if user:
-#                     if user.is_active:
-#                         login(response, user)
-#                         response.session['username'] = username
-#                     return redirect("/dashboard")  # here  we  need to send the dictinoary and puplate it
-#                 else:
-#                     return render(response, "register/login.html",
-#                                   {"form": form, 'error': "Username and Password did not match"})
-
-
 def home(request):
+    msg = request.GET.get('msg')
     if request.method == "GET":
-        name=request.session.get('name')
-        return render(request, "dashboard/dashboard.html",{'name':name})
+        print(request.session.get('uid'))
+        if request.session.get('uid') is not None and request.COOKIES['sessionid'] is not None:
+            name=request.session.get('name')
+            return render(request, "dashboard/dashboard.html",{'name':name})
+        else:
+            print("got to else")
+            print(msg)
+            return render(request, "register/login.html",{'msg':msg})
+
 
 
 def user_logout(request):
    try:
+       del request.COOKIES['sessionid']
+
        del request.session['uid']
+       auth.current_user = None
+       request.session.clear()
        return redirect("/")
    except KeyError:
     pass
