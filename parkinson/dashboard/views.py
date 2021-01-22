@@ -38,14 +38,13 @@ def postsign(request):
         name=current_doctor_id.val()['first_name']+" "+current_doctor_id.val()['last_name']
         request.session['name'] = name
         request.session['email']=user['email']
-        print(auth_fb.get_account_info(user['idToken']))
         return redirect("/home",)
 
 def home(request):
     msg = request.GET.get('msg')
     if request.method == "GET":
         print(request.session.get('uid'))
-        if request.session.get('uid') is not None and request.COOKIES['sessionid'] is not None:
+        if request.session.get('uid'):
             name=request.session.get('name')
             return render(request, "dashboard/dashboard.html",{'name':name})
         else:
@@ -57,10 +56,9 @@ def home(request):
 
 def user_logout(request):
    try:
-       del request.COOKIES['sessionid']
-
        del request.session['uid']
        auth.current_user = None
+
        request.session.clear()
        return redirect("/")
    except KeyError:

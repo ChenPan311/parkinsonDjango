@@ -11,8 +11,17 @@
 <script>
     alert("{{msg}}")
 </script>
-
 {%endif%}
+<script>
+
+    var theCookies = document.cookie.split(';');
+    var aString = '';
+    for (var i = 1 ; i <= theCookies.length; i++) {
+        aString += i + ' ' + theCookies[i - 1] + "\n";
+    }
+    console.log(aString)
+
+</script>
     <h1>התחברות</h1>
     <hr class="mt-0 mb-4">
     <form method="POST" class="form-group" style="text-align: right" lang="he" dir="rtl">

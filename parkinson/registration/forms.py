@@ -45,8 +45,19 @@ class DoctorRegisterForm(forms.ModelForm):
         exclude = ('user',)#this should be removed
 
 
+class DateInput(forms.DateInput):
+    input_type = 'date'
+
 class PatientRegisterForm(forms.ModelForm):
 
+
+    GENDER_CHOICES = (
+        ('זכר', 'זכר'),
+        ('נקבה', 'נקבה')
+    )
+    gender = forms.ChoiceField(choices=GENDER_CHOICES, label="מין")
+    date_of_birth = forms.DateField(widget=DateInput,label="תאריך לידה")
     class Meta:
         model=Patient
         fields = "__all__"
+

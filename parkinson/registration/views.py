@@ -80,11 +80,12 @@ def register_new_Patient(response):
             email = django_form.cleaned_data["email"]
             password = django_form.cleaned_data["password1"]
 
-            # gender = doctor_form.cleaned_data["gender"]
+            gender = patient_form.cleaned_data["gender"]
             # office_Phone = doctor_form.cleaned_data["Office_Phone"]
             country=patient_form.cleaned_data["Country"]
             mobile_Phone = patient_form.cleaned_data["Mobile_Phone"]
             HMO = patient_form.cleaned_data["HMO"]
+            date_of_birth =patient_form.cleaned_data['date_of_birth']
             patient = auth_fb.create_user_with_email_and_password(email=email,password=password)
 
             print(response.session.get('email'))
@@ -98,11 +99,12 @@ def register_new_Patient(response):
                     # 'office_Phone': office_Phone,
                     'mobile_Phone': mobile_Phone,
                     'HMO': HMO,
-                    'Country':country
+                    'Country':country,
+                    'Date_of_birth':str(date_of_birth)
 
                 }
 
-                db.child("Patients").child(patient['localId']).child("details").set(data)
+                db.child("Django-Patients").child(patient['localId']).child("details").set(data)
         else:
             return HttpResponse("Invalid")
         return redirect("/home")
