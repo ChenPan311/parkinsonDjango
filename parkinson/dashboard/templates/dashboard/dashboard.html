@@ -1,162 +1,36 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="he">
+{% extends "dashboard/base.html" %}
+<html dir="rtl">
 <head>
-    <title>Bootstrap Example</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js"
-            integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s"
-            crossorigin="anonymous"></script>
-
-    <style>
-        /* Remove the navbar's default margin-bottom and rounded borders */
-        .navbar {
-            background: #005b96;
-            margin-bottom: 0;
-            border-radius: 0;
-        }
-
-
-        /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
-        .row.content {
-            height: 500px
-        }
-
-        /* Set gray background color and 100% height */
-        .sidenav {
-            padding-top: 20px;
-            background-color: #6497b1;
-            height: 100%;
-        }
-
-
-        /* Set black background color, white text and some padding */
-        footer {
-            background-color: #005b96;
-            color: white;
-            padding: 15px;
-        }
-
-        .card {
-            margin-right: 5%;
-            margin-left: 20%;
-            border-radius: 10px;
-            background: #005b96;
-        }
-
-        #search_div {
-            horiz-align: center;
-            vertical-align: middle;
-            width: 250px;
-            padding: 1em;
-            margin-top: 2%;
-            border: 1px solid #e5e5e5;
-        }
-
-        div#search_div {
-            margin: 2% auto;
-        }
-
-        #log-out-btn {
-            position: absolute;
-            margin-bottom: 1rem;
-            width: 300px;
-            bottom: 0;
-            right: 25%;
-            left: 50%;
-
-        }
-
-        #nav-sidebar {
-            position: relative;
-            display: table;
-            text-align: center;
-        }
-
-        .btn.btn-primary{
-            margin: 1rem;
-        }
-
-
-        #search_div {
-            background: white;
-        }
-
-        .container-fluid.text-center {
-            height: auto;
-            position: relative;
-        }
-
-
-        /* On small screens, set height to 'auto' for sidenav and grid */
-        @media screen and (max-width: 767px) {
-            .sidenav {
-                height: auto;
-                padding: 15px;
-            }
-
-            footer {
-                background-color: #555;
-                color: white;
-                padding: 15px;
-            }
-
-
-        }
-    </style>
+    <title>Hello</title>
 </head>
+
 <body>
+{% block content %}
 
-<nav class="navbar navbar-inverse">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="#">Logo</a>
-        </div>
-    </div>
-</nav>
+<div class="jumbotron">
+    <h1 class="display-4">שלום {{name}}</h1>
+    <p class="lead">זהו דף הבית, ניתן לחפש מטופלים</p>
+    <hr class="my-4">
+    <p>על מנת לחפש מטופל אנא הכנס את מספרו.</p>
+    <p class="lead">
+    <form method="post" action="/patient_detail/">
+        {% csrf_token %}
+        <i class="fas fa-search" aria-hidden="true"></i>
+        <input name="patient_id" type="text" placeholder="מספר מטופל"
+               aria-label="Search">
+        <input class="search-btn" type="submit" value="חפש">
+    </form>
 
-
-<div class="container-fluid text-center">
-    <div class="row content">
-        <div class="col-sm-2 sidenav" id="nav-sidebar">
-            <p><a href="/add_patient">הוסף מטופל חדש</a></p>
-            <p><a href="#">Link</a></p>
-            <p><a href="#">Link</a></p>
-            <div id="log-out-btn">
-                <a href="/logout" class="btn btn-info btn-lg ">
-                    <span class="glyphicon glyphicon-log-out"></span>Log out</a>
-            </div>
-        </div>
-        <div class="card" style="text-align: end; padding: 1em; margin-top: 2%">
-            <h3 class="card-header" style="color: white">{{name}} שלום ד"ר </h3>
-            <div class="card-body" style="color: white">
-                <p class="card-text">להלן לוח המטופלים שלך</p>
-            </div>
-        </div>
-
-        <div class="card border-primary" id="search_div">
-            <div class="card-body">
-                <h4 class="card-title">Card title</h4>
-                <p class="card-text">Some example text. Some example text.</p>
-
-            </div>
-            <form class="form-inline d-flex justify-content-center md-form form-sm mt-0">
-                <i class="fas fa-search" aria-hidden="true"></i>
-                <input class="form-control form-control-sm ml-3 w-75" type="text" placeholder="Search"
-                       aria-label="Search">
-            </form>
-             <a href="#" class="btn btn-primary">חפש</a>
-        </div>
-    </div>
-
-
+    </p>
 </div>
 
+{% if msg %}
+    <script>
+        alert('{{ msg }}');
+    </script>
+{% endif %}
 
+{% endblock content %}
 </body>
-<footer class="container-fluid text-center">
-    <p>Footer Text</p>
-</footer>
 </html>

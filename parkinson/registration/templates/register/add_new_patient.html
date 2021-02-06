@@ -1,0 +1,31 @@
+{% load static %}
+
+<title>הרשמה</title>
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static 'registration/style.css' %}">
+</head>
+
+<body>
+<div class="registration-page">
+    <div class="form">
+        <form method="POST" class="form-group" dir="rtl" lang="he" style="text-align:right;">
+            <h1>הוסף מטופל</h1>
+            {% csrf_token %}
+            {{form}}
+            {{ourform}}
+            <button type="submit" class="btn btn-success">הוסף</button>
+        </form>
+    </div>
+</div>
+</body>
+
+<script>
+    $(function (){
+        $("datepicker1").datepicker({
+            format: 'DD/MM/YYYY',
+        });
+    });
+</script>
+
+
+

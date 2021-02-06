@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load timetags %}
+<html dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Patient Page{% endblock %} </title>
+</head>
+<body>
+
+{% block content %}
+
+<div class="jumbotron">
+    <div class="patient_details">
+        <div class="grid-container">
+            <p><span>שם : </span> {{patient_details.name}}</p>
+            <p><span>תעודת זהות : </span> {{patient_details.id}}</p>
+            <p><span> תאריך לידה : </span> {{patient_details.birthDate.time}}</p>
+            <p><span>מרפאה : </span> {{patient_details.clinicName}}</p>
+            <p><span>ארץ לידה : </span> {{patient_details.birthCountry}}</p>
+        </div>
+    </div>
+</div>
+
+<h2>תרופות</h2>
+<div class="jumbotron">
+    {% for medicine in patient_medications %}
+        <p><span>שם התרופה : </span> {{medicine.val.name}} <span>מינון : </span>  {{medicine.val.dosage}}</p>
+    {% endfor %}
+</div>
+
+<h2>שאלון <span>מעודכן לתאריך {{patient_questionnaire.answeredAt.time|prettydate}} </span></h2>
+<div class="jumbotron">
+    {% for question in patient_questionnaire.questionList %}
+        <p><span> {{question.title}} </span>:
+        {% for ans in question.ansPositions %}
+            {{ans}}
+        {% endfor %}</p>
+        {{question.answer}}
+    {% endfor %}
+</div>
+
+<h2>דיווחים</h2>
+<div class="jumbotron">
+    {% for report in patient_reports %}
+        <p><span id="date">תאריך : </span> {{report.val.reportTime.time|prettydate}}
+            <span>סטאטוס : </span>  {{report.val.status}}</p>
+    {% endfor %}
+</div>
+
+{% endblock %}
+
+</body>
+</html>

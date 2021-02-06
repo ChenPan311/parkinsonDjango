@@ -1,18 +1,22 @@
-{% extends 'dashboard/base.html' %}
+{% load static %}
 
-{% block title %}צור משתמש{% endblock %}
-{% load crispy_forms_tags %}
-{% block content %}
+<title>הרשמה</title>
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static 'registration/style.css' %}">
+</head>
+
+<body>
+<div class="registration-page">
+    <div class="form">
+        <form method="POST" class="form-group" style="text-align: right" dir="rtl">
+            <h1>צור משתמש</h1>
+            {% csrf_token %}
+            {{form}}
+            {{ourform}}
+            <button type="submit" class="btn btn-success">הרשם</button>
+        </form>
+    </div>
+</div>
+</body>
 
 
-
-<h1>צור משתמש</h1>
-
-<hr class="mt-0 mb-4">
-<form method="POST" class="form-group" dir="rtl" lang="he" style="text-align:right;">
-    {% csrf_token %}
-    {{form|crispy}}
-    {{ourform|crispy}}
-    <button type="submit" class="btn btn-success">הרשם</button>
-</form>
-{% endblock %}
