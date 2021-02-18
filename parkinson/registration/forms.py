@@ -53,7 +53,14 @@ class PatientRegisterForm(forms.ModelForm):
         ('זכר', 'זכר'),
         ('נקבה', 'נקבה')
     )
+    CLINIC_NAMES = (
+        ('מאוחדת', 'מאוחדת'),
+        ('כללית', 'כללית'),
+        ('לאומית', 'לאומית'),
+        ('מכבי', 'מכבי')
+    )
     gender = forms.ChoiceField(choices=GENDER_CHOICES, label="מין")
+    clinic = forms.ChoiceField(choices=CLINIC_NAMES, label="קופת חולים")
     date_of_birth = forms.DateField(widget=DateInput, label="תאריך לידה")
 
     class Meta:

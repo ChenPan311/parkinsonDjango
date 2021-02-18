@@ -13,4 +13,4 @@ class Doctor(models.Model):
 class Patient(models.Model):
     mobile_phone = models.CharField(max_length=20, verbose_name="טלפון נייד")
     country = models.CharField(max_length=20, verbose_name="ארץ לידה")
-    HMO = models.CharField(max_length=20, verbose_name="קופת חולים")
+

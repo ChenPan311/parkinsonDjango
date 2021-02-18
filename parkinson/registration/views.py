@@ -29,6 +29,7 @@ def register_new_doctor(response):
                     'office_phone': office_phone,
                     'mobile_phone': mobile_phone,
                     'organization': organization,
+
                 }
                 db.child("Doctors").child(doctor['localId']).child("details").set(data)
         else:
@@ -53,7 +54,7 @@ def register_new_patient(response):
             gender = patient_form.cleaned_data["gender"]
             country = patient_form.cleaned_data["country"]
             mobile_phone = patient_form.cleaned_data["mobile_phone"]
-            HMO = patient_form.cleaned_data["HMO"]
+            clinic = patient_form.cleaned_data["clinic"]
             date_of_birth = patient_form.cleaned_data['date_of_birth']
             patient = auth_fb.create_user_with_email_and_password(email=email, password=password)
 
@@ -61,15 +62,18 @@ def register_new_patient(response):
                 data = {
                     'doctor': response.session.get('email'),
                     'email': email,
-                    'first_name': first_name,
+                    'name': first_name,
                     'last_name': last_name,
                     'gender': gender,
                     'mobile_phone': mobile_phone,
-                    'HMO': HMO,
+                    'clinic': clinic,
                     'country': country,
+                    'hasUnansweredQuestionnaire':True,
+                    'needToUpdateMedicine':True,
                     'date_of_birth': str(date_of_birth)
                 }
-                db.child("Django-Patients").child(patient['localId']).child("details").set(data)
+                db.child("Patients").child(patient['localId']).set({'id':mobile_phone})
+                db.child("Patients").child(patient['localId']).child("user_details").set(data)
         else:
             return HttpResponse("Invalid")
         return redirect("/home")
