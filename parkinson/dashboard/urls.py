@@ -2,6 +2,7 @@ from django.urls import path
 
 from dashboard import views as d_views
 from registration import views as r_views
+from questionnaire import views as q_views
 
 urlpatterns = [
     path('', d_views.postsign, name="login"),
@@ -10,5 +11,6 @@ urlpatterns = [
     path('home/', d_views.home, name="home"),
     path('logout/', d_views.user_logout, name="logout"),
     path('patient_detail/', d_views.patient_detail, name="patient_detail"),
+    path('questionnaire/',q_views.question_create,name='question_creation')
 
 ]

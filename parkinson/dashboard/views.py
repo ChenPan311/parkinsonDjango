@@ -70,7 +70,7 @@ def patient_detail(request):
         patient_medications = db.child('Patients').child(patient.key()).child("medicine_list").get()
         patient_reports = db.child('Patients').child(patient.key()).child("reports").get()
 
-        patient_medications1 = patient.val()["medicine_list"]
+
         # print(patient_medications1)
 
         for field in patient_details:

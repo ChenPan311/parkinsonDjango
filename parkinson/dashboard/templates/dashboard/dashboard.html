@@ -14,7 +14,7 @@
     <hr class="my-4">
     <p>על מנת לחפש מטופל אנא הכנס את מספרו.</p>
     <p class="lead">
-    <form method="post" action="/patient_detail/">
+    <form method="POST" action="/patient_detail/">
         {% csrf_token %}
         <i class="fas fa-search" aria-hidden="true"></i>
         <input name="patient_id" type="text" placeholder="מספר מטופל"

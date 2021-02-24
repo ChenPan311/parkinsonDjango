@@ -20,6 +20,7 @@ from django.urls import path,include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include("dashboard.urls")),
+    # path('questionnaire/', include('questionnaire.urls')),
     # path('', include("django.contrib.auth.urls"))#link to main features login.html,logut
 
 
