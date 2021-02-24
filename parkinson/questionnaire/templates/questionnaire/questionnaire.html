@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>שאלון</title>
+</head>
+<body>
+
+    <form id="answer_form" method="POST" class="form-group" dir="rtl" lang="he" style="text-align:right">
+        {% csrf_token %}
+        {{question_form.as_p}}
+
+        <button id="add_answer_btn" type="button">+</button>
+        <button id="remove_answer_btn" type="button">-</button>
+        <input id="number_of_answers" name="number_of_answers" style="display: none">
+
+           <div id="answers_container">
+
+        </div>
+         <input id="submit_answers" type="submit" value="submit">
+    </form>
+
+<script>
+    let i=0;
+    const form = document.getElementById("answer_form");
+    const add_btn = document.getElementById("add_answer_btn");
+    const remove_btn = document.getElementById("remove_answer_btn");
+    const number_of_answers=document.getElementById("number_of_answers")
+    const option=document.getElementById("id_choice_type")
+    const answers_container=document.getElementById("answers_container")
+
+
+    option.onchange=function () {
+        if (option.value === 'open_choice') {
+            add_btn.style.display = 'none'
+            remove_btn.style.display = 'none'
+            while (answers_container.hasChildNodes()) {
+                answers_container.removeChild(answers_container.lastChild);
+            }
+        }else{
+            add_btn.style.display='initial'
+            remove_btn.style.display = 'initial'
+        }
+    }
+
+
+    remove_btn.onclick=function (){
+        answers_container.removeChild(answers_container.lastChild);
+        answers_container.removeChild(answers_container.lastChild);
+        i-=1
+    }
+
+    add_btn.onclick = function() {
+        const answer = document.createElement("input");
+        answer.type = "text";
+        answer.name=i;
+        answer.placeholder = "רשום תשובה";
+        answer.id=i;
+        answer.required=true
+        number_of_answers.value=i;
+        answers_container.appendChild(answer);
+        answers_container.appendChild(document.createElement("br"));
+        i+=1
+
+}
+
+</script>
+
+
+
+</body>
+
+
+</html>
