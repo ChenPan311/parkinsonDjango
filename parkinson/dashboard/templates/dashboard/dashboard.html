@@ -13,22 +13,24 @@
     <p class="lead">זהו דף הבית, ניתן לחפש מטופלים</p>
     <hr class="my-4">
     <p>על מנת לחפש מטופל אנא הכנס את מספרו.</p>
-    <p class="lead">
     <form method="POST" action="/patient_detail/">
         {% csrf_token %}
-        <i class="fas fa-search" aria-hidden="true"></i>
-        <input name="patient_id" type="text" placeholder="מספר מטופל"
-               aria-label="Search">
-        <input class="search-btn" type="submit" value="חפש">
+        <div class="input-group mb-3">
+            <input name="patient_id" type="text" class="form-control" placeholder="מספר מטופל" aria-label="Search"
+                   aria-describedby="basic-addon1" style="max-width: 20%">
+            <div class="input-group-prepend">
+                <button class="btn btn-primary" type="submit">חפש<i class="fas fa-search" aria-hidden="true"></i></button>
+            </div>
+
+        </div>
     </form>
 
-    </p>
 </div>
 
 {% if msg %}
-    <script>
-        alert('{{ msg }}');
-    </script>
+<script>
+    alert('{{ msg }}');
+</script>
 {% endif %}
 
 {% endblock content %}

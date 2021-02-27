@@ -8,14 +8,14 @@ class Login(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput, label="סיסמא")
 
 
-class Medications(forms.Form):
-    category_list = []
-    sub_catgories = []
-    patient_medications = db.child('Data').child('medicine_list').get()
-    for medication in patient_medications.each():
-        category_list.append(medication.val()["categoryName"])
-        sub_medications = db.child('Data').child('medicine_list').child(medication.key()).child('medicationList').get()
-        med_list = []
-        for med in sub_medications.each():
-            med_list.append(med.val()["categoryName"])
-    sub_catgories.append(med_list)
+# class Medications(forms.Form):
+#     category_list = []
+#     sub_catgories = []
+#     patient_medications = db.child('Data').child('medicine_list').get()
+#     for medication in patient_medications.each():
+#         category_list.append(medication.val()["categoryName"])
+#         sub_medications = db.child('Data').child('medicine_list').child(medication.key()).child('medicationList').get()
+#         med_list = []
+#         for med in sub_medications.each():
+#             med_list.append(med.val()["categoryName"])
+#     sub_catgories.append(med_list)

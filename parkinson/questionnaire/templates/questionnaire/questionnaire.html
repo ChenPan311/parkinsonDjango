@@ -1,73 +1,137 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <title>שאלון</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl"
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'questionnaire/style.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0"
+            crossorigin="anonymous"></script>
 </head>
 <body>
 
-    <form id="answer_form" method="POST" class="form-group" dir="rtl" lang="he" style="text-align:right">
-        {% csrf_token %}
-        {{question_form.as_p}}
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-bg">
+    הוסף שאלה חדשה
+</button>
 
-        <button id="add_answer_btn" type="button">+</button>
-        <button id="remove_answer_btn" type="button">-</button>
-        <input id="number_of_answers" name="number_of_answers" style="display: none">
+<!-- Modal -->
+<div class="modal fade" id="modal-bg" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" dir="rtl" lang="he" style="text-align:right">
+                <h5 class="modal-title" id="exampleModalLabel">שאלה חדשה</h5>
+            </div>
+            <div class="modal-body">
+                <form id="answer_form" method="POST" class="form-group" dir="rtl" lang="he" style="text-align:right">
+                    {% csrf_token %}
+                    {{question_form.as_p}}
+                    <button id="add_answer_btn" class="btn btn-success" type="button">+</button>
+                    <button id="remove_answer_btn" class="btn btn-danger" type="button">-</button>
+                    <input id="number_of_answers" name="number_of_answers" style="display: none">
+                    <div id="answers_container"></div>
+                    <div class="modal-footer" style="float: right">
+                        <button id="close_btn" type="button" class="btn btn-secondary" data-bs-dismiss="modal">סגור
+                        </button>
+                        <button type="submit" class="btn btn-primary">הוסף</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
-           <div id="answers_container">
+<!-- Questionnaire -->
+{% if questionnaire.val is not None %}
+<div class="list-group" dir="rtl" lang="he" style="text-align:right">
+    {% for question in questionnaire %}
+    <div class="list-group-item list-group-item-action">
+        <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">{{question.val.title}}</h5>
+            <form method="POST" action="delete/">
+                {% csrf_token %}
+                <small>
+                    <button value="{{question.key}}" name="key_to_delete" type="submit" class="btn btn-danger"
+                            style="float: left">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </small>
+            </form>
+            <form method="POST" action="edit/">
+                {% csrf_token %}
+                <small>
+                    <button value="{{question.key}}" name="key_to_edit" type="submit" class="btn btn-success"
+                            style="float: left">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </small>
+            </form>
 
         </div>
-         <input id="submit_answers" type="submit" value="submit">
-    </form>
+        <p class="mb-1">{{question.val.choices}}.</p>
+    </div>
+    {% endfor %}
+
+</div>
+{% endif %}
+
 
 <script>
-    let i=0;
-    const form = document.getElementById("answer_form");
-    const add_btn = document.getElementById("add_answer_btn");
-    const remove_btn = document.getElementById("remove_answer_btn");
-    const number_of_answers=document.getElementById("number_of_answers")
-    const option=document.getElementById("id_choice_type")
-    const answers_container=document.getElementById("answers_container")
+    let i = 0;
+    const addBtn = document.getElementById("add_answer_btn");
+    const removeBtn = document.getElementById("remove_answer_btn");
+    const numberOfAnswers = document.getElementById("number_of_answers")
+    const option = document.getElementById("id_choice_type")
+    const answersContainer = document.getElementById("answers_container")
+    const addQuestionBtn = document.getElementById("add_q_btn");
+    const closeModalBtn = document.getElementById("close_btn")
 
-
-    option.onchange=function () {
-        if (option.value === 'open_choice') {
-            add_btn.style.display = 'none'
-            remove_btn.style.display = 'none'
-            while (answers_container.hasChildNodes()) {
-                answers_container.removeChild(answers_container.lastChild);
-            }
-        }else{
-            add_btn.style.display='initial'
-            remove_btn.style.display = 'initial'
+    closeModalBtn.onclick = function () {
+        while (answersContainer.hasChildNodes()) {
+            answersContainer.removeChild(answersContainer.lastChild);
         }
     }
 
-
-    remove_btn.onclick=function (){
-        answers_container.removeChild(answers_container.lastChild);
-        answers_container.removeChild(answers_container.lastChild);
-        i-=1
+    option.onchange = function () {
+        if (option.value === 'OpenQuestion') {
+            addBtn.style.display = 'none'
+            removeBtn.style.display = 'none'
+            while (answersContainer.hasChildNodes()) {
+                answersContainer.removeChild(answersContainer.lastChild);
+            }
+            i = 0
+        } else {
+            addBtn.style.display = 'initial'
+            removeBtn.style.display = 'initial'
+        }
     }
 
-    add_btn.onclick = function() {
+    removeBtn.onclick = function () {
+        if (answersContainer.hasChildNodes()) {
+            answersContainer.removeChild(answersContainer.lastChild);
+            answersContainer.removeChild(answersContainer.lastChild);
+            i -= 1
+        }
+    }
+
+    addBtn.onclick = function () {
         const answer = document.createElement("input");
         answer.type = "text";
-        answer.name=i;
+        answer.name = i;
         answer.placeholder = "רשום תשובה";
-        answer.id=i;
-        answer.required=true
-        number_of_answers.value=i;
-        answers_container.appendChild(answer);
-        answers_container.appendChild(document.createElement("br"));
-        i+=1
-
-}
-
+        answer.id = i;
+        answer.required = true
+        numberOfAnswers.value = i;
+        answersContainer.appendChild(answer);
+        answersContainer.appendChild(document.createElement("br"));
+        i += 1
+    }
 </script>
 
-
-
 </body>
-
 
 </html>

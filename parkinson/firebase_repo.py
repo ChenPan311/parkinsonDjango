@@ -11,3 +11,8 @@ config = {
 firebase = pyrebase.initialize_app(config)
 auth_fb = firebase.auth()
 db = firebase.database()
+
+
+def get_questionnaire():
+    questionnaire = db.child("Data").child('questionnaire_follow_up_test').child("questionList").get()
+    return questionnaire

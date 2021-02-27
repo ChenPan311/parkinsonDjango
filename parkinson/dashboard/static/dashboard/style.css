@@ -11,10 +11,10 @@ body{
   z-index: 1;
   position: fixed;
   background: #22242A;
-  padding: 20px;
-  width: calc(100% - 0%);
+  padding-right: 10px;
+  width: 100%;
   top: 0;
-  height: 30px ;
+  height: 70px ;
 }
 
 .right_area h3{
@@ -26,23 +26,11 @@ body{
 }
 
 .logout_btn{
-  padding: 8px;
-  background: #24417B;
-  text-decoration: none;
   float: left;
   margin-top: -30px;
   margin-left: 40px;
-  border-radius: 2px;
-  font-size: 15px;
-  font-weight: 600;
-  color: #fff;
-  transition: 0.5s;
-  transition-property: background;
 }
 
-.logout_btn:hover{
-  background: #0B87A6;
-}
 
 .sidebar{
   z-index: 1;
@@ -131,7 +119,6 @@ label #sidebar_btn:hover{
 }
 
 .content{
-  width: (100% - 250px);
   margin-top: 40px;
   padding: 20px;
   margin-right: 250px;
@@ -190,7 +177,7 @@ label #sidebar_btn:hover{
 
   .nav_bar{
     background: #222;
-    width: (100% - 0px);
+    width: calc(100% - 0px);
     margin-top: 70px;
     display: flex;
     justify-content: space-between;
@@ -238,31 +225,13 @@ label #sidebar_btn:hover{
 
 .jumbotron span{
     font-size: 20px;
-    font: bold;
+    font-weight: bold;
     margin-right: 10px;
 }
 
 .jumbotron i{
     margin-left: 10px;
     margin-right: 10px;
-}
-
-.search-btn{
-    border: 0;
-    padding: 5px;
-    background: #24417B;
-    text-decoration: none;
-    margin-right: 20px;
-    border-radius: 2px;
-    font-size: 15px;
-    font-weight: 600;
-    color: #fff;
-    transition: 0.5s;
-    transition-property: background;
-}
-
-.search-btn:hover{
-  background: #0B87A6;
 }
 
 .grid-container {
