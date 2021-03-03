@@ -1,14 +1,19 @@
 from django.shortcuts import render, redirect
 from firebase_repo import db, get_questionnaire
+import firebase_repo
 from questionnaire.forms import Question
 
 
-def create_question(request):
+def questionnaire_page(request):
     questionnaire = get_questionnaire()
     form = Question()
-    if request.method == "GET":
-        return render(request, "questionnaire/questionnaire.html", {"question_form": form,
-                                                                    "questionnaire": questionnaire})
+    medications = firebase_repo.get_medications()
+    return render(request, "questionnaire/questionnaire.html", {"question_form": form,
+                                                                "questionnaire": questionnaire,
+                                                                "medications": medications})
+
+
+def create_question(request):
     if request.method == "POST":
         answers = {}
         form = Question(request.POST)
@@ -30,13 +35,7 @@ def create_question(request):
                 'choices': answers,
                 'type': type
             }
-            # key = 0
-            # if questionnaire.val() is not None:
-            #     for question in questionnaire.each():
-            #         key = question.key()
-            #     key += 1
             db.child("Data").child('questionnaire_follow_up_test').child("questionList").push(data)
-
             return redirect('/questionnaire')  # Reload new questionnaire and prevent resubmission
 
 
@@ -44,7 +43,6 @@ def delete_question(request):
     question_to_delete = request.POST.get('key_to_delete', 0)
     db.child("Data").child('questionnaire_follow_up_test').child("questionList").child(question_to_delete).remove()
     return redirect('/questionnaire')
-    # print(question_to_delete)
 
 
 def edit_question(request):

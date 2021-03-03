@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% load crispy_forms_tags %}
 <html lang="en">
 <head>
     <title>שאלון</title>
@@ -12,24 +13,27 @@
             integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0"
             crossorigin="anonymous"></script>
 </head>
-<body>
+<body style="direction: rtl">
 
+<h1 class="d-flex justify-content-center">שאלון רפואי</h1>
 <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-bg">
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-modal-bg">
     הוסף שאלה חדשה
 </button>
+<br><br>
 
-<!-- Modal -->
-<div class="modal fade" id="modal-bg" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<!-- Add Modal -->
+<div class="modal fade" id="add-modal-bg" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header" dir="rtl" lang="he" style="text-align:right">
-                <h5 class="modal-title" id="exampleModalLabel">שאלה חדשה</h5>
+                <h5 class="modal-title">שאלה חדשה</h5>
             </div>
             <div class="modal-body">
-                <form id="answer_form" method="POST" class="form-group" dir="rtl" lang="he" style="text-align:right">
+                <form action="create/" id="answer_form" method="POST" class="form-group" dir="rtl" lang="he"
+                      style="text-align:right">
                     {% csrf_token %}
-                    {{question_form.as_p}}
+                    {{question_form|crispy}}
                     <button id="add_answer_btn" class="btn btn-success" type="button">+</button>
                     <button id="remove_answer_btn" class="btn btn-danger" type="button">-</button>
                     <input id="number_of_answers" name="number_of_answers" style="display: none">
@@ -45,92 +49,99 @@
     </div>
 </div>
 
+<!-- Edit Modal -->
+<div class="modal fade" id="edit-modal-bg" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" dir="rtl" lang="he" style="text-align:right">
+                <h5 class="modal-title">ערוך שאלה</h5>
+            </div>
+            <div class="modal-body">
+                <form action="create/" id="answer_form" method="POST" class="form-group" dir="rtl" lang="he"
+                      style="text-align:right">
+                    {% csrf_token %}
+                    {{question_form|crispy}}
+                    <button id="add_answer_btn" class="btn btn-success" type="button">+</button>
+                    <button id="remove_answer_btn" class="btn btn-danger" type="button">-</button>
+                    <input id="number_of_answers" name="number_of_answers" style="display: none">
+                    <div id="answers_container"></div>
+                    <div class="modal-footer" style="float: right">
+                        <button id="close_btn" type="button" class="btn btn-secondary" data-bs-dismiss="modal">סגור
+                        </button>
+                        <button type="submit" class="btn btn-primary">עדכן</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Questionnaire -->
 {% if questionnaire.val is not None %}
 <div class="list-group" dir="rtl" lang="he" style="text-align:right">
     {% for question in questionnaire %}
-    <div class="list-group-item list-group-item-action">
-        <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1">{{question.val.title}}</h5>
-            <form method="POST" action="delete/">
-                {% csrf_token %}
-                <small>
+    <div class="list-group-item list-group-item-success">
+        <div>
+            <h3 class="mb-3">{{question.val.title}}</h3>
+            <div class="container-sm">
+                <form method="POST" action="delete/">
+                    {% csrf_token %}
                     <button value="{{question.key}}" name="key_to_delete" type="submit" class="btn btn-danger"
                             style="float: left">
                         <i class="fas fa-trash-alt"></i>
                     </button>
-                </small>
-            </form>
-            <form method="POST" action="edit/">
-                {% csrf_token %}
-                <small>
-                    <button value="{{question.key}}" name="key_to_edit" type="submit" class="btn btn-success"
-                            style="float: left">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                </small>
-            </form>
-
+                </form>
+                <!--                <form method="POST" action="edit/">-->
+                <!--                    {% csrf_token %}-->
+                <button value="{{question.key}}" name="key_to_edit" type="submit" class="btn btn-success"
+                        style="float: left"
+                        data-bs-toggle="modal" data-bs-target="#edit-modal-bg">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <!--                </form>-->
+            </div>
         </div>
-        <p class="mb-1">{{question.val.choices}}.</p>
+        <h5>תשובות : </h5>
+        {% for answer in question.val.choices %}
+        <span class="mb-1">{{answer}},</span>
+        {% endfor %}
     </div>
     {% endfor %}
 
 </div>
 {% endif %}
 
+<!--&lt;!&ndash; Medicines Test &ndash;&gt;-->
+<!--<div class="container" style="max-width: 300px">-->
+<!--    <select class="form-select">-->
+<!--        {% for medicine in medications %}-->
+<!--        {% for key,val in medicine.val.medicationList.items %}-->
+<!--        <option value="{{key}}">-->
+<!--            {{val.name}}-->
+<!--        </option>-->
+<!--        {% endfor %}-->
+<!--        {% endfor %}-->
+<!--    </select>-->
+<!--</div>-->
+<!--&lt;!&ndash; Medicines Test &ndash;&gt;-->
 
-<script>
-    let i = 0;
-    const addBtn = document.getElementById("add_answer_btn");
-    const removeBtn = document.getElementById("remove_answer_btn");
-    const numberOfAnswers = document.getElementById("number_of_answers")
-    const option = document.getElementById("id_choice_type")
-    const answersContainer = document.getElementById("answers_container")
-    const addQuestionBtn = document.getElementById("add_q_btn");
-    const closeModalBtn = document.getElementById("close_btn")
+<!--<div class="dropstart">-->
+<!--    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown"-->
+<!--            aria-expanded="true">-->
+<!--        בחר תרופה-->
+<!--    </button>-->
+<!--    <ul class="dropdown-menu">-->
+<!--        {% for medicine in medications %}-->
+<!--        <li class="dropdown-item">-->
+<!--            {{medicine.val.categoryName}}-->
+<!--        </li>-->
+<!--        <li class="dropdown-divider"></li>-->
+<!--        {% endfor %}-->
+<!--    </ul>-->
+<!--</div>-->
 
-    closeModalBtn.onclick = function () {
-        while (answersContainer.hasChildNodes()) {
-            answersContainer.removeChild(answersContainer.lastChild);
-        }
-    }
+<script type="text/javascript" src="{% static 'questionnaire/scripts.js' %}"></script>
 
-    option.onchange = function () {
-        if (option.value === 'OpenQuestion') {
-            addBtn.style.display = 'none'
-            removeBtn.style.display = 'none'
-            while (answersContainer.hasChildNodes()) {
-                answersContainer.removeChild(answersContainer.lastChild);
-            }
-            i = 0
-        } else {
-            addBtn.style.display = 'initial'
-            removeBtn.style.display = 'initial'
-        }
-    }
-
-    removeBtn.onclick = function () {
-        if (answersContainer.hasChildNodes()) {
-            answersContainer.removeChild(answersContainer.lastChild);
-            answersContainer.removeChild(answersContainer.lastChild);
-            i -= 1
-        }
-    }
-
-    addBtn.onclick = function () {
-        const answer = document.createElement("input");
-        answer.type = "text";
-        answer.name = i;
-        answer.placeholder = "רשום תשובה";
-        answer.id = i;
-        answer.required = true
-        numberOfAnswers.value = i;
-        answersContainer.appendChild(answer);
-        answersContainer.appendChild(document.createElement("br"));
-        i += 1
-    }
-</script>
 
 </body>
 

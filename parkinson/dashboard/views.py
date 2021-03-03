@@ -5,6 +5,11 @@ from django.shortcuts import render, redirect
 from firebase_repo import auth_fb, db
 from .forms import Login
 
+DYSKINESIA = 6
+ON = 4
+OFF = 2
+HALLUCINATION = 0
+
 
 # Create your views here.
 
@@ -58,6 +63,12 @@ def user_logout(request):
         pass
 
 
+def prettydate(ms):
+    date = datetime.fromtimestamp(ms / 1000.0)
+    date = date.strftime('%d-%m-%Y %H:%M:%S')
+    return date
+
+
 def patient_detail(request):
     patient_id = request.POST.get("patient_id", 0)
     name = request.session.get('name')
@@ -70,17 +81,24 @@ def patient_detail(request):
         patient_medications = db.child('Patients').child(patient.key()).child("medicine_list").get()
         patient_reports = db.child('Patients').child(patient.key()).child("reports").get()
 
+        # Data for the charts
+        labels = []
+        data = []
 
-        # print(patient_medications1)
-
-        for field in patient_details:
-            if field == 'birthDate':
-                print(patient_details[field]['time'])
+        for report in patient_reports.each():
+            labels.append(prettydate(report.val()['reportTime']['time']))
+            if report.val()['status'] == "On":
+                data.append(ON)
+            elif report.val()['status'] == "Off":
+                data.append(OFF)
+            elif report.val()['status'] == "Dyskinesia":
+                data.append(DYSKINESIA)
             else:
-                print(patient_details[field])
+                data.append(HALLUCINATION)
 
         return render(request, "patient/patient_page.html", {'patient_details': patient_details,
                                                              'patient_medications': patient_medications,
                                                              'patient_questionnaire': patient_questionnaire,
-                                                             'patient_reports': patient_reports,
+                                                             'labels': labels,
+                                                             'data': data,
                                                              'name': name})
