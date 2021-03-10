@@ -6,6 +6,7 @@
           integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl"
           crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="{% static 'registration/style.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 
 <body>
@@ -20,15 +21,26 @@
         </form>
     </div>
 </div>
-</body>
 
 <script>
-    $(function (){
-        $("datepicker1").datepicker({
-            format: 'DD/MM/YYYY',
-        });
+    $(function () {
+        var dtToday = new Date();
+
+        var month = dtToday.getMonth() + 1;
+        var day = dtToday.getDate();
+        var year = dtToday.getFullYear();
+        if (month < 10)
+            month = '0' + month.toString();
+        if (day < 10)
+            day = '0' + day.toString();
+
+        var maxDate = year + '-' + month + '-' + day;
+        $('#id_date_of_birth').attr('max', maxDate);
     });
 </script>
+
+</body>
+
 
 
 

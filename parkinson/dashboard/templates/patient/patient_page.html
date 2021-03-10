@@ -66,6 +66,8 @@
 </div>
 
 <h2>דיווחים</h2>
+<input type="date" id="filter_dates">
+<button class="btn btn-primary" id="filter_btn">סנן</button>
 <!--<div class="jumbotron">-->
 <!--    {% for report in patient_reports %}-->
 <!--    <p><span id="date">תאריך : </span> {{report.val.reportTime.time|prettydate}}-->
@@ -80,7 +82,9 @@
 <script>
     const ctx = document.getElementById('myChart').getContext('2d');
     <!-- Colors for chart -->
-    const coloR = [];
+    const colors = [];
+
+
     const dynamicColors = function () {
         const r = Math.floor(Math.random() * 255);
         const g = Math.floor(Math.random() * 255);
@@ -88,9 +92,10 @@
         return "rgb(" + r + "," + g + "," + b + "," + 0.6 + ")";
     };
     {% for label in labels %}
-    coloR.push(dynamicColors());
+    colors.push(dynamicColors());
     {% endfor %}
     <!-- Colors for chart end -->
+
 
     const yLabels = {
         0: 'Hallucinations',
@@ -105,17 +110,26 @@
             labels: [{% for label in labels %}'{{label}}',{% endfor %}],
     datasets: [{
         label: 'סטאטוס',
-        data: [{% for val in data %}'{{val}}', {% endfor %}],
-        backgroundColor: coloR,
-        borderColor: coloR,
-        borderWidth: 1}]
+        fill: false,
+        data: [{% for val in data %} '{{val}}', {% endfor %}],
+        backgroundColor: colors,
+        borderColor: colors,
+        borderWidth: 3}]
     },
     options: {
+            legend: {
+            display: false
+         },
+        title: {
+            display: true,
+            fontSize:18,
+            text:"סטאטוס"
+         },
         scales: {
             yAxes: [{
                 ticks: {
                     beginAtZero: true,
-                    suggestedMin: -2,
+                    suggestedMin: 0,
                     suggestedMax: 8,
                     callback: function (value) {
                         return yLabels[value];
@@ -124,7 +138,27 @@
             }]
         }
     }
+
     });
+
+    function formatDate() {
+        var dtToday = new Date();
+
+        var month = dtToday.getMonth() + 1;
+        var day = dtToday.getDate();
+        var year = dtToday.getFullYear();
+        if (month < 10)
+            month = '0' + month.toString();
+        if (day < 10)
+            day = '0' + day.toString();
+
+        return [year, month, day].join('-');
+    }
+
+    today = formatDate();
+    document.getElementById('filter_dates').value = today;
+    document.getElementById('filter_dates').setAttribute('max', today);
+
 </script>
 
 {% endblock %}

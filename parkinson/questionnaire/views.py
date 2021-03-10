@@ -47,4 +47,26 @@ def delete_question(request):
 
 def edit_question(request):
     question_to_edit = request.POST.get('key_to_edit', 0)
-    return None
+    if request.method == "POST":
+        answers = {}
+        form = Question(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data['title']
+            choice_type = form.cleaned_data['choice_type']
+            if choice_type != 'OpenQuestion':
+                number_of_answers = int(request.POST.get("edit_number_of_answers", 0)) + 1
+                for i in range(number_of_answers):
+                    answers[str(i)] = request.POST.get(str(i))
+
+            if choice_type == 'SingleChoice' or choice_type == 'MultipleChoice':
+                type = 'MultipleChoiceQuestion'
+            else:
+                type = 'OpenQuestion'
+            data = {
+                'title': title,
+                'choiceType': choice_type,
+                'choices': answers,
+                'type': type
+            }
+            db.child("Data").child('questionnaire_follow_up_test').child("questionList").child(question_to_edit).update(data)
+    return redirect('/questionnaire')  # Reload new questionnaire and prevent resubmission

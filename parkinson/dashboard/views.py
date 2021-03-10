@@ -79,7 +79,7 @@ def patient_detail(request):
         patient_details = patient.val()["user_details"]
         patient_questionnaire = patient.val()["questionnaire"]
         patient_medications = db.child('Patients').child(patient.key()).child("medicine_list").get()
-        patient_reports = db.child('Patients').child(patient.key()).child("reports").get()
+        patient_reports = db.child('Patients').child(patient.key()).child("reports").order_by_child("time").get()
 
         # Data for the charts
         labels = []

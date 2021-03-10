@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 {% load static %}
 {% load crispy_forms_tags %}
-<html lang="en">
+{% load typetags %}
+
+<html dir="rtl">
 <head>
     <title>שאלון</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -9,6 +11,7 @@
           crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="{% static 'questionnaire/style.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0"
             crossorigin="anonymous"></script>
@@ -17,10 +20,9 @@
 
 <h1 class="d-flex justify-content-center">שאלון רפואי</h1>
 <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-modal-bg">
+<button type="button" class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#add-modal-bg">
     הוסף שאלה חדשה
 </button>
-<br><br>
 
 <!-- Add Modal -->
 <div class="modal fade" id="add-modal-bg" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -34,11 +36,18 @@
                       style="text-align:right">
                     {% csrf_token %}
                     {{question_form|crispy}}
-                    <button id="add_answer_btn" class="btn btn-success" type="button">+</button>
-                    <button id="remove_answer_btn" class="btn btn-danger" type="button">-</button>
-                    <input id="number_of_answers" name="number_of_answers" style="display: none">
+                    <div class="btns mb-2 mt-2">
+                        <p>תשובות : </p>
+                        <button id="add_answer_btn" class="btn btn-success" type="button">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <button id="remove_answer_btn" class="btn btn-danger" type="button">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                    <input id="number_of_answers" name="number_of_answers" type="hidden">
                     <div id="answers_container"></div>
-                    <div class="modal-footer" style="float: right">
+                    <div class="modal-footer d-flex justify-content-start">
                         <button id="close_btn" type="button" class="btn btn-secondary" data-bs-dismiss="modal">סגור
                         </button>
                         <button type="submit" class="btn btn-primary">הוסף</button>
@@ -57,18 +66,25 @@
                 <h5 class="modal-title">ערוך שאלה</h5>
             </div>
             <div class="modal-body">
-                <form action="create/" id="answer_form" method="POST" class="form-group" dir="rtl" lang="he"
+                <form action="update/" id="answer_form" method="POST" class="form-group" dir="rtl" lang="he"
                       style="text-align:right">
                     {% csrf_token %}
                     {{question_form|crispy}}
-                    <button id="add_answer_btn" class="btn btn-success" type="button">+</button>
-                    <button id="remove_answer_btn" class="btn btn-danger" type="button">-</button>
-                    <input id="number_of_answers" name="number_of_answers" style="display: none">
-                    <div id="answers_container"></div>
-                    <div class="modal-footer" style="float: right">
+                    <div class="btns mb-2 mt-2">
+                        <p>תשובות : </p>
+                        <button id="add_answer_btn" class="btn btn-success" type="button">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <button id="remove_answer_btn" class="btn btn-danger" type="button">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                    <input id="edit_number_of_answers" name="edit_number_of_answers" type="hidden">
+                    <div id="edit_answers_container"></div>
+                    <div class="modal-footer d-flex justify-content-start">
                         <button id="close_btn" type="button" class="btn btn-secondary" data-bs-dismiss="modal">סגור
                         </button>
-                        <button type="submit" class="btn btn-primary">עדכן</button>
+                        <button id="update_btn" type="submit" class="btn btn-primary">עדכן</button>
                     </div>
                 </form>
             </div>
@@ -80,31 +96,41 @@
 {% if questionnaire.val is not None %}
 <div class="list-group" dir="rtl" lang="he" style="text-align:right">
     {% for question in questionnaire %}
-    <div class="list-group-item list-group-item-success">
+    <div class="list-group-item list-group-item-light">
         <div>
-            <h3 class="mb-3">{{question.val.title}}</h3>
+            <h3 class="mb-3">{{question.val.title}}
+                <span class="badge alert-primary">{{question.val.choiceType|translate_type}}</span>
+            </h3>
             <div class="container-sm">
                 <form method="POST" action="delete/">
                     {% csrf_token %}
-                    <button value="{{question.key}}" name="key_to_delete" type="submit" class="btn btn-danger"
+                    <button value="{{question.key}}"
+                            name="key_to_delete"
+                            type="submit" class="btn btn-danger"
                             style="float: left">
                         <i class="fas fa-trash-alt"></i>
                     </button>
                 </form>
-                <!--                <form method="POST" action="edit/">-->
-                <!--                    {% csrf_token %}-->
-                <button value="{{question.key}}" name="key_to_edit" type="submit" class="btn btn-success"
+                <button type="button" class="edit-btn btn btn-success"
                         style="float: left"
-                        data-bs-toggle="modal" data-bs-target="#edit-modal-bg">
+                        data-bs-toggle="modal"
+                        data-bs-target="#edit-modal-bg"
+                        data-title="{{question.val.title}}"
+                        data-type="{{question.val.choiceType}}"
+                        data-answers="{{question.val.choices}}"
+                        data-key-to-edit="{{question.key}}">
                     <i class="fas fa-edit"></i>
                 </button>
-                <!--                </form>-->
             </div>
         </div>
+        {% if question.val.choiceType != 'OpenQuestion' %}
         <h5>תשובות : </h5>
-        {% for answer in question.val.choices %}
-        <span class="mb-1">{{answer}},</span>
-        {% endfor %}
+        <div class="answers">
+            {% for answer in question.val.choices %}
+            <span class="mb-1">{{answer}},</span>
+            {% endfor %}
+        </div>
+        {% endif %}
     </div>
     {% endfor %}
 
