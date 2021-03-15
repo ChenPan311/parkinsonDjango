@@ -38,13 +38,12 @@
     <div class="profile_info">
         <center>
             <img src="{% static 'dashboard/doctor.jpg' %}" class="profile_image" alt="">
-            <h4>{{name}}</h4>
+            <h4>{{request.session.name}}</h4>
         </center>
     </div>
     <a href="/home"><i class="fas fa-desktop"></i><span>בית</span></a>
     <a href="/add_patient"><i class="fas fa-user-plus"></i><span>הוסף מטופל חדש</span></a>
     <a href="/questionnaire"><i class="fas fa-table"></i><span> שאלון</span></a>
-    <a href="#"><i class="fas fa-info-circle"></i><span>About</span></a>
 </div>
 
 <!--sidebar end-->

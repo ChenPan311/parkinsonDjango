@@ -1,10 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Alef&display=swap');
+
 body{
   background-image : url('blur-hospital.jpg');
   background-size: cover;
   background-attachment: fixed;
   margin: 0;
   padding: 0;
-  font-family: "Roboto", sans-serif;
+  font-family: "Alef", serif;
 }
 
 .header-nb{

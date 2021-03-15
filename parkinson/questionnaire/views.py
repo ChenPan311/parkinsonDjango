@@ -1,16 +1,13 @@
 from django.shortcuts import render, redirect
 from firebase_repo import db, get_questionnaire
-import firebase_repo
 from questionnaire.forms import Question
 
 
 def questionnaire_page(request):
     questionnaire = get_questionnaire()
     form = Question()
-    medications = firebase_repo.get_medications()
     return render(request, "questionnaire/questionnaire.html", {"question_form": form,
-                                                                "questionnaire": questionnaire,
-                                                                "medications": medications})
+                                                                "questionnaire": questionnaire})
 
 
 def create_question(request):

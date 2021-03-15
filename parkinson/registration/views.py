@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from firebase_repo import auth_fb, db
+from datetime import datetime
 from .forms import RegisterForm, DoctorRegisterForm, PatientRegisterForm
 
 
@@ -55,24 +56,30 @@ def register_new_patient(response):
             country = patient_form.cleaned_data["country"]
             mobile_phone = patient_form.cleaned_data["mobile_phone"]
             clinic = patient_form.cleaned_data["clinic"]
-            date_of_birth = patient_form.cleaned_data['date_of_birth']
+            date_of_birth = str(patient_form.cleaned_data['date_of_birth'])
             patient = auth_fb.create_user_with_email_and_password(email=email, password=password)
 
+            epoch = datetime(1970, 1, 1)
+            dt_obj = datetime.strptime(date_of_birth, '%Y-%m-%d')
+            if dt_obj > epoch:
+                millisec = dt_obj.timestamp() * 1000
+            else:
+                millisec = (dt_obj - epoch).total_seconds() * 1000
             if patient:
                 data = {
                     'doctor': response.session.get('email'),
                     'email': email,
-                    'name': first_name,
+                    'first_name': first_name,
                     'last_name': last_name,
                     'gender': gender,
                     'mobile_phone': mobile_phone,
                     'clinic': clinic,
                     'country': country,
-                    'hasUnansweredQuestionnaire':True,
-                    'needToUpdateMedicine':True,
-                    'date_of_birth': str(date_of_birth)
+                    'hasUnansweredQuestionnaire': True,
+                    'needToUpdateMedicine': True,
+                    'date_of_birth': millisec
                 }
-                db.child("Patients").child(patient['localId']).set({'id':mobile_phone})
+                db.child("Patients").child(patient['localId']).set({'id': mobile_phone})
                 db.child("Patients").child(patient['localId']).child("user_details").set(data)
         else:
             return HttpResponse("Invalid")

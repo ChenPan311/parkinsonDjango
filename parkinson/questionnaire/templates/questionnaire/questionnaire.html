@@ -2,6 +2,7 @@
 {% load static %}
 {% load crispy_forms_tags %}
 {% load typetags %}
+{% load timetags %}
 
 <html dir="rtl">
 <head>
@@ -19,10 +20,14 @@
 <body style="direction: rtl">
 
 <h1 class="d-flex justify-content-center">שאלון רפואי</h1>
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#add-modal-bg">
-    הוסף שאלה חדשה
-</button>
+<div class="d-flex justify-content-between">
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#add-modal-bg">
+        הוסף שאלה חדשה
+    </button>
+    <h3>עודכן לאחרונה : {{questionnaire.val.answeredAt.time|date_only}} </h3>
+</div>
+
 
 <!-- Add Modal -->
 <div class="modal fade" id="add-modal-bg" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -93,13 +98,13 @@
 </div>
 
 <!-- Questionnaire -->
-{% if questionnaire.val is not None %}
+{% if questionnaire.val.questionList is not None %}
 <div class="list-group" dir="rtl" lang="he" style="text-align:right">
-    {% for question in questionnaire %}
+    {% for question in questionnaire.val.questionList %}
     <div class="list-group-item list-group-item-light">
         <div>
-            <h3 class="mb-3">{{question.val.title}}
-                <span class="badge alert-primary">{{question.val.choiceType|translate_type}}</span>
+            <h3 class="mb-3">{{question.title}}
+                <span class="badge alert-primary">{{question.choiceType|translate_type}}</span>
             </h3>
             <div class="container-sm">
                 <form method="POST" action="delete/">
@@ -115,18 +120,18 @@
                         style="float: left"
                         data-bs-toggle="modal"
                         data-bs-target="#edit-modal-bg"
-                        data-title="{{question.val.title}}"
-                        data-type="{{question.val.choiceType}}"
-                        data-answers="{{question.val.choices}}"
+                        data-title="{{question.title}}"
+                        data-type="{{question.choiceType}}"
+                        data-answers="{{question.choices}}"
                         data-key-to-edit="{{question.key}}">
                     <i class="fas fa-edit"></i>
                 </button>
             </div>
         </div>
-        {% if question.val.choiceType != 'OpenQuestion' %}
+        {% if question.choiceType != 'OpenQuestion' %}
         <h5>תשובות : </h5>
         <div class="answers">
-            {% for answer in question.val.choices %}
+            {% for answer in question.choices %}
             <span class="mb-1">{{answer}},</span>
             {% endfor %}
         </div>
