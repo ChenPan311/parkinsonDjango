@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from firebase_repo import db, get_questionnaire
+from firebase_repo import db, get_questionnaire,get_medications
 from questionnaire.forms import Question
 
 
@@ -32,7 +32,7 @@ def create_question(request):
                 'choices': answers,
                 'type': type
             }
-            db.child("Data").child('questionnaire_follow_up_test').child("questionList").push(data)
+            db.child("Data").child('questionnaire_follow_up').child("questionList").push(data)
             return redirect('/questionnaire')  # Reload new questionnaire and prevent resubmission
 
 

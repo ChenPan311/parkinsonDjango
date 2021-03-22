@@ -3,6 +3,7 @@ from django.urls import path
 from dashboard import views as d_views
 from registration import views as r_views
 from questionnaire import views as q_views
+from medications import views as m_views
 
 urlpatterns = [
     path('', d_views.postsign, name="login"),
@@ -14,6 +15,8 @@ urlpatterns = [
     path('questionnaire/', q_views.questionnaire_page, name='questionnaire'),
     path('questionnaire/create/', q_views.create_question, name='question_creation'),
     path('questionnaire/delete/', q_views.delete_question, name='delete_question'),
-    path('questionnaire/update/', q_views.edit_question, name='edit_question')
+    path('questionnaire/update/', q_views.edit_question, name='edit_question'),
+    path('medications/', m_views.medication_page, name='medications'),
+    path('medications/create/', m_views.create_medicine, name='medicine_creation'),
 
 ]
