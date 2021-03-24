@@ -9,3 +9,27 @@ $('#edit-modal-bg').on('show.bs.modal', function (event) {
     modal.find('#update_btn').attr('value', key_to_edit)
     modal.find('#update_btn').attr('name', 'key_to_edit')
 })
+
+$('#submit_btn').click(function (){
+    let med_name = $('#id_medication_name') // Populate the form with med name
+    let category = $('#id_category')
+    let form = $('#answer_form')
+    const token = $('input[name="csrfmiddlewaretoken"]').attr('value');
+    console.log(token)
+    let data = {'med_name': med_name, 'category': category}
+    const dataString = JSON.stringify(data);
+    $.post({
+        url: "check/",
+        data: dataString ,
+        headers: {
+                    "X-CSRFToken": token
+               },
+        success: function (result){
+            if(result === "True" ){
+                alert("תרופה כבר קיימת")
+            } else {
+                form.submit()
+            }
+        }
+    })
+})

@@ -20,5 +20,6 @@ urlpatterns = [
     path('medications/create/', m_views.create_medicine, name='medicine_creation'),
     path('medications/delete/', m_views.delete_medicine, name='delete_medicine'),
     path('medications/update/', m_views.edit_medicine, name='edit_medicine'),
+    path('medications/check/', m_views.check_if_med_exist, name='medications_check'),
 
 ]
