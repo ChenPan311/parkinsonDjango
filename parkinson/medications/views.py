@@ -39,18 +39,16 @@ def create_medicine(request):
 
 
 def check_if_med_exist(request):
-    category = request.POST.get('dataString')
-    # med_name = request.POST.get('med_name')
-    print(category)
+    data = str(request.POST.get('data'))
+    category = data.split(',')[0]
+    med_name = data.split(',')[1]
+    exist = db.child("Data").child('medicine_list').child(category).child("medicationList")\
+        .order_by_child('name').equal_to(med_name).get()
 
-    # exist = db.child("Data").child('medicine_list').child(category).child("medicationList")\
-    #     .order_by_child('name').equal_to(med_name).get()
-    #
-    # if exist.val():
-    #     return HttpResponse("True")
-    # else:
-    #     return HttpResponse("False")
-    # return HttpResponse("False")
+    if exist.val():
+        return HttpResponse("True")
+    else:
+        return HttpResponse("False")
 
 
 def delete_medicine(request):

@@ -11,16 +11,14 @@ $('#edit-modal-bg').on('show.bs.modal', function (event) {
 })
 
 $('#submit_btn').click(function (){
-    let med_name = $('#id_medication_name') // Populate the form with med name
-    let category = $('#id_category')
+    let med_name = $('#id_medication_name')[0].value
+    let category = $('#id_category')[0].value
     let form = $('#answer_form')
     const token = $('input[name="csrfmiddlewaretoken"]').attr('value');
-    console.log(token)
-    let data = {'med_name': med_name, 'category': category}
-    const dataString = JSON.stringify(data);
+    let data = category +','+ med_name
     $.post({
         url: "check/",
-        data: dataString ,
+        data: {data: data} ,
         headers: {
                     "X-CSRFToken": token
                },
