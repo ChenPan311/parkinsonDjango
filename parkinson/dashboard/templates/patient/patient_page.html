@@ -92,7 +92,7 @@
 </div>
 
 <script>
-    const ctx = document.getElementById('myChart').getContext('2d');
+      const ctx = document.getElementById('myChart').getContext('2d');
     const yLabels = {
         0: 'Hallucinations',
         2: 'Off',
@@ -121,6 +121,21 @@
                 text: "סטאטוס"
             },
             scales: {
+                xAxes: [{
+                    type: 'time',
+                    distribution: 'linear',
+                    time: {
+                        parser: "HH:mm",
+                        unit: 'hour',
+                        unitStepSize: 1,
+                        displayFormats: {
+                            'minute': 'HH:mm',
+                            'hour': 'HH:mm',
+                            min: '00:00',
+                            max: '23:59'
+                        },
+                    }
+                }],
                 yAxes: [{
                     ticks: {
                         beginAtZero: true,
@@ -131,7 +146,7 @@
                         }
                     }
                 }]
-            }
+            },
         }
     });
     // Setting the date picker date to today and preventing future dates

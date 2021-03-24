@@ -34,3 +34,33 @@ def create_medicine(request):
             db.child("Data").child('medicine_list').child(category).child("medicationList").push(data)
             return redirect('/medications')  # Reload new questionnaire and prevent resubmission
     return HttpResponse("Already Exist")
+
+
+def delete_medicine(request):
+    med_to_delete= request.POST.get('key_to_delete', 0)
+    category_key=str(med_to_delete).split(',')[0]
+    medicine_key=str(med_to_delete).split(',')[1]
+    db.child("Data").child('medicine_list').child(category_key).child("medicationList").child(medicine_key).remove()
+    return redirect('/medications')
+
+def edit_medicine(request):
+    medicine_form = MedicationForm(med_categories=get_medications_categories(), data=request.POST)
+
+    med_key_to_update=request.POST.get('key_to_edit',0)
+    if medicine_form.is_valid():
+        category = medicine_form.cleaned_data['category']
+        medication_name = medicine_form.cleaned_data['medication_name']
+        data = {
+            'categoryId': category,
+            'dosage': 0,
+            'name': medication_name,
+        }
+
+        med_name = db.child("Data").child('medicine_list').child(category).child("medicationList").order_by_child(
+            'name').equal_to(medication_name).get()
+
+        if not med_name.val():
+            db.child("Data").child('medicine_list').child(category).child("medicationList").child(med_key_to_update).update(data)
+            return redirect('/medications')  # Reload new questionnaire and prevent resubmission
+    return HttpResponse("Already Exist")
+
