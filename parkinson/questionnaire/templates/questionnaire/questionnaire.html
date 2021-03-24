@@ -100,7 +100,7 @@
 <!-- Questionnaire -->
 {% if questionnaire.val.questionList is not None %}
 <div class="list-group" dir="rtl" lang="he" style="text-align:right">
-    {% for question in questionnaire.val.questionList %}
+    {% for key,question in questionnaire.val.questionList.items %}
     <div class="list-group-item list-group-item-light">
         <div>
             <h3 class="mb-3">{{question.title}}
@@ -109,7 +109,7 @@
             <div class="container-sm">
                 <form method="POST" action="delete/">
                     {% csrf_token %}
-                    <button value="{{question.key}}"
+                    <button value="{{key}}"
                             name="key_to_delete"
                             type="submit" class="btn btn-danger"
                             style="float: left">
@@ -123,7 +123,7 @@
                         data-title="{{question.title}}"
                         data-type="{{question.choiceType}}"
                         data-answers="{{question.choices}}"
-                        data-key-to-edit="{{question.key}}">
+                        data-key-to-edit="{{key}}">
                     <i class="fas fa-edit"></i>
                 </button>
             </div>

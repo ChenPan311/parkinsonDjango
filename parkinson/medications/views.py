@@ -33,4 +33,4 @@ def create_medicine(request):
         if not med_name.val():
             db.child("Data").child('medicine_list').child(category).child("medicationList").push(data)
             return redirect('/medications')  # Reload new questionnaire and prevent resubmission
-    return HttpResponse("Already Exsist")
+    return HttpResponse("Already Exist")

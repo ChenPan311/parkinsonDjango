@@ -38,7 +38,7 @@ def create_question(request):
 
 def delete_question(request):
     question_to_delete = request.POST.get('key_to_delete', 0)
-    db.child("Data").child('questionnaire_follow_up_test').child("questionList").child(question_to_delete).remove()
+    db.child("Data").child('questionnaire_follow_up').child("questionList").child(question_to_delete).remove()
     return redirect('/questionnaire')
 
 
@@ -65,5 +65,5 @@ def edit_question(request):
                 'choices': answers,
                 'type': type
             }
-            db.child("Data").child('questionnaire_follow_up_test').child("questionList").child(question_to_edit).update(data)
+            db.child("Data").child('questionnaire_follow_up').child("questionList").child(question_to_edit).update(data)
     return redirect('/questionnaire')  # Reload new questionnaire and prevent resubmission

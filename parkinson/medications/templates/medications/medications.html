@@ -22,28 +22,54 @@
 <div class="d-flex justify-content-between">
     <!-- Button trigger modal -->
     <button type="button" class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#add-modal-bg">
-       הוסף תרופה חדשה
+        הוסף תרופה חדשה
     </button>
 </div>
 
-<div class="accordion" id="accordionExample">
+<!-- Medications -->
+<div class="medications_section" id="accordionExample">
     {%for category in medications.each %}
-    <div class="accordion-item">
-    <h2 class="accordion-header" id="heading{{category.key}}">
-      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{category.key}}" aria-expanded="true" aria-controls="collapseheading{{category.key}}">
-            {{category.val.categoryName}}
-      </button>
-    </h2>
-    <div id="collapse{{category.key}}"class="accordion-collapse collapse" aria-labelledby="heading{{category.key}}" data-bs-parent="#accordionExample">
-      <div class="accordion-body">
-          <ul class="list-group">
-                {%for key,med in category.val.medicationList.items %}
-                  <li class="list-group-item">{{med.name}}</li>
-                 {%endfor%}
-          </ul>
-      </div>
+    <div class="accordion-item list-group-item-light">
+        <h2 class="accordion-header" id="heading{{category.key}}">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapse{{category.key}}" aria-expanded="true"
+                    aria-controls="collapseheading{{category.key}}">
+                {{category.val.categoryName}}
+            </button>
+        </h2>
+        <div id="collapse{{category.key}}" class="accordion-collapse collapse" aria-labelledby="heading{{category.key}}"
+             data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+                <div class="list-group">
+                    {%for key,med in category.val.medicationList.items %}
+                    <div class="list-group-item list-group-item-light">
+                        {{med.name}}
+                        <div class="container-sm">
+                            <form method="POST" action="delete/">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger"
+                                        value="{{key}}"
+                                        style="float: left"
+                                        name="key_to_delete">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                            <button type="button" class="edit-btn btn btn-success"
+                                    style="float: left"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#edit-modal-bg"
+                                    data-med-name="{{med.name}}"
+                                    data-category="{{med.categoryId}}"
+                                    data-key-to-edit="{{key}}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                    </div>
+                    {%endfor%}
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
     {%endfor%}
 </div>
 
@@ -94,7 +120,7 @@
     </div>
 </div>
 
-<!--<script type="text/javascript" src="{% static 'questionnaire/scripts.js' %}"></script>-->
+<script type="text/javascript" src="{% static 'medications/scripts.js' %}"></script>
 
 
 </body>
