@@ -29,9 +29,9 @@ def postsign(request):
             password = form.cleaned_data['password']
         try:
             user = auth_fb.sign_in_with_email_and_password(email, password)
-            request.session['uid'] = str(user['idToken'])
             current_doctor_id = db.child("Doctors").child(user['localId']).child("details").get()
             name = current_doctor_id.val()['first_name'] + " " + current_doctor_id.val()['last_name']
+            request.session['uid'] = str(user['idToken'])
             request.session['name'] = name
             request.session['email'] = user['email']
             return redirect("/home")

@@ -2,6 +2,7 @@ let i = 0;
 const addBtn = document.querySelectorAll("#add_answer_btn");
 const removeBtn = document.querySelectorAll("#remove_answer_btn");
 const option = document.querySelectorAll("#id_choice_type")
+const answers_p = document.querySelectorAll("#answers_p")
 const numberOfAnswers = document.getElementById("number_of_answers")
 const editNumberOfAnswers = document.getElementById("edit_number_of_answers")
 const answersContainer = document.getElementById("answers_container")
@@ -12,6 +13,7 @@ function handleOptions(toAdd) { // Handling changes in options select, toAdd(boo
         if (option[0].value === 'OpenQuestion') {
             addBtn[0].style.display = 'none'
             removeBtn[0].style.display = 'none'
+            answers_p[0].style.display = 'none'
             while (answersContainer.hasChildNodes()) {
                 answersContainer.removeChild(answersContainer.lastChild);
             }
@@ -19,11 +21,13 @@ function handleOptions(toAdd) { // Handling changes in options select, toAdd(boo
         } else {
             addBtn[0].style.display = 'initial'
             removeBtn[0].style.display = 'initial'
+            answers_p[0].style.display = 'block'
         }
     } else {
         if (option[1].value === 'OpenQuestion') {
             addBtn[1].style.display = 'none'
             removeBtn[1].style.display = 'none'
+            answers_p[1].style.display = 'none'
             while (editAnswersContainer.hasChildNodes()) {
                 editAnswersContainer.removeChild(editAnswersContainer.lastChild);
             }
@@ -31,6 +35,7 @@ function handleOptions(toAdd) { // Handling changes in options select, toAdd(boo
         } else {
             addBtn[1].style.display = 'initial'
             removeBtn[1].style.display = 'initial'
+            answers_p[1].style.display = 'block'
         }
     }
 }

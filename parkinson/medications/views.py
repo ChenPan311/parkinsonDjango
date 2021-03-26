@@ -1,6 +1,4 @@
-import json
-
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from medications.forms import MedicationForm
 from firebase_repo import get_medications, get_medications_categories, db
@@ -22,27 +20,23 @@ def create_medicine(request):
     if medicine_form.is_valid():
         category = medicine_form.cleaned_data['category']
         medication_name = medicine_form.cleaned_data['medication_name']
-
         data = {
             'categoryId': category,
             'dosage': 0,
             'name': medication_name,
         }
+        med_key = db.child("Data").child('medicine_list').child(category).child("medicationList").push(data)['name']
+        db.child("Data").child('medicine_list').child(category).child("medicationList").child(med_key)\
+            .update({'id': med_key})
 
-        med_name = db.child("Data").child('medicine_list').child(category).child("medicationList").order_by_child(
-            'name').equal_to(medication_name).get()
-
-        if not med_name.val():
-            db.child("Data").child('medicine_list').child(category).child("medicationList").push(data)
-            return redirect('/medications')  # Reload new questionnaire and prevent resubmission
-    return HttpResponse("Already Exist")
+        return redirect('/medications')  # Reload new medications and prevent resubmission
 
 
 def check_if_med_exist(request):
     data = str(request.POST.get('data'))
     category = data.split(',')[0]
     med_name = data.split(',')[1]
-    exist = db.child("Data").child('medicine_list').child(category).child("medicationList")\
+    exist = db.child("Data").child('medicine_list').child(category).child("medicationList") \
         .order_by_child('name').equal_to(med_name).get()
 
     if exist.val():

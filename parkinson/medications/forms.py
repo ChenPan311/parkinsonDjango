@@ -7,10 +7,6 @@ class MedicationForm(forms.Form):
         super(MedicationForm, self).__init__(*args, **kwargs)
         self.fields['category'].choices = med_categories
 
-
-
-
     category = forms.ChoiceField(choices=(), label="סוג תרופה")
-    medication_name = forms.CharField(required=True,  widget=forms.TextInput(attrs={'placeholder': 'שם התרופה'}) ,label="שם התרופה")
-
-
+    medication_name = forms.CharField(required=True, widget=forms.TextInput(attrs={'placeholder': 'שם התרופה'}),
+                                      label="שם התרופה")

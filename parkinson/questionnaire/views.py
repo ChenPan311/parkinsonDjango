@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
-from firebase_repo import db, get_questionnaire,get_medications
+from firebase_repo import db, get_questionnaire, get_medications
 from questionnaire.forms import Question
+import time
 
 
 def questionnaire_page(request):
@@ -33,6 +34,8 @@ def create_question(request):
                 'type': type
             }
             db.child("Data").child('questionnaire_follow_up').child("questionList").push(data)
+            db.child("Data").child('questionnaire_follow_up').child("answeredAt").update(
+                {'time': round(time.time() * 1000)})
             return redirect('/questionnaire')  # Reload new questionnaire and prevent resubmission
 
 
@@ -66,4 +69,6 @@ def edit_question(request):
                 'type': type
             }
             db.child("Data").child('questionnaire_follow_up').child("questionList").child(question_to_edit).update(data)
+            db.child("Data").child('questionnaire_follow_up').child("answeredAt").update(
+                {'time': round(time.time() * 1000)})
     return redirect('/questionnaire')  # Reload new questionnaire and prevent resubmission

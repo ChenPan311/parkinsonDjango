@@ -1,3 +1,5 @@
+const MSG = "   התרופה כבר קיימת! בחר שם אחר"
+
 $('#edit-modal-bg').on('show.bs.modal', function (event) {
     const button = $(event.relatedTarget); // Button that triggered the modal
     const key_to_edit = button.data('key-to-edit');
@@ -10,23 +12,32 @@ $('#edit-modal-bg').on('show.bs.modal', function (event) {
     modal.find('#update_btn').attr('name', 'key_to_edit')
 })
 
-$('#submit_btn').click(function (){
+$('#submit_btn').click(function () {
     let med_name = $('#id_medication_name')[0].value
     let category = $('#id_category')[0].value
     let form = $('#answer_form')
     const token = $('input[name="csrfmiddlewaretoken"]').attr('value');
-    let data = category +','+ med_name
+    let data = category + ',' + med_name
     $.post({
         url: "check/",
-        data: {data: data} ,
+        data: {data: data},
         headers: {
-                    "X-CSRFToken": token
-               },
-        success: function (result){
-            if(result === "True" ){
-                alert("תרופה כבר קיימת")
+            "X-CSRFToken": token
+        },
+        success: function (result) {
+            if (result === "True") {  //If medicine already exist
+                $(".bootstrap-growl").remove();  //Nice looking alert
+                $.bootstrapGrowl(MSG, {
+                    type: 'danger',
+                    offset: {from: 'top', amount: 10},
+                    align: 'center',
+                    width: 'auto',
+                    delay: 2000,
+                    allow_dismiss: false,
+                });
             } else {
-                form.submit()
+                if(med_name != "")
+                    form.submit()
             }
         }
     })
