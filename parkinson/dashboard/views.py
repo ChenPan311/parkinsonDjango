@@ -4,6 +4,7 @@ from django.contrib import auth
 from django.shortcuts import render, redirect
 from firebase_repo import auth_fb, db
 from .forms import Login
+from django.http import HttpResponse
 
 DYSKINESIA = 6
 ON = 4
@@ -68,6 +69,7 @@ def prettydate(ms):
 
 # @cache_control(no_cache=False, must_revalidate=True, no_store=True)
 def patient_detail(request):
+
     patient_id = request.POST.get("patient_id", 0)
     patients = db.child("Patients").order_by_child("id").equal_to(patient_id).get()
     if not patients.val():
@@ -99,3 +101,12 @@ def patient_detail(request):
                                                              'patient_medications': patient_medications,
                                                              'patient_questionnaire': patient_questionnaire,
                                                              'reports': reports})
+
+
+def patient_detail_check(request):
+    patient_id = request.POST.get('data')
+    exist = db.child("Patients").order_by_child('id').equal_to(patient_id).get()
+    if exist.val():
+        return HttpResponse("True")
+    else:
+        return HttpResponse("False")

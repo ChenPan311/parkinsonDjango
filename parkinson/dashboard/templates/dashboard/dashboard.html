@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 {% extends "dashboard/base.html" %}
+{% load static %}
 <html dir="rtl">
 <head>
     <title>Hello</title>
+
 </head>
 
 <body>
@@ -13,13 +15,13 @@
     <p class="lead">זהו דף הבית, ניתן לחפש מטופלים</p>
     <hr class="my-4">
     <p>על מנת לחפש מטופל אנא הכנס את מספרו.</p>
-    <form method="POST" action="/patient_detail/">
+    <form method="POST" action="/patient_detail/" id="search_form" >
         {% csrf_token %}
         <div class="input-group mb-3">
-            <input name="patient_id" type="text" class="form-control" placeholder="מספר מטופל" aria-label="Search"
+            <input id="patient_input" required name="patient_id" type="text" class="form-control" placeholder="מספר מטופל" aria-label="Search"
                    aria-describedby="basic-addon1" style="max-width: 20%">
             <div class="input-group-prepend">
-                <button class="btn btn-primary" type="submit">חפש<i class="fas fa-search" aria-hidden="true"></i></button>
+                <button id="search_btn" class="btn btn-primary" type="button">חפש<i class="fas fa-search" aria-hidden="true"></i></button>
             </div>
 
         </div>
@@ -27,11 +29,7 @@
 
 </div>
 
-{% if msg %}
-<script>
-    alert('{{ msg }}');
-</script>
-{% endif %}
+<script type="text/javascript" src="{% static 'dashboard/scripts.js' %}"></script>
 
 {% endblock content %}
 </body>

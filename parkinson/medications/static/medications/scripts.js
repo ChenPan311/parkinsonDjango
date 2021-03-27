@@ -36,8 +36,7 @@ $('#submit_btn').click(function () {
                     allow_dismiss: false,
                 });
             } else {
-                if(med_name != "")
-                    form.submit()
+                $('<input type="submit">').hide().appendTo(form).click().remove();
             }
         }
     })

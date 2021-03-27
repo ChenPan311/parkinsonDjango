@@ -15,6 +15,7 @@ def create_question(request):
     if request.method == "POST":
         answers = {}
         form = Question(request.POST)
+
         if form.is_valid():
             title = form.cleaned_data['title']
             choice_type = form.cleaned_data['choice_type']
