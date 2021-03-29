@@ -29,37 +29,70 @@
 
 <h2>תרופות</h2>
 <div class="jumbotron container">
-    {% if patient_medications.val == None %}
+    <button id="add_medicine_btn" class="btn btn-primary mb-2">הוסף תרופה</button>
+    <table class="table table-striped table-sm" style="background-color: white">
+        {% if patient_medications.val == None %}
         <div class="alert alert-warning" role="alert">
             <i class="fas fa-exclamation-circle fa-lg"></i>
             המטופל טרם עדכן את תרופותיו!
         </div>
-    {% else %}
-    <table class="table table-striped table-sm" style="background-color: white">
+        {% else %}
         <thead>
         <tr>
             <th scope="col">#</th>
             <th scope="col">שם</th>
             <th scope="col">מינון</th>
             <th scope="col">זמני נטילה</th>
+            <th scope="col">אפשרויות</th>
         </tr>
         </thead>
         <tbody>
         {% for medicine in patient_medications %}
-        <tr>
-            <th scope="row">#</th>
-            <td>{{medicine.val.name}}</td>
-            <td>{{medicine.val.dosage}}</td>
-            <td>
-                {% for time in medicine.val.hoursArr %}
-                {{time.hour}}:{{time.minutes}},
-                {% endfor %}
-            </td>
-        </tr>
+        <form>
+            {% csrf_token %}
+            <tr>
+                <th scope="row">#</th>
+                <td>
+                    <select required disabled class="name_input{{medicine.key}} form-select">
+                        {% for med in medications %}
+                        <option style="color: #EF3B3A" disabled>--{{med.val.categoryName}}--</option>
+                        {% for key,val in med.val.medicationList.items %}
+                        {% if val.name == medicine.val.name %}
+                        <option id="{{key}}" selected data-category={{med.key}} value="{{key}}">{{val.name}}</option>
+                        {% else %}
+                        <option id="{{key}}" data-category={{med.key}} value="{{key}}">{{val.name}}</option>
+                        {% endif %}
+                        {% endfor %}
+                        {% endfor %}
+                    </select>
+                </td>
+                <td><input required disabled class="dosage_input{{medicine.key}} form-control" style="max-width: 100px"
+                           type="text" value={{medicine.val.dosage}}></td>
+                <td>
+                    {% for time in medicine.val.hoursArr %}
+                    <input required class="time_input{{medicine.key}}" disabled type="time"
+                           value={{time.hour}}:{{time.minutes}}>
+                    {% endfor %}
+                </td>
+                <td>
+                    <button type="button" class="edit_row_btn btn btn-success"
+                            data-medicine-key={{medicine.key}}>ערוך
+                    </button>
+                    <button type="button" hidden class="save_row_btn{{medicine.key}} btn btn-success"
+                            data-medicine-key={{medicine.key}}>שמור
+                    </button>
+                    <button type="button" class="delete_row_btn{{medicine.key}} btn btn-danger"
+                            data-key-to-delete={{medicine.key}}
+                            data-patient-id=>מחק
+                    </button>
+                </td>
+
+            </tr>
+        </form>
         {% endfor %}
         </tbody>
+        {% endif %}
     </table>
-    {% endif %}
 </div>
 
 <h2>שאלון <span>
@@ -92,7 +125,7 @@
 </div>
 
 <script>
-      const ctx = document.getElementById('myChart').getContext('2d');
+    const ctx = document.getElementById('myChart').getContext('2d');
     const yLabels = {
         0: 'Hallucinations',
         2: 'Off',
@@ -203,6 +236,7 @@
     document.getElementById('filter_btn').addEventListener('click', filterDatesAndLabels.bind(null, false));
 
 </script>
+<script type="text/javascript" src="{% static 'dashboard/scripts.js' %}"></script>
 
 {% endblock %}
 

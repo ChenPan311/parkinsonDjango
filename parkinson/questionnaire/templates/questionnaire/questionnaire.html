@@ -118,7 +118,7 @@
                     </button>
                 </form>
                 <button type="button" class="edit-btn btn btn-success"
-                        style="float: left"
+                        style="float: left ; margin-left: 5px"
                         data-bs-toggle="modal"
                         data-bs-target="#edit-modal-bg"
                         data-title="{{question.title}}"
@@ -139,38 +139,9 @@
         {% endif %}
     </div>
     {% endfor %}
-
 </div>
 {% endif %}
 
-<!--&lt;!&ndash; Medicines Test &ndash;&gt;-->
-<!--<div class="container" style="max-width: 300px">-->
-<!--    <select class="form-select">-->
-<!--        {% for medicine in medications %}-->
-<!--        {% for key,val in medicine.val.medicationList.items %}-->
-<!--        <option value="{{key}}">-->
-<!--            {{val.name}}-->
-<!--        </option>-->
-<!--        {% endfor %}-->
-<!--        {% endfor %}-->
-<!--    </select>-->
-<!--</div>-->
-<!--&lt;!&ndash; Medicines Test &ndash;&gt;-->
-
-<!--<div class="dropstart">-->
-<!--    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown"-->
-<!--            aria-expanded="true">-->
-<!--        בחר תרופה-->
-<!--    </button>-->
-<!--    <ul class="dropdown-menu">-->
-<!--        {% for medicine in medications %}-->
-<!--        <li class="dropdown-item">-->
-<!--            {{medicine.val.categoryName}}-->
-<!--        </li>-->
-<!--        <li class="dropdown-divider"></li>-->
-<!--        {% endfor %}-->
-<!--    </ul>-->
-<!--</div>-->
 
 <script type="text/javascript" src="{% static 'questionnaire/scripts.js' %}"></script>
 

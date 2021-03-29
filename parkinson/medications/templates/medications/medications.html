@@ -31,7 +31,7 @@
 </div>
 
 <!-- Medications -->
-<div class="medications_section" id="accordionExample">
+<div class="medications_section" id="medications_accordion">
     {%for category in medications.each %}
     <div class="accordion-item list-group-item-light">
         <h2 class="accordion-header" id="heading{{category.key}}">
@@ -42,7 +42,7 @@
             </button>
         </h2>
         <div id="collapse{{category.key}}" class="accordion-collapse collapse" aria-labelledby="heading{{category.key}}"
-             data-bs-parent="#accordionExample">
+             data-bs-parent="#medications_accordion">
             <div class="accordion-body">
                 <div class="list-group">
                     {%for key,med in category.val.medicationList.items %}
@@ -59,7 +59,7 @@
                                 </button>
                             </form>
                             <button type="button" class="edit-btn btn btn-success"
-                                    style="float: left"
+                                    style="float: left; margin-left: 5px"
                                     data-bs-toggle="modal"
                                     data-bs-target="#edit-modal-bg"
                                     data-med-name="{{med.name}}"
@@ -123,6 +123,21 @@
         </div>
     </div>
 </div>
+
+<!--&lt;!&ndash; Medicines Spinner Test &ndash;&gt;-->
+<!--<div class="container" style="max-width: 250px">-->
+<!--    <select class="form-select">-->
+<!--        {% for medicine in medications %}-->
+<!--        <option style="color: #EF3B3A" disabled>&#45;&#45;{{medicine.val.categoryName}}&#45;&#45;</option>-->
+<!--        {% for key,val in medicine.val.medicationList.items %}-->
+<!--        <option value="{{key}}">-->
+<!--            {{val.name}}-->
+<!--        </option>-->
+<!--        {% endfor %}-->
+<!--        {% endfor %}-->
+<!--    </select>-->
+<!--</div>-->
+<!--&lt;!&ndash; Medicines Spinner Test &ndash;&gt;-->
 
 <script type="text/javascript" src="{% static 'medications/scripts.js' %}"></script>
 

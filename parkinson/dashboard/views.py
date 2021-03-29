@@ -2,7 +2,7 @@ from datetime import datetime
 from django.views.decorators.cache import cache_control
 from django.contrib import auth
 from django.shortcuts import render, redirect
-from firebase_repo import auth_fb, db
+from firebase_repo import auth_fb, db,get_medications
 from .forms import Login
 from django.http import HttpResponse
 
@@ -69,12 +69,12 @@ def prettydate(ms):
 
 # @cache_control(no_cache=False, must_revalidate=True, no_store=True)
 def patient_detail(request):
-
     patient_id = request.POST.get("patient_id", 0)
     patients = db.child("Patients").order_by_child("id").equal_to(patient_id).get()
     if not patients.val():
         return render(request, "dashboard/dashboard.html", {'msg': "מטופל לא נמצא, נסה שנית"})
     for patient in patients.each():  # order_by returns a list
+        request.session['patient_key'] = patient.key()
         patient_details = patient.val().get("user_details")
         patient_questionnaire = patient.val().get("questionnaire")
         patient_medications = db.child('Patients').child(patient.key()).child("medicine_list").get()
@@ -97,16 +97,40 @@ def patient_detail(request):
                     data.append(HALLUCINATION)
 
         reports = dict(zip(labels, data))
+        medications = get_medications()
         return render(request, "patient/patient_page.html", {'patient_details': patient_details,
                                                              'patient_medications': patient_medications,
                                                              'patient_questionnaire': patient_questionnaire,
-                                                             'reports': reports})
+                                                             'reports': reports,
+                                                             'medications': medications})
 
 
 def patient_detail_check(request):
     patient_id = request.POST.get('data')
     exist = db.child("Patients").order_by_child('id').equal_to(patient_id).get()
     if exist.val():
+        return HttpResponse("True")
+    else:
+        return HttpResponse("False")
+
+
+def update_medicine(request):
+    data = (request.POST).dict()
+    times = (data['hoursArr']).split(',')
+    time_dict = {}
+    idx = 0
+    for time in times:
+        if(time != ''):
+            hours = time.split(':')[0]
+            minutes = time.split(':')[1]
+            time_dict[idx] = {'hour':hours, 'minutes':minutes}
+            idx+=1
+
+    data['hoursArr'] = time_dict
+
+    check = db.child("Patients").child(request.session.get('patient_key')).child('medicine_list').child(data['id']).update(data)
+
+    if check:
         return HttpResponse("True")
     else:
         return HttpResponse("False")
