@@ -30,53 +30,41 @@ $('#search_btn').click(function () {
 })
 
 function handleAttrs(e) {
-    med_key = e.data('medicine-key')
-    $('.time_input' + med_key).each(function () {
+    row = e.closest('tr') // finds closest <tr> element - row that contains the btn we clicked
+    row.find('.row-data , .row-time-data').each(function () { // in this row find classes ... (inputs)
         $(this).attr('disabled') ? $(this).prop('disabled', false) : $(this).prop('disabled', true)
     })
-    $('.name_input' + med_key).each(function () {
-        $(this).attr('disabled') ? $(this).prop('disabled', false) : $(this).prop('disabled', true)
-    })
-    $('.dosage_input' + med_key).each(function () {
-        $(this).attr('disabled') ? $(this).prop('disabled', false) : $(this).prop('disabled', true)
-    })
-    save_updates = $('.save_row_btn' + med_key)
-    delete_btn = $('.delete_row_btn' + med_key)
+    save_updates = row.find('.save_row_btn')
+    delete_btn = row.find('.delete_row_btn')
     save_updates.attr('hidden') ? save_updates.prop('hidden', false) : save_updates.prop('hidden', true)
     delete_btn.attr('hidden') ? delete_btn.prop('hidden', false) : delete_btn.prop('hidden', true)
 }
 
 function handleSaveEdits(e) {
+    row = e.closest('tr')
     med_key = e.data('medicine-key')
-    $('.save_row_btn' + med_key).click(function () {
+    row.find('.save_row_btn').click(function () {
         hours_arr = ""
-        $('.time_input' + med_key).each(function () {
+        row.find('.row-time-data').each(function () {
             hours_arr += ($(this)[0].value) + ','
         })
-        $('.name_input' + med_key).each(function () {
-            text_op = '.name_input' + med_key
-            category_id = $('#' + med_key).data('category')
-            medicine_id = $(this)[0].value
-            medicine_name = $(text_op).children("option").filter(":selected").text()
-        })
-        $('.dosage_input' + med_key).each(function () {
-            dosage = $(this)[0].value
-        })
-        hours_final = []
-        for (i = 0; i < hours_arr.length; i++) {
-            hours = hours_arr[i].split(':')[0]
-            minutes = hours_arr[i].split(':')[1]
-            hours_final[i] = {
-                'hours': hours,
-                'minutes': minutes
+        row.find('.row-data').each(function () {
+            if ($(this).hasClass('name')) {
+                category_id = $('#' + med_key).data('category')
+                medicine_id = $(this)[0].value
+                medicine_name = $(this).children("option").filter(":selected").text()
+            } else {
+                dosage = $(this)[0].value
             }
-        }
+        })
+
         data = {
             'categoryId': category_id,
             'dosage': dosage,
             'id': medicine_id,
             'name': medicine_name,
-            'hoursArr': hours_arr
+            'hoursArr': hours_arr,
+            'keyToUpdate': med_key
         }
 
         const token = $('input[name="csrfmiddlewaretoken"]').attr('value');
@@ -87,10 +75,9 @@ function handleSaveEdits(e) {
                 "X-CSRFToken": token
             },
             success: function (result) {
-                if (result === "False") {  //If medicine already exist
+                if (result === "False") {  //If something went wrong
                     $(".bootstrap-growl").remove();  //Nice looking alert
                     $.bootstrapGrowl("עדכון לא הצליח", {
-                        ele: 'body',
                         type: 'danger',
                         offset: {from: 'top', amount: 10},
                         align: 'center',
@@ -99,8 +86,8 @@ function handleSaveEdits(e) {
                         allow_dismiss: false,
                     });
                 } else {
-                    handleAttrs($(this))
-                    $(".bootstrap-growl").remove();  //Nice looking alert
+                    handleAttrs(e)
+                    $(".bootstrap-growl").remove();
                     $.bootstrapGrowl("עודכן בהצלחה!", {
                         type: 'success',
                         offset: {from: 'top', amount: 10},

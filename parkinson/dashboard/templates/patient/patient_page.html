@@ -31,6 +31,7 @@
 <div class="jumbotron container">
     <button id="add_medicine_btn" class="btn btn-primary mb-2">הוסף תרופה</button>
     <table class="table table-striped table-sm" style="background-color: white">
+        {% csrf_token %}
         {% if patient_medications.val == None %}
         <div class="alert alert-warning" role="alert">
             <i class="fas fa-exclamation-circle fa-lg"></i>
@@ -48,12 +49,10 @@
         </thead>
         <tbody>
         {% for medicine in patient_medications %}
-        <form>
-            {% csrf_token %}
             <tr>
                 <th scope="row">#</th>
                 <td>
-                    <select required disabled class="name_input{{medicine.key}} form-select">
+                    <select required disabled class="row-data name form-select">
                         {% for med in medications %}
                         <option style="color: #EF3B3A" disabled>--{{med.val.categoryName}}--</option>
                         {% for key,val in med.val.medicationList.items %}
@@ -66,11 +65,11 @@
                         {% endfor %}
                     </select>
                 </td>
-                <td><input required disabled class="dosage_input{{medicine.key}} form-control" style="max-width: 100px"
+                <td><input required disabled class="row-data dosage form-control" style="max-width: 100px"
                            type="text" value={{medicine.val.dosage}}></td>
                 <td>
                     {% for time in medicine.val.hoursArr %}
-                    <input required class="time_input{{medicine.key}}" disabled type="time"
+                    <input required class="row-time-data" disabled type="time"
                            value={{time.hour}}:{{time.minutes}}>
                     {% endfor %}
                 </td>
@@ -78,17 +77,15 @@
                     <button type="button" class="edit_row_btn btn btn-success"
                             data-medicine-key={{medicine.key}}>ערוך
                     </button>
-                    <button type="button" hidden class="save_row_btn{{medicine.key}} btn btn-success"
+                    <button type="button" hidden class="save_row_btn btn btn-success"
                             data-medicine-key={{medicine.key}}>שמור
                     </button>
-                    <button type="button" class="delete_row_btn{{medicine.key}} btn btn-danger"
-                            data-key-to-delete={{medicine.key}}
-                            data-patient-id=>מחק
+                    <button type="button" class="delete_row_btn btn btn-danger"
+                            data-key-to-delete={{medicine.key}}>מחק
                     </button>
                 </td>
 
             </tr>
-        </form>
         {% endfor %}
         </tbody>
         {% endif %}

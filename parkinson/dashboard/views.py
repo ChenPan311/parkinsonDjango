@@ -127,7 +127,9 @@ def update_medicine(request):
             idx+=1
 
     data['hoursArr'] = time_dict
-
+    if data['keyToUpdate'] != data['id']:
+        db.child("Patients").child(request.session.get('patient_key')).child('medicine_list').child(data['keyToUpdate']).remove()
+    del data['keyToUpdate']
     check = db.child("Patients").child(request.session.get('patient_key')).child('medicine_list').child(data['id']).update(data)
 
     if check:
