@@ -91,8 +91,7 @@ function handleSaveEdits(e) {
                 });
             } else {
                 e.data("medicine-key", medicine_id) // updating the data-medicine-key to the new medcine key
-                row.find('.edit_row_btn').data("medicine-key", medicine_id)
-                row.find('.delete_row_btn').data("medicine-key", medicine_id)
+                row.find('.edit_row_btn, .delete_row_btn, .submit_delete_row_btn').data("medicine-key", medicine_id)
                 handleAttrs(e)
                 $(".bootstrap-growl").remove();
                 $.bootstrapGrowl("עודכן בהצלחה!", {
@@ -117,9 +116,15 @@ $('table').on('click', '.save_row_btn', function () {
     handleSaveEdits($(this))
 })
 
+$('table').on('click', '.add_time_btn', function () {
+    cell = $(this).closest('td')
+    newInput = $('<input required class="row-time-data" type="time">')
+    cell.append(newInput).append(" ")
+})
+
 
 function delete_data(e) {
-    med_key = e.data('key-to-delete')
+    med_key = e.data('medicine-key')
     row = e.closest('tr')
     const token = $('input[name="csrfmiddlewaretoken"]').attr('value');
     $.post({
@@ -130,7 +135,7 @@ function delete_data(e) {
         },
         success: function (result) {
             if (result === "False") {  //If something went wrong
-                $(".bootstrap-growl").remove();  //Nice looking alert
+                $(".bootstrap-growl").remove();
                 $.bootstrapGrowl("עדכון לא הצליח", {
                     type: 'danger',
                     offset: { from: 'top', amount: 10 },
@@ -144,22 +149,17 @@ function delete_data(e) {
                     row.remove();
                 });
             }
-
         }
     })
 }
 
-$('.delete_row_btn').on("click", function () {
+$('table').on('click', '.delete_row_btn', function () {
     row = $(this).closest('tr')
     edit_btn = row.find('.edit_row_btn')
     submit_deletion = row.find('.submit_delete_row_btn')
 
-    $(this).toggleClass('delete');
-    if ($(this).hasClass('delete')) {
-        $(this).text('חזור');
-    } else {
-        $(this).text('מחק');
-    }
+    $(this).toggleClass('delete')
+    $(this).hasClass('delete') ? $(this).text('חזור') : $(this).text('מחק')
     submit_deletion.attr('hidden') ? submit_deletion.prop('hidden', false) : submit_deletion.prop('hidden', true)
     edit_btn.attr('hidden') ? edit_btn.prop('hidden', false) : edit_btn.prop('hidden', true)
     submit_deletion.click(function () {
@@ -167,10 +167,4 @@ $('.delete_row_btn').on("click", function () {
     })
 })
 
-
-$('table').on('click', '.add_time_btn', function () {
-    cell = $(this).closest('td')
-    newInput = $('<input required class="row-time-data" type="time">')
-    cell.append(newInput).append(" ")
-})
 
