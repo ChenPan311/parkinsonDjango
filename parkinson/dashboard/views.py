@@ -2,7 +2,7 @@ from datetime import datetime
 from django.views.decorators.cache import cache_control
 from django.contrib import auth
 from django.shortcuts import render, redirect
-from firebase_repo import auth_fb, db,get_medications
+from firebase_repo import auth_fb, db, get_medications
 from .forms import Login
 from django.http import HttpResponse
 
@@ -120,19 +120,33 @@ def update_medicine(request):
     time_dict = {}
     idx = 0
     for time in times:
-        if(time != ''):
+        if (time != ''):
             hours = time.split(':')[0]
             minutes = time.split(':')[1]
-            time_dict[idx] = {'hour':hours, 'minutes':minutes}
-            idx+=1
+            time_dict[idx] = {'hour': hours, 'minutes': minutes}
+            idx += 1
 
     data['hoursArr'] = time_dict
     if data['keyToUpdate'] != data['id']:
-        db.child("Patients").child(request.session.get('patient_key')).child('medicine_list').child(data['keyToUpdate']).remove()
+        db.child("Patients").child(request.session.get('patient_key')).child('medicine_list').child(
+            data['keyToUpdate']).remove()
     del data['keyToUpdate']
-    check = db.child("Patients").child(request.session.get('patient_key')).child('medicine_list').child(data['id']).update(data)
+    check = db.child("Patients").child(request.session.get('patient_key')).child('medicine_list').child(
+        data['id']).update(data)
 
     if check:
+        return HttpResponse("True")
+    else:
+        return HttpResponse("False")
+
+
+def delete_medicine(request):
+    key_to_delete = request.POST.get('data')
+
+    check = db.child("Patients").child(request.session.get('patient_key')).child('medicine_list') \
+        .child(key_to_delete).remove()
+
+    if check is None:
         return HttpResponse("True")
     else:
         return HttpResponse("False")

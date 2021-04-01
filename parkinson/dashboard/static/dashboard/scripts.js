@@ -38,6 +38,7 @@ function handleAttrs(e) {
     delete_btn = row.find('.delete_row_btn')
     save_updates.attr('hidden') ? save_updates.prop('hidden', false) : save_updates.prop('hidden', true)
     delete_btn.attr('hidden') ? delete_btn.prop('hidden', false) : delete_btn.prop('hidden', true)
+
 }
 
 function handleSaveEdits(e) {
@@ -105,5 +106,54 @@ function handleSaveEdits(e) {
 $('.edit_row_btn').click(function () {
     handleAttrs($(this))
     handleSaveEdits($(this))
+})
+
+function delete_data(e) {
+    med_key = e.data('key-to-delete')
+    row = e.closest('tr')
+    const token = $('input[name="csrfmiddlewaretoken"]').attr('value');
+    $.post({
+        url: "/patient_detail/med_delete",
+        data: {data:med_key},
+        headers: {
+            "X-CSRFToken": token
+        },
+        success: function (result) {
+            if (result === "False") {  //If something went wrong
+                $(".bootstrap-growl").remove();  //Nice looking alert
+                $.bootstrapGrowl("עדכון לא הצליח", {
+                    type: 'danger',
+                    offset: {from: 'top', amount: 10},
+                    align: 'center',
+                    width: 'auto',
+                    delay: 2000,
+                    allow_dismiss: false,
+                });
+            } else {
+                row.fadeOut(1000, function () {
+                    row.remove();
+                });
+            }
+
+        }
+    })
+}
+
+$('.delete_row_btn').on("click",function () {
+    row = $(this).closest('tr')
+    edit_btn = row.find('.edit_row_btn')
+    submit_deletion = row.find('.submit_delete_row_btn')
+
+    $(this).toggleClass('delete');
+    if($(this).hasClass('delete')){
+        $(this).text('חזור');
+    } else {
+        $(this).text('מחק');
+    }
+    submit_deletion.attr('hidden') ? submit_deletion.prop('hidden', false) : submit_deletion.prop('hidden', true)
+    edit_btn.attr('hidden') ? edit_btn.prop('hidden', false) : edit_btn.prop('hidden', true)
+    submit_deletion.click(function () {
+        delete_data($(this))
+    })
 })
 
