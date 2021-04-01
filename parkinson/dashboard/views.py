@@ -120,13 +120,14 @@ def update_medicine(request):
     time_dict = {}
     idx = 0
     for time in times:
-        if (time != ''):
-            hours = time.split(':')[0]
-            minutes = time.split(':')[1]
-            time_dict[idx] = {'hour': hours, 'minutes': minutes}
-            idx += 1
+        if(time != ''):
+            hours = int(time.split(':')[0])
+            minutes = int(time.split(':')[1])
+            time_dict[idx] = {'hour':hours, 'minutes':minutes}
+            idx+=1
 
     data['hoursArr'] = time_dict
+    data['dosage'] = float(data['dosage'])
     if data['keyToUpdate'] != data['id']:
         db.child("Patients").child(request.session.get('patient_key')).child('medicine_list').child(
             data['keyToUpdate']).remove()
