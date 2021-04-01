@@ -31,7 +31,7 @@ $('#search_btn').click(function () {
 
 function handleAttrs(e) {
     row = e.closest('tr') // finds closest <tr> element - row that contains the btn we clicked
-    row.find('.row-data , .row-time-data').each(function () { // in this row find classes ... (inputs)
+    row.find('.row-data , .row-time-data, .add_time_btn').each(function () { // in this row find classes ... (inputs)
         $(this).attr('disabled') ? $(this).prop('disabled', false) : $(this).prop('disabled', true)
     })
     save_updates = row.find('.save_row_btn')
@@ -42,68 +42,82 @@ function handleAttrs(e) {
 
 function handleSaveEdits(e) {
     row = e.closest('tr')
-    med_key = e.data('medicine-key')
-    row.find('.save_row_btn').click(function () {
-        hours_arr = ""
-        row.find('.row-time-data').each(function () {
-            hours_arr += ($(this)[0].value) + ','
-        })
-        row.find('.row-data').each(function () {
-            if ($(this).hasClass('name')) {
-                category_id = $('#' + med_key).data('category')
-                medicine_id = $(this)[0].value
-                medicine_name = $(this).children("option").filter(":selected").text()
-            } else {
-                dosage = $(this)[0].value
-            }
-        })
-
-        data = {
-            'categoryId': category_id,
-            'dosage': dosage,
-            'id': medicine_id,
-            'name': medicine_name,
-            'hoursArr': hours_arr,
-            'keyToUpdate': med_key
+    hours_arr = ""
+    row.find('.row-time-data').each(function () {
+        hours_arr += ($(this)[0].value) + ','
+    })
+    row.find('.row-data').each(function () {
+        if ($(this).hasClass('name')) {
+            medicine_id = $(this)[0].value
+            category_id = $('#' + medicine_id).data('category')
+            medicine_name = $(this).children("option").filter(":selected").text()
+        } else {
+            dosage = $(this)[0].value
         }
+    })
 
-        const token = $('input[name="csrfmiddlewaretoken"]').attr('value');
-        $.post({
-            url: "/patient_detail/med_update",
-            data: data,
-            headers: {
-                "X-CSRFToken": token
-            },
-            success: function (result) {
-                if (result === "False") {  //If something went wrong
-                    $(".bootstrap-growl").remove();  //Nice looking alert
-                    $.bootstrapGrowl("עדכון לא הצליח", {
-                        type: 'danger',
-                        offset: {from: 'top', amount: 10},
-                        align: 'center',
-                        width: 'auto',
-                        delay: 2000,
-                        allow_dismiss: false,
-                    });
-                } else {
-                    handleAttrs(e)
-                    $(".bootstrap-growl").remove();
-                    $.bootstrapGrowl("עודכן בהצלחה!", {
-                        type: 'success',
-                        offset: {from: 'top', amount: 10},
-                        align: 'center',
-                        width: 'auto',
-                        delay: 2000,
-                        allow_dismiss: false,
-                    });
-                }
+    med_key = e.data('medicine-key') // for checking if we changed the medicine name
+    if (med_key == ''){
+        med_key = medicine_id
+    }
+    data = {
+        'categoryId': category_id,
+        'dosage': dosage,
+        'id': medicine_id,
+        'name': medicine_name,
+        'hoursArr': hours_arr,
+        'keyToUpdate': med_key
+    }
+
+    const token = $('input[name="csrfmiddlewaretoken"]').attr('value');
+    $.post({
+        url: "/patient_detail/med_update",
+        data: data,
+        headers: {
+            "X-CSRFToken": token
+        },
+        success: function (result) {
+            if (result === "False") {  //If something went wrong
+                $(".bootstrap-growl").remove();
+                $.bootstrapGrowl("עדכון לא הצליח", {
+                    ele: '.header-nb',
+                    type: 'danger',
+                    offset: {from: 'top', amount: 10},
+                    align: 'center',
+                    width: 'auto',
+                    delay: 2000,
+                    allow_dismiss: false,
+                });
+            } else {
+                e.data("medicine-key", medicine_id) // updating the data-medicine-key to the new medcine key
+                row.find('.edit_row_btn').data("medicine-key", medicine_id)
+                row.find('.delete_row_btn').data("medicine-key", medicine_id)
+                handleAttrs(e)
+                $(".bootstrap-growl").remove();
+                $.bootstrapGrowl("עודכן בהצלחה!", {
+                    ele: '.header-nb',
+                    type: 'success',
+                    offset: {from: 'top', amount: 20},
+                    align: 'center',
+                    width: 'auto',
+                    delay: 2000,
+                    allow_dismiss: false,
+                });
             }
-        })
+        }
     })
 }
 
-$('.edit_row_btn').click(function () {
+$('table').on('click', '.edit_row_btn', function () {
     handleAttrs($(this))
+})
+
+$('table').on('click', '.save_row_btn', function () {
     handleSaveEdits($(this))
 })
 
+$('table').on('click', '.add_time_btn', function () {
+    cell = $(this).closest('td')
+    newInput = $('<input required class="row-time-data" type="time">')
+    cell.append(newInput).append(" ")
+})
