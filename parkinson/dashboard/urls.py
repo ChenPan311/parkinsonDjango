@@ -15,6 +15,7 @@ urlpatterns = [
     path('patient_detail/med_update', d_views.update_medicine, name="patient_detail_update_med"),
     path('patient_detail/med_delete', d_views.delete_medicine, name="patient_detail_delete_med"),
     path('patient_detail/check', d_views.patient_detail_check, name="patient_detail"),
+    path('patient_detail/send_medication_notif', d_views.send_medication_notif, name="send_medication_notification"),
     path('questionnaire/', q_views.questionnaire_page, name='questionnaire'),
     path('questionnaire/create/', q_views.create_question, name='question_creation'),
     path('questionnaire/delete/', q_views.delete_question, name='delete_question'),
@@ -24,5 +25,6 @@ urlpatterns = [
     path('medications/delete/', m_views.delete_medicine, name='delete_medicine'),
     path('medications/update/', m_views.edit_medicine, name='edit_medicine'),
     path('medications/check/', m_views.check_if_med_exist, name='medications_check'),
+
 
 ]

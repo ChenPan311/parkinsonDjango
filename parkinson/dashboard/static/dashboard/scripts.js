@@ -6,7 +6,7 @@ $('#search_btn').click(function () {
     const token = $('input[name="csrfmiddlewaretoken"]').attr('value');
     $.post({
         url: "/patient_detail/check",
-        data: { data: patient_id },
+        data: {data: patient_id},
         headers: {
             "X-CSRFToken": token
         },
@@ -16,7 +16,7 @@ $('#search_btn').click(function () {
                 $.bootstrapGrowl(MSG, {
                     ele: 'body',
                     type: 'danger',
-                    offset: { from: 'top', amount: 10 },
+                    offset: {from: 'top', amount: 10},
                     align: 'center',
                     width: 'auto',
                     delay: 2000,
@@ -83,7 +83,7 @@ function handleSaveEdits(e) {
                 $.bootstrapGrowl("עדכון לא הצליח", {
                     ele: '.header-nb',
                     type: 'danger',
-                    offset: { from: 'top', amount: 10 },
+                    offset: {from: 'top', amount: 10},
                     align: 'center',
                     width: 'auto',
                     delay: 2000,
@@ -97,7 +97,7 @@ function handleSaveEdits(e) {
                 $.bootstrapGrowl("עודכן בהצלחה!", {
                     ele: '.header-nb',
                     type: 'success',
-                    offset: { from: 'top', amount: 20 },
+                    offset: {from: 'top', amount: 20},
                     align: 'center',
                     width: 'auto',
                     delay: 2000,
@@ -125,32 +125,41 @@ $('table').on('click', '.add_time_btn', function () {
 
 function delete_data(e) {
     med_key = e.data('medicine-key')
-    row = e.closest('tr')
-    const token = $('input[name="csrfmiddlewaretoken"]').attr('value');
-    $.post({
-        url: "/patient_detail/med_delete",
-        data: { data: med_key },
-        headers: {
-            "X-CSRFToken": token
-        },
-        success: function (result) {
-            if (result === "False") {  //If something went wrong
-                $(".bootstrap-growl").remove();
-                $.bootstrapGrowl("עדכון לא הצליח", {
-                    type: 'danger',
-                    offset: { from: 'top', amount: 10 },
-                    align: 'center',
-                    width: 'auto',
-                    delay: 2000,
-                    allow_dismiss: false,
-                });
-            } else {
-                row.fadeOut(1000, function () {
-                    row.remove();
-                });
+    if (med_key === '') {
+        row.fadeOut(1000, function () {
+            row.remove();
+        });
+    } else {
+        row = e.closest('tr')
+        const token = $('input[name="csrfmiddlewaretoken"]').attr('value');
+        $.post({
+            url: "/patient_detail/med_delete",
+            data: {data: med_key},
+            headers: {
+                "X-CSRFToken": token
+            },
+            success: function (result) {
+                if (result === "False") {  //If something went wrong
+                    $(".bootstrap-growl").remove();
+                    $.bootstrapGrowl("עדכון לא הצליח", {
+                        type: 'danger',
+                        offset: {from: 'top', amount: 10},
+                        align: 'center',
+                        width: 'auto',
+                        delay: 2000,
+                        allow_dismiss: false,
+                    });
+                } else {
+                    row.fadeOut(1000, function () {
+                        row.remove();
+                    });
+                }
             }
-        }
-    })
+        })
+    }
+    // $('table tbody tr').length === 1 ?
+    // console.log($('table tbody tr').length)
+    // $('#alert').attr('hidden') ? $('#trhead').prop('hidden', false) : null
 }
 
 $('table').on('click', '.delete_row_btn', function () {
@@ -167,4 +176,61 @@ $('table').on('click', '.delete_row_btn', function () {
     })
 })
 
+$('#add_medicine_btn').click(function () {
+    $('#trhead').attr('hidden') ? $('#trhead').prop('hidden', false) : null
+    $('#alert').prop('hidden', true)
+    tableBody = $('table').find('tbody')
+    trLast = tableBody.find("tr:last")
+    trNew = trLast.clone(); // creating new row which is a duplicate of the last row
+    trNew.attr('hidden') ? trNew.prop('hidden', false) : null
+    trNew.find('.row-time-data').each(function () {
+        $(this).remove()
+    })
+    trNew.find('.row-data').each(function () {
+        $(this).hasClass('name') ? $(this).prop('selectedIndex', 1) : $(this).val("").attr('value', '')
+    })
+    trNew.find('.edit_row_btn, .save_row_btn ,delete_row_btn, .submit_delete_row_btn').each(function () {
+        $(this).data("medicine-key", '')
+    })
+    trLast.after(trNew);
+    console.log($('table tbody tr').length)
+})
+
+$('#notify_patient_medications').click(function (){
+    token = $(this).data("token")
+    const csrf_tok = $('input[name="csrfmiddlewaretoken"]').attr('value');
+        $.post({
+        url: "/patient_detail/send_medication_notif",
+        data: {data : token},
+        headers: {
+            "X-CSRFToken": csrf_tok
+        },
+        success: function (result) {
+            if (result === "False") {  //If something went wrong
+                $(".bootstrap-growl").remove();
+                $.bootstrapGrowl("אירעה שגיאה", {
+                    ele: '.header-nb',
+                    type: 'danger',
+                    offset: {from: 'top', amount: 10},
+                    align: 'center',
+                    width: 'auto',
+                    delay: 2000,
+                    allow_dismiss: false,
+                });
+            } else {
+                $(".bootstrap-growl").remove();
+                $.bootstrapGrowl("התראה נשלחה!", {
+                    ele: '.header-nb',
+                    type: 'success',
+                    offset: {from: 'top', amount: 20},
+                    align: 'center',
+                    width: 'auto',
+                    delay: 2000,
+                    allow_dismiss: false,
+                });
+            }
+        }
+    })
+
+})
 

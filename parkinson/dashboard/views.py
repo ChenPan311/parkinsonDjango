@@ -3,6 +3,7 @@ from django.views.decorators.cache import cache_control
 from django.contrib import auth
 from django.shortcuts import render, redirect
 from firebase_repo import auth_fb, db, get_medications
+import PushService
 from .forms import Login
 from django.http import HttpResponse
 
@@ -79,6 +80,7 @@ def patient_detail(request):
         patient_questionnaire = patient.val().get("questionnaire")
         patient_medications = db.child('Patients').child(patient.key()).child("medicine_list").get()
         patient_reports = db.child('Patients').child(patient.key()).child("reports").get()
+        patient_token = patient_details['token']
 
         # Data for the charts
         labels = []
@@ -102,7 +104,8 @@ def patient_detail(request):
                                                              'patient_medications': patient_medications,
                                                              'patient_questionnaire': patient_questionnaire,
                                                              'reports': reports,
-                                                             'medications': medications})
+                                                             'medications': medications,
+                                                             'token': patient_token})
 
 
 def patient_detail_check(request):
@@ -120,11 +123,11 @@ def update_medicine(request):
     time_dict = {}
     idx = 0
     for time in times:
-        if(time != ''):
+        if (time != ''):
             hours = int(time.split(':')[0])
             minutes = int(time.split(':')[1])
-            time_dict[idx] = {'hour':hours, 'minutes':minutes}
-            idx+=1
+            time_dict[idx] = {'hour': hours, 'minutes': minutes}
+            idx += 1
 
     data['hoursArr'] = time_dict
     data['dosage'] = float(data['dosage'])
@@ -151,3 +154,11 @@ def delete_medicine(request):
         return HttpResponse("True")
     else:
         return HttpResponse("False")
+
+
+def send_medication_notif(request):
+    result = PushService.send_medicine_notification(request.POST.get('data'))
+    if result['success'] == 1:
+        return HttpResponse('True')
+    else:
+        return HttpResponse('False')
