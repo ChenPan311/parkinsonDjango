@@ -16,6 +16,7 @@ urlpatterns = [
     path('patient_detail/med_delete', d_views.delete_medicine, name="patient_detail_delete_med"),
     path('patient_detail/check', d_views.patient_detail_check, name="patient_detail"),
     path('patient_detail/send_medication_notif', d_views.send_medication_notif, name="send_medication_notification"),
+    path('patient_detail/send_questionnaire_notif', d_views.send_questionnaire_notif, name="send_questionnaire_notification"),
     path('questionnaire/', q_views.questionnaire_page, name='questionnaire'),
     path('questionnaire/create/', q_views.create_question, name='question_creation'),
     path('questionnaire/delete/', q_views.delete_question, name='delete_question'),

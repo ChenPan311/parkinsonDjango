@@ -17,8 +17,8 @@ def send_medicine_notification(token):
 
 
 def send_questionnaire_notification(token):
-    message_title = "Test questionnaire push"
-    message_body = "test test test test test test test"
+    message_title = "push project to github"
+    message_body = "push project to github"
     result = push_service.notify_single_device(registration_id=token, message_title=message_title,
                                                message_body=message_body)
     return result

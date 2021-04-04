@@ -99,12 +99,33 @@ def patient_detail(request):
                     data.append(HALLUCINATION)
 
         reports = dict(zip(labels, data))
+
+        report_list=[]
+
+        if patient_medications.val() is not None:
+            for medication in patient_medications.each():
+                print(type(medication.val()['hoursArr']))
+                for time in medication.val()['hoursArr']:
+                    hour = str(time['hour']).rjust(2, '0')
+                    minutes = str(time['minutes']).rjust(2, '0')
+                    report_object={
+                        'label':hour + ":" + minutes,
+                        'value':8,
+                        'name':medication.val()['name']
+                    }
+                    report_list.append(report_object)
+
+
+
+
+
         medications = get_medications()
         return render(request, "patient/patient_page.html", {'patient_details': patient_details,
                                                              'patient_medications': patient_medications,
                                                              'patient_questionnaire': patient_questionnaire,
                                                              'reports': reports,
                                                              'medications': medications,
+                                                             'medication_reports': report_list,
                                                              'token': patient_token})
 
 
@@ -158,6 +179,14 @@ def delete_medicine(request):
 
 def send_medication_notif(request):
     result = PushService.send_medicine_notification(request.POST.get('data'))
+    if result['success'] == 1:
+        return HttpResponse('True')
+    else:
+        return HttpResponse('False')
+
+
+def send_questionnaire_notif(request):
+    result = PushService.send_questionnaire_notification(request.POST.get('data'))
     if result['success'] == 1:
         return HttpResponse('True')
     else:

@@ -120,6 +120,7 @@ $('table').on('click', '.add_time_btn', function () {
     cell = $(this).closest('td')
     newInput = $('<input required class="row-time-data" type="time">')
     cell.append(newInput).append(" ")
+
 })
 
 
@@ -201,6 +202,44 @@ $('#notify_patient_medications').click(function (){
     const csrf_tok = $('input[name="csrfmiddlewaretoken"]').attr('value');
         $.post({
         url: "/patient_detail/send_medication_notif",
+        data: {data : token},
+        headers: {
+            "X-CSRFToken": csrf_tok
+        },
+        success: function (result) {
+            if (result === "False") {  //If something went wrong
+                $(".bootstrap-growl").remove();
+                $.bootstrapGrowl("אירעה שגיאה", {
+                    ele: '.header-nb',
+                    type: 'danger',
+                    offset: {from: 'top', amount: 10},
+                    align: 'center',
+                    width: 'auto',
+                    delay: 2000,
+                    allow_dismiss: false,
+                });
+            } else {
+                $(".bootstrap-growl").remove();
+                $.bootstrapGrowl("התראה נשלחה!", {
+                    ele: '.header-nb',
+                    type: 'success',
+                    offset: {from: 'top', amount: 20},
+                    align: 'center',
+                    width: 'auto',
+                    delay: 2000,
+                    allow_dismiss: false,
+                });
+            }
+        }
+    })
+
+})
+
+$('#notify_patient_questionnaire').click(function (){
+    token = $(this).data("token")
+    const csrf_tok = $('input[name="csrfmiddlewaretoken"]').attr('value');
+        $.post({
+        url: "/patient_detail/send_questionnaire_notif",
         data: {data : token},
         headers: {
             "X-CSRFToken": csrf_tok
