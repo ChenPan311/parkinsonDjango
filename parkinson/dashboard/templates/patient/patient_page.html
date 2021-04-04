@@ -8,8 +8,11 @@
     <title>{% block title %}Patient Page{% endblock %} </title>
 
 
-        <style>
-        * { padding: 0; margin: 0; }
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
 
         #chart-tooltip {
             position: fixed;
@@ -24,7 +27,9 @@
             /*width and height is set by javascript*/
         }
 
-        #chart-tooltip p { text-align: center; }
+        #chart-tooltip p {
+            text-align: center;
+        }
     </style>
 
 
@@ -53,7 +58,8 @@
 <div class="jumbotron container">
     <div class="d-flex justify-content-between">
         <button id="add_medicine_btn" class="btn btn-primary mb-2">הוסף תרופה</button>
-        <button id="notify_patient_medications" class="btn btn-warning mb-2" data-token="{{token}}"><i class="fas fa-bell fa-lg"></i></button>
+        <button id="notify_patient_medications" class="btn btn-warning mb-2" data-token="{{token}}"><i
+                class="fas fa-bell fa-lg"></i></button>
     </div>
     <table class="table table-striped table-sm" style="background-color: white">
         {% csrf_token %}
@@ -73,38 +79,38 @@
         </thead>
         <tbody>
         <tr hidden>
-                <th scope="row">#</th>
-                <td>
-                    <select required disabled class="row-data name form-select">
-                        {% for med in medications %}
-                        <option style="color: #EF3B3A" disabled>--{{med.val.categoryName}}--</option>
-                        {% for key,val in med.val.medicationList.items %}
-                        <option id="{{key}}" data-category={{med.key}} value="{{key}}">{{val.name}}</option>
-                        {% endfor %}
-                        {% endfor %}
-                    </select>
-                </td>
-                <td><input required disabled class="row-data dosage form-control" style="max-width: 100px"
-                           type="text"></td>
-                <td style="max-width: 300px">
-                    <button type="button" class="add_time_btn btn btn-success btn-sm" disabled>+</button>
-                </td>
-                <td>
-                    <button type="button" class="edit_row_btn btn btn-success"
-                            data-medicine-key=''>ערוך
-                    </button>
-                    <button type="button" hidden class="save_row_btn btn btn-success"
-                            data-medicine-key=''>שמור
-                    </button>
-                    <button type="button" class="delete_row_btn btn btn-danger"
-                            data-medicine-key=''>מחק
-                    </button>
-                    <button type="button" hidden class="submit_delete_row_btn btn btn-warning"
-                            data-medicine-key=''>אשר
-                    </button>
-                </td>
+            <th scope="row">#</th>
+            <td>
+                <select required disabled class="row-data name form-select">
+                    {% for med in medications %}
+                    <option style="color: #EF3B3A" disabled>--{{med.val.categoryName}}--</option>
+                    {% for key,val in med.val.medicationList.items %}
+                    <option id="{{key}}" data-category={{med.key}} value="{{key}}">{{val.name}}</option>
+                    {% endfor %}
+                    {% endfor %}
+                </select>
+            </td>
+            <td><input required disabled class="row-data dosage form-control" style="max-width: 100px"
+                       type="text"></td>
+            <td style="max-width: 300px">
+                <button type="button" class="add_time_btn btn btn-success btn-sm" disabled>+</button>
+            </td>
+            <td>
+                <button type="button" class="edit_row_btn btn btn-success"
+                        data-medicine-key=''>ערוך
+                </button>
+                <button type="button" hidden class="save_row_btn btn btn-success"
+                        data-medicine-key=''>שמור
+                </button>
+                <button type="button" class="delete_row_btn btn btn-danger"
+                        data-medicine-key=''>מחק
+                </button>
+                <button type="button" hidden class="submit_delete_row_btn btn btn-warning"
+                        data-medicine-key=''>אשר
+                </button>
+            </td>
 
-            </tr>
+        </tr>
         </tbody>
         {% else %}
         <thead>
@@ -118,47 +124,47 @@
         </thead>
         <tbody>
         {% for medicine in patient_medications %}
-            <tr>
-                <th scope="row">#</th>
-                <td>
-                    <select required disabled class="row-data name form-select">
-                        {% for med in medications %}
-                        <option style="color: #EF3B3A" disabled>--{{med.val.categoryName}}--</option>
-                        {% for key,val in med.val.medicationList.items %}
-                        {% if val.name == medicine.val.name %}
-                        <option id="{{key}}" selected data-category={{med.key}} value="{{key}}">{{val.name}}</option>
-                        {% else %}
-                        <option id="{{key}}" data-category={{med.key}} value="{{key}}">{{val.name}}</option>
-                        {% endif %}
-                        {% endfor %}
-                        {% endfor %}
-                    </select>
-                </td>
-                <td><input required disabled class="row-data dosage form-control" style="max-width: 100px"
-                           type="text" value={{medicine.val.dosage}}></td>
-                <td style="max-width: 300px">
-                    <button type="button" class="add_time_btn btn btn-success btn-sm" disabled>+</button>
-                    {% for time in medicine.val.hoursArr %}
-                    <input required class="row-time-data" disabled type="time"
-                           value={{time.hour|time_for_med}}:{{time.minutes|time_for_med}}>
+        <tr>
+            <th scope="row">#</th>
+            <td>
+                <select required disabled class="row-data name form-select">
+                    {% for med in medications %}
+                    <option style="color: #EF3B3A" disabled>--{{med.val.categoryName}}--</option>
+                    {% for key,val in med.val.medicationList.items %}
+                    {% if val.name == medicine.val.name %}
+                    <option id="{{key}}" selected data-category={{med.key}} value="{{key}}">{{val.name}}</option>
+                    {% else %}
+                    <option id="{{key}}" data-category={{med.key}} value="{{key}}">{{val.name}}</option>
+                    {% endif %}
                     {% endfor %}
-                </td>
-                <td>
-                    <button type="button" class="edit_row_btn btn btn-success"
-                            data-medicine-key={{medicine.key}}>ערוך
-                    </button>
-                    <button type="button" hidden class="save_row_btn btn btn-success"
-                            data-medicine-key={{medicine.key}}>שמור
-                    </button>
-                    <button type="button" class="delete_row_btn btn btn-danger"
-                            data-medicine-key={{medicine.key}}>מחק
-                    </button>
-                    <button type="button" hidden class="submit_delete_row_btn btn btn-warning"
-                            data-medicine-key={{medicine.key}}>אשר
-                    </button>
-                </td>
+                    {% endfor %}
+                </select>
+            </td>
+            <td><input required disabled class="row-data dosage form-control" style="max-width: 100px"
+                       type="text" value={{medicine.val.dosage}}></td>
+            <td style="max-width: 300px">
+                <button type="button" class="add_time_btn btn btn-success btn-sm" disabled>+</button>
+                {% for time in medicine.val.hoursArr %}
+                <input required class="row-time-data" disabled type="time"
+                       value={{time.hour|time_for_med}}:{{time.minutes|time_for_med}}>
+                {% endfor %}
+            </td>
+            <td>
+                <button type="button" class="edit_row_btn btn btn-success"
+                        data-medicine-key={{medicine.key}}>ערוך
+                </button>
+                <button type="button" hidden class="save_row_btn btn btn-success"
+                        data-medicine-key={{medicine.key}}>שמור
+                </button>
+                <button type="button" class="delete_row_btn btn btn-danger"
+                        data-medicine-key={{medicine.key}}>מחק
+                </button>
+                <button type="button" hidden class="submit_delete_row_btn btn btn-warning"
+                        data-medicine-key={{medicine.key}}>אשר
+                </button>
+            </td>
 
-            </tr>
+        </tr>
         {% endfor %}
         </tbody>
         {% endif %}
@@ -177,7 +183,8 @@
         המטופל טרם עדכן את שאלונו הרפואי!
     </div>
     {% else %}
-    <button id="notify_patient_questionnaire" class="btn btn-warning mb-2" data-token="{{token}}" style="float: left"><i class="fas fa-bell fa-lg"></i></button>
+    <button id="notify_patient_questionnaire" class="btn btn-warning mb-2" data-token="{{token}}" style="float: left"><i
+            class="fas fa-bell fa-lg"></i></button>
     {% for question in patient_questionnaire.questionList %}
     <p><span> {{question.title}} </span>:
         {% for ans in question.answers %}
@@ -197,41 +204,75 @@
 
 <script>
     const ctx = document.getElementById('myChart').getContext('2d');
-    // med_reports=[]
-    // {% for label in medication_reports%}
-    //     report={
-    //         label:'{{label.label}}',
-    //         value:8,
-    //         name:'{{label.name}}'
-    //
-    //     }
-    //      med_reports.push(report)
-    // {% endfor %}
-    //
-    // console.log(med_reports)
+    med_reports = []
+    {% for label in medication_reports %}
+    report = {
+        x: '{{label.label}}',
+        y: 8,
+        id: '{{label.name}}'
+
+    }
+    med_reports.push(report)
+    {% endfor %}
+
+    console.log(med_reports)
 
     const yLabels = {
         0: 'Hallucinations',
         2: 'Off',
         4: 'On',
         6: 'Dyskinesia',
+        8: 'Medications',
     };
 
     const myChart = new Chart(ctx, {
+
+        type: 'scatter',
         showTooltips: false,
-        type: 'line',
         data: {
             labels: [],
             datasets: [{
+                type: 'line',
                 label: 'סטאטוס',
+                showLine: true,
                 fill: false,
                 data: [],
                 borderColor: 'rgba(255,159,110,1)',
                 borderWidth: 3
             },
+                {
+                    pointRadius: 5,
+                    pointHoverRadius: 5,
+                    backgroundColor: "rgba(186,44,90,1)",
+                    borderColor: "rgba(186,44,90,1)",
+                    data: []
+                }
             ]
         },
         options: {
+            tooltips: {
+                callbacks: {
+                    label: function (tooltipItem, data) {
+                        let indice = tooltipItem.index;
+                        if (tooltipItem.datasetIndex === 0) {
+                            console.log(data.labels[indice])
+                            return yLabels[data.datasets[0].data[indice]]
+                        } else {
+                            return data.datasets[1].data[indice].id;
+                        }
+
+                    },
+                    afterLabel: function (tooltipItem, data) {
+                        let indice = tooltipItem.index;
+                        if (tooltipItem.datasetIndex === 0) {
+                            return data.labels[indice]
+                        } else {
+                            return data.datasets[1].data[indice].x;
+                        }
+
+                    }
+                }
+            },
             legend: {
                 display: false
             },
@@ -260,7 +301,7 @@
                     ticks: {
                         beginAtZero: true,
                         suggestedMin: 0,
-                        suggestedMax: 8,
+                        suggestedMax: 10,
                         callback: function (value) {
                             return yLabels[value];
                         }
@@ -270,9 +311,8 @@
         }
     });
 
-
-
-
+    console.log(myChart.data.datasets[1].data)
+    console.log("After change", myChart.data.datasets[1].data = med_reports)
     // Setting the date picker date to today and preventing future dates
     today = formatDate(true);
     let date_picker = document.getElementById('filter_dates');
@@ -287,7 +327,7 @@
         else
             formated_today = formatDate(false, date_picker.value)
 
-        {% for label, value in reports.items %}
+        {% for label , value in reports.items %}
         new_label = '{{label}}';
         new_value = '{{value}}';
         new_label = new_label.split(' ')
@@ -297,6 +337,7 @@
             new_data.push(parseInt(new_value))
         }
         {% endfor %}
+
 
         myChart.data.datasets[0].data = new_data;
         myChart.data.labels = new_labels;
