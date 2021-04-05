@@ -22,6 +22,7 @@ urlpatterns = [
     path('', include("dashboard.urls")),
     path('', include('questionnaire.urls')),
     path('', include('medications.urls')),
+    path('', include('registration.urls')),
     # path('', include("django.contrib.auth.urls"))#link to main features login.html,logut
 
 
