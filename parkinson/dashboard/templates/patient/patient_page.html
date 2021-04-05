@@ -59,7 +59,7 @@
     <div class="d-flex justify-content-between">
         <button id="add_medicine_btn" class="btn btn-primary mb-2">הוסף תרופה</button>
         <button id="notify_patient_medications" class="btn btn-warning mb-2" data-token="{{token}}"><i
-                class="fas fa-bell fa-lg"></i></button>
+                class="fas fa-bell fa-lg"></i>שלח התראה</button>
     </div>
     <table class="table table-striped table-sm" style="background-color: white">
         {% csrf_token %}
@@ -109,7 +109,6 @@
                         data-medicine-key=''>אשר
                 </button>
             </td>
-
         </tr>
         </tbody>
         {% else %}
@@ -173,7 +172,7 @@
 
 <h2>שאלון <span>
     {% if patient_questionnaire != None %}
-    מעודכן לתאריך  {{patient_questionnaire.answeredAt.time|prettydate}}
+    מעודכן לתאריך: {{patient_questionnaire.answeredAt.time|date_only}}
     {% endif %}
 </span></h2>
 <div class="jumbotron">
@@ -184,7 +183,7 @@
     </div>
     {% else %}
     <button id="notify_patient_questionnaire" class="btn btn-warning mb-2" data-token="{{token}}" style="float: left"><i
-            class="fas fa-bell fa-lg"></i></button>
+            class="fas fa-bell fa-lg"></i>שלח התראה</button>
     {% for question in patient_questionnaire.questionList %}
     <p><span> {{question.title}} </span>:
         {% for ans in question.answers %}

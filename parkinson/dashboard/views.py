@@ -68,6 +68,37 @@ def prettydate(ms):
     return date
 
 
+def status_data_for_chart(reports):
+    labels = []
+    data = []
+    for report in reports.each():
+        labels.append(prettydate(report.val()['reportTime']))
+        if report.val()['status'] == "On":
+            data.append(ON)
+        elif report.val()['status'] == "Off":
+            data.append(OFF)
+        elif report.val()['status'] == "Dyskinesia":
+            data.append(DYSKINESIA)
+        else:
+            data.append(HALLUCINATION)
+    return dict(zip(labels, data))
+
+
+def medications_data_for_charts(medications):
+    report_list = []
+    for medication in medications.each():
+        for time in medication.val()['hoursArr']:
+            hour = str(time['hour']).rjust(2, '0')
+            minutes = str(time['minutes']).rjust(2, '0')
+            report_object = {
+                'label': hour + ":" + minutes,
+                'value': 8,
+                'name': medication.val()['name']
+            }
+            report_list.append(report_object)
+    return report_list
+
+
 # @cache_control(no_cache=False, must_revalidate=True, no_store=True)
 def patient_detail(request):
     patient_id = request.POST.get("patient_id", 0)
@@ -83,41 +114,11 @@ def patient_detail(request):
         patient_token = patient_details['token']
 
         # Data for the charts
-        labels = []
-        data = []
-
         if patient_reports.val() is not None:
-            for report in patient_reports.each():
-                labels.append(prettydate(report.val()['reportTime']))
-                if report.val()['status'] == "On":
-                    data.append(ON)
-                elif report.val()['status'] == "Off":
-                    data.append(OFF)
-                elif report.val()['status'] == "Dyskinesia":
-                    data.append(DYSKINESIA)
-                else:
-                    data.append(HALLUCINATION)
-
-        reports = dict(zip(labels, data))
-
-        report_list=[]
+            reports = status_data_for_chart(patient_reports)
 
         if patient_medications.val() is not None:
-            for medication in patient_medications.each():
-                print(type(medication.val()['hoursArr']))
-                for time in medication.val()['hoursArr']:
-                    hour = str(time['hour']).rjust(2, '0')
-                    minutes = str(time['minutes']).rjust(2, '0')
-                    report_object={
-                        'label':hour + ":" + minutes,
-                        'value':8,
-                        'name':medication.val()['name']
-                    }
-                    report_list.append(report_object)
-
-
-
-
+            report_list = medications_data_for_charts(patient_medications)
 
         medications = get_medications()
         return render(request, "patient/patient_page.html", {'patient_details': patient_details,
@@ -139,12 +140,12 @@ def patient_detail_check(request):
 
 
 def update_medicine(request):
-    data = (request.POST).dict()
+    data = request.POST.dict()
     times = (data['hoursArr']).split(',')
     time_dict = {}
     idx = 0
     for time in times:
-        if (time != ''):
+        if time != '':
             hours = int(time.split(':')[0])
             minutes = int(time.split(':')[1])
             time_dict[idx] = {'hour': hours, 'minutes': minutes}
