@@ -204,50 +204,32 @@
 
 <script>
     const ctx = document.getElementById('myChart').getContext('2d');
-    med_reports = []
-    {% for label in medication_reports %}
-    report = {
-        x: '{{label.label}}',
-        y: 8,
-        id: '{{label.name}}'
-
-    }
-    med_reports.push(report)
-    {% endfor %}
-
-    console.log(med_reports)
-
     const yLabels = {
         0: 'Hallucinations',
         2: 'Off',
         4: 'On',
-        6: 'Dyskinesia',
-        8: 'Medications',
+        6: 'Medications',
     };
 
-    const myChart = new Chart(ctx, {
+    var tooltipSh = new Image()
+    tooltipSh.src =  "{% static "dashboard/medicine.png" %}"
 
+    const myChart = new Chart(ctx, {
         type: 'scatter',
-        showTooltips: false,
+        showTooltips: true,
         data: {
             labels: [],
             datasets: [{
                 type: 'line',
-                label: 'סטאטוס',
                 showLine: true,
                 fill: false,
-                data: [],
-                borderColor: 'rgba(255,159,110,1)',
-                borderWidth: 3
-            },
-                {
-                    pointRadius: 5,
-                    pointHoverRadius: 5,
-                    backgroundColor: "rgba(186,44,90,1)",
-                    borderColor: "rgba(186,44,90,1)",
-                    data: []
-                }
-            ]
+                borderColor: 'rgb(39,65,181)',
+                borderWidth: 3,
+                data: []
+            }, {
+                pointStyle: tooltipSh,
+                data: []
+            }]
         },
         options: {
             tooltips: {
@@ -255,21 +237,18 @@
                     label: function (tooltipItem, data) {
                         let indice = tooltipItem.index;
                         if (tooltipItem.datasetIndex === 0) {
-                            console.log(data.labels[indice])
                             return yLabels[data.datasets[0].data[indice]]
                         } else {
-                            return data.datasets[1].data[indice].id;
+                            return data.datasets[1].data[indice].id
                         }
-
                     },
                     afterLabel: function (tooltipItem, data) {
                         let indice = tooltipItem.index;
                         if (tooltipItem.datasetIndex === 0) {
                             return data.labels[indice]
                         } else {
-                            return data.datasets[1].data[indice].x;
+                            return data.datasets[1].data[indice].x
                         }
-
                     }
                 }
             },
@@ -301,7 +280,7 @@
                     ticks: {
                         beginAtZero: true,
                         suggestedMin: 0,
-                        suggestedMax: 10,
+                        suggestedMax: 8,
                         callback: function (value) {
                             return yLabels[value];
                         }
@@ -311,8 +290,18 @@
         }
     });
 
-    console.log(myChart.data.datasets[1].data)
-    console.log("After change", myChart.data.datasets[1].data = med_reports)
+    med_reports = []
+    {% for label in medication_reports %}
+    report = {
+        x: '{{label.label}}',
+        y: 6,
+        id: '{{label.name}}'
+    }
+    med_reports.push(report)
+    {% endfor %}
+
+    myChart.data.datasets[1].data = med_reports;
+
     // Setting the date picker date to today and preventing future dates
     today = formatDate(true);
     let date_picker = document.getElementById('filter_dates');
@@ -337,7 +326,6 @@
             new_data.push(parseInt(new_value))
         }
         {% endfor %}
-
 
         myChart.data.datasets[0].data = new_data;
         myChart.data.labels = new_labels;
