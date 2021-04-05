@@ -17,15 +17,6 @@ urlpatterns = [
     path('patient_detail/check', d_views.patient_detail_check, name="patient_detail"),
     path('patient_detail/send_medication_notif', d_views.send_medication_notif, name="send_medication_notification"),
     path('patient_detail/send_questionnaire_notif', d_views.send_questionnaire_notif, name="send_questionnaire_notification"),
-    path('questionnaire/', q_views.questionnaire_page, name='questionnaire'),
-    path('questionnaire/create/', q_views.create_question, name='question_creation'),
-    path('questionnaire/delete/', q_views.delete_question, name='delete_question'),
-    path('questionnaire/update/', q_views.edit_question, name='edit_question'),
-    path('medications/', m_views.medication_page, name='medications'),
-    path('medications/create/', m_views.create_medicine, name='medicine_creation'),
-    path('medications/delete/', m_views.delete_medicine, name='delete_medicine'),
-    path('medications/update/', m_views.edit_medicine, name='edit_medicine'),
-    path('medications/check/', m_views.check_if_med_exist, name='medications_check'),
 
 
 ]
