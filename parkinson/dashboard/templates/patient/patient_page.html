@@ -187,9 +187,13 @@
     {% for question in patient_questionnaire.questionList %}
     <p><span> {{question.title}} </span>:
         {% for ans in question.answers %}
+        {% if forloop.last %}
+        {{ans}}
+        {% else %}
         {{ans}},
-        {% endfor %}</p>
-    {{question.answer}}
+        {% endif %}
+        {% endfor %}
+        {{question.answer}}</p>
     {% endfor %}
     {% endif %}
 </div>
