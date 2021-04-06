@@ -176,14 +176,16 @@
     {% endif %}
 </span></h2>
 <div class="jumbotron">
+    <div class="d-flex justify-content-end">
+        <button id="notify_patient_medications" class="btn btn-warning mb-2" data-token="{{token}}"><i
+                class="fas fa-bell fa-lg"></i>שלח התראה</button>
+    </div>
     {% if patient_questionnaire == None %}
     <div class="alert alert-warning" role="alert">
         <i class="fas fa-exclamation-circle fa-lg"></i>
         המטופל טרם עדכן את שאלונו הרפואי!
     </div>
     {% else %}
-    <button id="notify_patient_questionnaire" class="btn btn-warning mb-2" data-token="{{token}}" style="float: left"><i
-            class="fas fa-bell fa-lg"></i>שלח התראה</button>
     {% for question in patient_questionnaire.questionList %}
     <p><span> {{question.title}} </span>:
         {% for ans in question.answers %}
@@ -228,29 +230,42 @@
                 fill: false,
                 borderColor: 'rgb(39,65,181)',
                 borderWidth: 3,
+                pointBorderWidth: 8,
+                pointHoverRadius: 8,
+                pointStyle: [],
+                pointBorderColor: [],
                 data: []
             }, {
                 pointStyle: tooltipSh,
+                hitRadius: 10,
                 data: []
             }]
         },
         options: {
+            layout: {
+                padding: {
+                    left: 20,
+                    right: 20,
+                    bottom: 20,
+                }
+            },
             tooltips: {
                 callbacks: {
                     label: function (tooltipItem, data) {
                         let indice = tooltipItem.index;
                         if (tooltipItem.datasetIndex === 0) {
-                            return yLabels[data.datasets[0].data[indice]]
+                            return data.datasets[0].data[indice].x
                         } else {
-                            return data.datasets[1].data[indice].id
+                            return data.datasets[1].data[indice].x
                         }
                     },
                     afterLabel: function (tooltipItem, data) {
                         let indice = tooltipItem.index;
                         if (tooltipItem.datasetIndex === 0) {
-                            return data.labels[indice]
+                            return yLabels[data.datasets[0].data[indice].y] + ' ' +
+                                data.datasets[0].data[indice].hallucination
                         } else {
-                            return data.datasets[1].data[indice].x
+                            return data.datasets[1].data[indice].id
                         }
                     }
                 }
@@ -294,11 +309,11 @@
     });
 
     med_reports = []
-    {% for label in medication_reports %}
+    {% for med in medication_reports %}
     report = {
-        x: '{{label.label}}',
+        x: '{{med.label}}',
         y: 6,
-        id: '{{label.name}}'
+        id: '{{med.name}}'
     }
     med_reports.push(report)
     {% endfor %}
@@ -312,26 +327,42 @@
     document.getElementById('filter_dates').setAttribute('max', today);
 
     function filterDatesAndLabels(isDefault) {
-        new_labels = []
-        new_data = []
+        status_reports = []
+        let pointsStyles = []
+        let pointsColors = []
         if (isDefault)
             formated_today = formatDate(false)
         else
             formated_today = formatDate(false, date_picker.value)
 
-        {% for label , value in reports.items %}
-        new_label = '{{label}}';
-        new_value = '{{value}}';
+        {% for value in reports %}
+        new_label = '{{value.label}}';
+        new_hallucination = '{{value.hallucinations}}'=='True' ? "עם הזיות" :"ללא הזיות";
+        new_value = '{{value.value}}';
         new_label = new_label.split(' ')
 
+        if('{{value.hallucinations}}' === 'True'){
+            pointsStyles.push('triangle')
+            pointsColors.push('rgb(255,82,82)')
+        } else {
+            pointsStyles.push('circle')
+            pointsColors.push('rgb(39,65,181)')
+        }
+
+        myChart.data.datasets[0].pointStyle = pointsStyles
+        myChart.data.datasets[0].pointBorderColor = pointsColors
+
         if (new_label[0] === formated_today) {
-            new_labels.push(new_label[1])
-            new_data.push(parseInt(new_value))
+            report = {
+                x: new_label[1],
+                y: parseInt(new_value),
+                hallucination: new_hallucination
+            }
+            status_reports.push(report)
         }
         {% endfor %}
 
-        myChart.data.datasets[0].data = new_data;
-        myChart.data.labels = new_labels;
+        myChart.data.datasets[0].data = status_reports;
         myChart.update();
     }
 

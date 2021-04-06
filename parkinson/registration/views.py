@@ -77,7 +77,8 @@ def register_new_patient(response):
                     'country': country,
                     'hasUnansweredQuestionnaire': True,
                     'needToUpdateMedicine': True,
-                    'date_of_birth': millisec
+                    'date_of_birth': millisec,
+                    'token': ''
                 }
                 db.child("Patients").child(patient['localId']).set({'id': mobile_phone})
                 db.child("Patients").child(patient['localId']).child("user_details").set(data)
