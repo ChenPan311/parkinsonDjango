@@ -7,32 +7,6 @@
     <meta charset="UTF-8">
     <title>{% block title %}Patient Page{% endblock %} </title>
 
-
-    <style>
-        * {
-            padding: 0;
-            margin: 0;
-        }
-
-        #chart-tooltip {
-            position: fixed;
-            z-index: 999;
-            background: #000000;
-            padding: 2px;
-            display: none;
-            overflow: hidden;
-            color: white;
-            font-size: 10px;
-            font-family: sans-serif;
-            /*width and height is set by javascript*/
-        }
-
-        #chart-tooltip p {
-            text-align: center;
-        }
-    </style>
-
-
 </head>
 <body>
 
@@ -204,13 +178,21 @@
 <input type="date" id="filter_dates">
 <button class="btn btn-primary" id="filter_btn">סנן</button>
 <div class="jumbotron" style="background-color: white">
+    <ul id="do_legend">
+    <li class="circle"></li>
+    <li class="li-container">סטאטוס</li>
+    <li  class="triangle-up"></li>
+    <li class="li-container"> הזיות </li>
+        <img src=  "{% static "dashboard/medicine.png" %}">
+         <li class="li-container"> תרופות </li>
+    </ul>
     <canvas id="myChart" width="400" height="150"></canvas>
 </div>
 
 <script>
     const ctx = document.getElementById('myChart').getContext('2d');
     const yLabels = {
-        0: 'Hallucinations',
+        0: 'Dyskinesia',
         2: 'Off',
         4: 'On',
         6: 'Medications',
@@ -218,7 +200,6 @@
 
     var tooltipSh = new Image()
     tooltipSh.src =  "{% static "dashboard/medicine.png" %}"
-
     const myChart = new Chart(ctx, {
         type: 'scatter',
         showTooltips: true,
@@ -234,14 +215,16 @@
                 pointHoverRadius: 8,
                 pointStyle: [],
                 pointBorderColor: [],
-                data: []
+                data: [],
+
             }, {
                 pointStyle: tooltipSh,
                 hitRadius: 10,
                 data: []
-            }]
+            },]
         },
         options: {
+            responsive: true,
             layout: {
                 padding: {
                     left: 20,
@@ -271,8 +254,32 @@
                 }
             },
             legend: {
-                display: false
-            },
+            display: false
+        },
+  //           legendCallback: function(myChart) {
+  //           let text = [];
+  //           let colors= [
+  //                    "#FF6384",
+  //                     "#36A2EB",
+  //                  "#FFCE56"
+  //   ];
+  //           let text_categories=[]
+  //           let data=myChart.data.datasets[0].data;
+  //           for(let i=0;i<i < data.length;i++){
+  //               if(data[i].hallucination==='עם הזיות'){
+  //                   text_categories.push('Hallucinations')
+  //               }
+  //           }
+  //           let shapes=['circle']
+  //           text.push('<ul class="' + myChart.id + '-legend">');
+  //       for (let i = 0; i < myChart.data.datasets[0].data.length; i++) {
+  //            text.push('<li class="li-container <%=shapes[i]%>"><span style="background-color:' + colors[i] + '">');
+  //            text.push("hello")
+  //            text.push('</span></li>');
+  //   }
+  //   text.push('</ul>');
+  //   return text.join("");
+  // },
             title: {
                 display: true,
                 fontSize: 18,
@@ -308,6 +315,8 @@
         }
     });
 
+
+
     med_reports = []
     {% for med in medication_reports %}
     report = {
@@ -317,6 +326,8 @@
     }
     med_reports.push(report)
     {% endfor %}
+
+
 
     myChart.data.datasets[1].data = med_reports;
 
@@ -363,7 +374,10 @@
         {% endfor %}
 
         myChart.data.datasets[0].data = status_reports;
+
         myChart.update();
+        // $("#do_legend").html(myChart.generateLegend());
+
     }
 
     function formatDate(formated, date = null) {
