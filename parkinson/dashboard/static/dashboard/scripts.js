@@ -1,5 +1,3 @@
-const MSG = " מטופל לא נמצא"
-
 $('#search_btn').click(function () {
     let patient_id = $('#patient_input')[0].value
     let form = $('#search_form')
@@ -12,16 +10,7 @@ $('#search_btn').click(function () {
         },
         success: function (result) {
             if (result === "False") {  //If medicine already exist
-                $(".bootstrap-growl").remove();  //Nice looking alert
-                $.bootstrapGrowl(MSG, {
-                    ele: 'body',
-                    type: 'danger',
-                    offset: {from: 'top', amount: 10},
-                    align: 'center',
-                    width: 'auto',
-                    delay: 2000,
-                    allow_dismiss: false,
-                });
+                GrowlCall(" מטופל לא נמצא",'danger');
             } else {
                 $('<input type="submit">').hide().appendTo(form).click().remove();
             }
@@ -79,30 +68,12 @@ function handleSaveEdits(e) {
         },
         success: function (result) {
             if (result === "False") {  //If something went wrong
-                $(".bootstrap-growl").remove();
-                $.bootstrapGrowl("עדכון לא הצליח", {
-                    ele: '.header-nb',
-                    type: 'danger',
-                    offset: {from: 'top', amount: 10},
-                    align: 'center',
-                    width: 'auto',
-                    delay: 2000,
-                    allow_dismiss: false,
-                });
+                GrowlCall("עדכון לא הצליח",'danger')
             } else {
                 e.data("medicine-key", medicine_id) // updating the data-medicine-key to the new medcine key
                 row.find('.edit_row_btn, .delete_row_btn, .submit_delete_row_btn').data("medicine-key", medicine_id)
                 handleAttrs(e)
-                $(".bootstrap-growl").remove();
-                $.bootstrapGrowl("עודכן בהצלחה!", {
-                    ele: '.header-nb',
-                    type: 'success',
-                    offset: {from: 'top', amount: 20},
-                    align: 'center',
-                    width: 'auto',
-                    delay: 2000,
-                    allow_dismiss: false,
-                });
+                GrowlCall("עודכן בהצלחה!",'success')
             }
         }
     })
@@ -123,7 +94,6 @@ $('table').on('click', '.add_time_btn', function () {
 
 })
 
-
 function delete_data(e) {
     med_key = e.data('medicine-key')
     if (med_key === '') {
@@ -141,15 +111,7 @@ function delete_data(e) {
             },
             success: function (result) {
                 if (result === "False") {  //If something went wrong
-                    $(".bootstrap-growl").remove();
-                    $.bootstrapGrowl("עדכון לא הצליח", {
-                        type: 'danger',
-                        offset: {from: 'top', amount: 10},
-                        align: 'center',
-                        width: 'auto',
-                        delay: 2000,
-                        allow_dismiss: false,
-                    });
+                    GrowlCall("עדכון לא הצליח",'danger')
                 } else {
                     row.fadeOut(1000, function () {
                         row.remove();
@@ -208,27 +170,9 @@ $('#notify_patient_medications').click(function (){
         },
         success: function (result) {
             if (result === "False") {  //If something went wrong
-                $(".bootstrap-growl").remove();
-                $.bootstrapGrowl("אירעה שגיאה", {
-                    ele: '.header-nb',
-                    type: 'danger',
-                    offset: {from: 'top', amount: 10},
-                    align: 'center',
-                    width: 'auto',
-                    delay: 2000,
-                    allow_dismiss: false,
-                });
+                GrowlCall("אירעה שגיאה",'danger')
             } else {
-                $(".bootstrap-growl").remove();
-                $.bootstrapGrowl("התראה נשלחה!", {
-                    ele: '.header-nb',
-                    type: 'success',
-                    offset: {from: 'top', amount: 20},
-                    align: 'center',
-                    width: 'auto',
-                    delay: 2000,
-                    allow_dismiss: false,
-                });
+                GrowlCall("התראה נשלחה!",'success')
             }
         }
     })
@@ -246,30 +190,38 @@ $('#notify_patient_questionnaire').click(function (){
         },
         success: function (result) {
             if (result === "False") {  //If something went wrong
-                $(".bootstrap-growl").remove();
-                $.bootstrapGrowl("אירעה שגיאה", {
-                    ele: '.header-nb',
-                    type: 'danger',
-                    offset: {from: 'top', amount: 10},
-                    align: 'center',
-                    width: 'auto',
-                    delay: 2000,
-                    allow_dismiss: false,
-                });
+                GrowlCall("אירעה שגיאה",'danger')
             } else {
-                $(".bootstrap-growl").remove();
-                $.bootstrapGrowl("התראה נשלחה!", {
-                    ele: '.header-nb',
-                    type: 'success',
-                    offset: {from: 'top', amount: 20},
-                    align: 'center',
-                    width: 'auto',
-                    delay: 2000,
-                    allow_dismiss: false,
-                });
+                GrowlCall("התראה נשלחה!",'success')
             }
         }
     })
-
 })
 
+function GrowlCall(msg,type){
+    $(".bootstrap-growl").remove();
+    $.bootstrapGrowl(msg, {
+        ele: 'nav',
+        type: type,
+        offset: {from: 'top', amount: 20},
+        align: 'center',
+        width: 'auto',
+        delay: 2000,
+        allow_dismiss: false,
+    });
+}
+
+function updateMedReports(medication_reports,mychart) {
+    med_reports = []
+    for (const reportee of medication_reports) {
+        report = {
+            x: reportee.label,
+            y: 8,
+            id: reportee.name
+        }
+        med_reports.push(report)
+    }
+    console.log(med_reports)
+    mychart.data.datasets[1].data = med_reports;
+    mychart.update();
+}

@@ -11,198 +11,250 @@
 <body>
 
 {% block content %}
-
-<h2 style="margin-top: 10px">פרטים אישיים</h2>
-<div class="jumbotron">
-    <div class="patient_details">
-        <div class="grid-container">
-            <p><span> <i class="fas fa-signature"></i>שם : </span> {{patient_details.first_name}}
-                {{patient_details.last_name}}</p>
-            <p><span> <i class="fas fa-birthday-cake"></i>תאריך לידה : </span>
-                {{patient_details.date_of_birth|date_only}}</p>
-            <p><span> <i class="fas fa-venus-mars"></i>מין : </span> {{patient_details.gender}}</p>
-            <p><span> <i class="fas fa-phone"></i>מספר פלאפון : </span> {{patient_details.mobile_phone}}</p>
-            <p><span> <i class="fas fa-clinic-medical"></i>מרפאה : </span> {{patient_details.clinic}}</p>
-            <p><span> <i class="fas fa-globe-americas"></i>ארץ לידה : </span> {{patient_details.country}}</p>
+<div class="container">
+    <div class="row">
+        <div class="card text-dark bg-light m-0 p-0 mt-3">
+            <div class="card-header">פרטים אישיים</div>
+            <div class="card-body">
+                <div class="container">
+                    <div class="row">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col-lg">
+                                    <p><span>  שם : </span> {{patient_details.first_name}}
+                                        {{patient_details.last_name}}</p>
+                                </div>
+                                <div class="col-lg">
+                                    <p><span>תאריך לידה : </span>
+                                        {{patient_details.date_of_birth|date_only}}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg">
+                                    <p><span>מין : </span> {{patient_details.gender}}</p>
+                                </div>
+                                <div class="col-lg">
+                                    <p><span>מספר פלאפון : </span> {{patient_details.mobile_phone}}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg">
+                                    <p><span>מרפאה : </span> {{patient_details.clinic}}</p>
+                                </div>
+                                <div class="col-lg">
+                                    <p><span>ארץ לידה : </span> {{patient_details.country}}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <img style="float: left" width="150rem" src="{% static "dashboard/personal-information.png" %}">
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
-
-<h2>תרופות</h2>
-<div class="jumbotron container">
-    <div class="d-flex justify-content-between">
-        <button id="add_medicine_btn" class="btn btn-primary mb-2">הוסף תרופה</button>
-        <button id="notify_patient_medications" class="btn btn-warning mb-2" data-token="{{token}}"><i
-                class="fas fa-bell fa-lg"></i>שלח התראה</button>
-    </div>
-    <table class="table table-striped table-sm" style="background-color: white">
-        {% csrf_token %}
-        {% if patient_medications.val == None %}
-        <div id="alert" class="alert alert-warning" role="alert">
-            <i class="fas fa-exclamation-circle fa-lg"></i>
-            המטופל טרם עדכן את תרופותיו!
-        </div>
-        <thead>
-        <tr id="trhead" hidden>
-            <th scope="col">#</th>
-            <th scope="col">שם</th>
-            <th scope="col">מינון</th>
-            <th scope="col">זמני נטילה</th>
-            <th scope="col">אפשרויות</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr hidden>
-            <th scope="row">#</th>
-            <td>
-                <select required disabled class="row-data name form-select">
-                    {% for med in medications %}
-                    <option style="color: #EF3B3A" disabled>--{{med.val.categoryName}}--</option>
-                    {% for key,val in med.val.medicationList.items %}
-                    <option id="{{key}}" data-category={{med.key}} value="{{key}}">{{val.name}}</option>
-                    {% endfor %}
-                    {% endfor %}
-                </select>
-            </td>
-            <td><input required disabled class="row-data dosage form-control" style="max-width: 100px"
-                       type="text"></td>
-            <td style="max-width: 300px">
-                <button type="button" class="add_time_btn btn btn-success btn-sm" disabled>+</button>
-            </td>
-            <td>
-                <button type="button" class="edit_row_btn btn btn-success"
-                        data-medicine-key=''>ערוך
-                </button>
-                <button type="button" hidden class="save_row_btn btn btn-success"
-                        data-medicine-key=''>שמור
-                </button>
-                <button type="button" class="delete_row_btn btn btn-danger"
-                        data-medicine-key=''>מחק
-                </button>
-                <button type="button" hidden class="submit_delete_row_btn btn btn-warning"
-                        data-medicine-key=''>אשר
-                </button>
-            </td>
-        </tr>
-        </tbody>
-        {% else %}
-        <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">שם</th>
-            <th scope="col">מינון</th>
-            <th scope="col">זמני נטילה</th>
-            <th scope="col">אפשרויות</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for medicine in patient_medications %}
-        <tr>
-            <th scope="row">#</th>
-            <td>
-                <select required disabled class="row-data name form-select">
-                    {% for med in medications %}
-                    <option style="color: #EF3B3A" disabled>--{{med.val.categoryName}}--</option>
-                    {% for key,val in med.val.medicationList.items %}
-                    {% if val.name == medicine.val.name %}
-                    <option id="{{key}}" selected data-category={{med.key}} value="{{key}}">{{val.name}}</option>
-                    {% else %}
-                    <option id="{{key}}" data-category={{med.key}} value="{{key}}">{{val.name}}</option>
+    <div class="row">
+        <div class="col"></div>
+        <div class="card text-dark bg-light m-0 p-0 mt-3">
+            <div class="card-header">שאלון
+                <span>
+                    {% if patient_questionnaire != None %}
+                    מעודכן לתאריך: {{patient_questionnaire.answeredAt.time|date_only}}
                     {% endif %}
-                    {% endfor %}
-                    {% endfor %}
-                </select>
-            </td>
-            <td><input required disabled class="row-data dosage form-control" style="max-width: 100px"
-                       type="text" value={{medicine.val.dosage}}></td>
-            <td style="max-width: 300px">
-                <button type="button" class="add_time_btn btn btn-success btn-sm" disabled>+</button>
-                {% for time in medicine.val.hoursArr %}
-                <input required class="row-time-data" disabled type="time"
-                       value={{time.hour|time_for_med}}:{{time.minutes|time_for_med}}>
-                {% endfor %}
-            </td>
-            <td>
-                <button type="button" class="edit_row_btn btn btn-success"
-                        data-medicine-key={{medicine.key}}>ערוך
-                </button>
-                <button type="button" hidden class="save_row_btn btn btn-success"
-                        data-medicine-key={{medicine.key}}>שמור
-                </button>
-                <button type="button" class="delete_row_btn btn btn-danger"
-                        data-medicine-key={{medicine.key}}>מחק
-                </button>
-                <button type="button" hidden class="submit_delete_row_btn btn btn-warning"
-                        data-medicine-key={{medicine.key}}>אשר
-                </button>
-            </td>
-
-        </tr>
-        {% endfor %}
-        </tbody>
-        {% endif %}
-    </table>
-</div>
-
-<h2>שאלון <span>
-    {% if patient_questionnaire != None %}
-    מעודכן לתאריך: {{patient_questionnaire.answeredAt.time|date_only}}
-    {% endif %}
-</span></h2>
-<div class="jumbotron">
-    <div class="d-flex justify-content-end">
-        <button id="notify_patient_medications" class="btn btn-warning mb-2" data-token="{{token}}"><i
-                class="fas fa-bell fa-lg"></i>שלח התראה</button>
+                </span>
+            </div>
+            <div class="card-body">
+                <div class="container">
+                    <!--            <div class="d-flex justify-content-end">-->
+                    <!--                <button id="notify_patient_medications" class="btn btn-warning mb-2" data-token="{{token}}"><i-->
+                    <!--                        class="fas fa-bell fa-lg"></i>שלח התראה-->
+                    <!--                </button>-->
+                    <!--            </div>-->
+                    <div class="row">
+                        <div class="col-7">
+                            {% if patient_questionnaire == None %}
+                            <div class="alert alert-warning" role="alert">
+                                <i class="fas fa-exclamation-circle fa-lg"></i>
+                                המטופל טרם עדכן את שאלונו הרפואי!
+                            </div>
+                            {% else %}
+                            {% for question in patient_questionnaire.questionList %}
+                            <p><span class="q_title"> {{question.title}} </span>:
+                                {% for ans in question.answers %}
+                                {% if forloop.last %}
+                                {{ans}}
+                                {% else %}
+                                {{ans}},
+                                {% endif %}
+                                {% endfor %}
+                                {{question.answer}}</p>
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="col">
+                            <img style="float: left" width="150rem" src="{% static "dashboard/questionnaire.png" %}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    {% if patient_questionnaire == None %}
-    <div class="alert alert-warning" role="alert">
-        <i class="fas fa-exclamation-circle fa-lg"></i>
-        המטופל טרם עדכן את שאלונו הרפואי!
+    <div class="row">
+        <div class="card text-dark bg-light m-0 p-0 mt-3">
+            <div class="card-header">תרופות</div>
+            <div class="card-body ">
+                <div class="d-flex justify-content-between">
+                    <button id="add_medicine_btn" class="btn btn-dark mb-2">הוסף תרופה</button>
+<!--                    <button id="notify_patient_medications" class="btn btn-warning mb-2" data-token="{{token}}"><i-->
+<!--                            class="fas fa-bell fa-lg"></i>שלח התראה-->
+<!--                    </button>-->
+                </div>
+                <table class="table table-striped table-sm table-responsive table-bordered">
+                    {% csrf_token %}
+                    {% if patient_medications.val == None %}
+                    <div id="alert" class="alert alert-warning" role="alert">
+                        <i class="fas fa-exclamation-circle fa-lg"></i>
+                        המטופל טרם עדכן את תרופותיו!
+                    </div>
+                    <thead>
+                    <tr id="trhead" hidden>
+                        <th scope="col">#</th>
+                        <th scope="col">שם</th>
+                        <th scope="col">מינון</th>
+                        <th scope="col">זמני נטילה</th>
+                        <th scope="col">אפשרויות</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr hidden>
+                        <th scope="row">#</th>
+                        <td>
+                            <select required disabled class="row-data name form-select">
+                                {% for med in medications %}
+                                <option style="color: #EF3B3A" disabled>--{{med.val.categoryName}}--</option>
+                                {% for key,val in med.val.medicationList.items %}
+                                <option id="{{key}}" data-category={{med.key}} value="{{key}}">{{val.name}}</option>
+                                {% endfor %}
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td><input required disabled class="row-data dosage form-control" style="max-width: 100px"
+                                   type="text"></td>
+                        <td style="max-width: 300px">
+                            <button type="button" class="add_time_btn btn btn-outline-success btn-sm" disabled>+</button>
+                        </td>
+                        <td>
+                            <button type="button" class="edit_row_btn btn btn-outline-success"
+                                    data-medicine-key=''>ערוך
+                            </button>
+                            <button type="button" hidden class="save_row_btn btn btn-outline-success"
+                                    data-medicine-key=''>שמור
+                            </button>
+                            <button type="button" class="delete_row_btn btn btn-outline-danger"
+                                    data-medicine-key=''>מחק
+                            </button>
+                            <button type="button" hidden class="submit_delete_row_btn btn btn-warning"
+                                    data-medicine-key=''>אשר
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                    {% else %}
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">שם</th>
+                        <th scope="col">מינון</th>
+                        <th scope="col">זמני נטילה</th>
+                        <th scope="col">אפשרויות</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for medicine in patient_medications %}
+                    <tr>
+                        <th scope="row">#</th>
+                        <td>
+                            <select required disabled class="row-data name form-select">
+                                {% for med in medications %}
+                                <option style="color: #EF3B3A" disabled>--{{med.val.categoryName}}--</option>
+                                {% for key,val in med.val.medicationList.items %}
+                                {% if val.name == medicine.val.name %}
+                                <option id="{{key}}" selected data-category={{med.key}}
+                                        value="{{key}}">{{val.name}}</option>
+                                {% else %}
+                                <option id="{{key}}" data-category={{med.key}} value="{{key}}">{{val.name}}</option>
+                                {% endif %}
+                                {% endfor %}
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td><input required disabled class="row-data dosage form-control" style="max-width: 100px"
+                                   type="text" value={{medicine.val.dosage}}></td>
+                        <td style="max-width: 300px">
+                            <button type="button" class="add_time_btn btn btn-outline-success btn-sm" disabled>+</button>
+                            {% for time in medicine.val.hoursArr %}
+                            <input required class="row-time-data" disabled type="time"
+                                   value={{time.hour|time_for_med}}:{{time.minutes|time_for_med}}>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            <button type="button" class="edit_row_btn btn btn-outline-success"
+                                    data-medicine-key={{medicine.key}}>ערוך
+                            </button>
+                            <button type="button" hidden class="save_row_btn btn btn-outline-success"
+                                    data-medicine-key={{medicine.key}}>שמור
+                            </button>
+                            <button type="button" class="delete_row_btn btn btn-outline-danger"
+                                    data-medicine-key={{medicine.key}}>מחק
+                            </button>
+                            <button type="button" hidden class="submit_delete_row_btn btn btn-warning"
+                                    data-medicine-key={{medicine.key}}>אשר
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                    {% endif %}
+                </table>
+            </div>
+        </div>
     </div>
-    {% else %}
-    {% for question in patient_questionnaire.questionList %}
-    <p><span> {{question.title}} </span>:
-        {% for ans in question.answers %}
-        {% if forloop.last %}
-        {{ans}}
-        {% else %}
-        {{ans}},
-        {% endif %}
-        {% endfor %}
-        {{question.answer}}</p>
-    {% endfor %}
-    {% endif %}
+    <div class="row">
+        <div class="card text-dark bg-light m-0 p-0 mt-3">
+            <div class="card-header">דיווחים</div>
+            <div class="card-body ">
+                <input type="date" id="filter_dates">
+                <button class="btn btn-dark" id="filter_btn">סנן</button>
+                <ul id="do_legend">
+                    <li class="circle"></li>
+                    <li class="li-container">ללא הזיות</li>
+                    <li class="triangle-up"></li>
+                    <li class="li-container"> הזיות</li>
+                    <img src="{% static "dashboard/medicine.png" %}">
+                    <li class="li-container"> תרופות</li>
+                </ul>
+                <canvas id="myChart" width="400" height="150"></canvas>
+            </div>
+        </div>
+    </div>
 </div>
 
-<h2>דיווחים</h2>
-<input type="date" id="filter_dates">
-<button class="btn btn-primary" id="filter_btn">סנן</button>
-<div class="jumbotron" style="background-color: white">
-    <ul id="do_legend">
-    <li class="circle"></li>
-    <li class="li-container">סטאטוס</li>
-    <li  class="triangle-up"></li>
-    <li class="li-container"> הזיות </li>
-        <img src=  "{% static "dashboard/medicine.png" %}">
-         <li class="li-container"> תרופות </li>
-    </ul>
-    <canvas id="myChart" width="400" height="150"></canvas>
-</div>
-
+<script type="text/javascript" src="{% static 'dashboard/scripts.js' %}"></script>
 <script>
     const ctx = document.getElementById('myChart').getContext('2d');
     const yLabels = {
-        0: 'Dyskinesia',
+        6: 'Dyskinesia',
         2: 'Off',
         4: 'On',
-        6: 'Medications',
+        8: '',
     };
 
     var tooltipSh = new Image()
-    tooltipSh.src =  "{% static "dashboard/medicine.png" %}"
+    tooltipSh.src = "{% static "dashboard/medicine.png" %}"
+
     const myChart = new Chart(ctx, {
         type: 'scatter',
-        showTooltips: true,
         data: {
             labels: [],
             datasets: [{
@@ -224,15 +276,18 @@
             },]
         },
         options: {
+            showAllTooltips: true,
             responsive: true,
             layout: {
                 padding: {
                     left: 20,
                     right: 20,
                     bottom: 20,
+                    top: 20
                 }
             },
             tooltips: {
+                yAlign: 'bottom', //placing the tooltip on top
                 callbacks: {
                     label: function (tooltipItem, data) {
                         let indice = tooltipItem.index;
@@ -254,36 +309,7 @@
                 }
             },
             legend: {
-            display: false
-        },
-  //           legendCallback: function(myChart) {
-  //           let text = [];
-  //           let colors= [
-  //                    "#FF6384",
-  //                     "#36A2EB",
-  //                  "#FFCE56"
-  //   ];
-  //           let text_categories=[]
-  //           let data=myChart.data.datasets[0].data;
-  //           for(let i=0;i<i < data.length;i++){
-  //               if(data[i].hallucination==='עם הזיות'){
-  //                   text_categories.push('Hallucinations')
-  //               }
-  //           }
-  //           let shapes=['circle']
-  //           text.push('<ul class="' + myChart.id + '-legend">');
-  //       for (let i = 0; i < myChart.data.datasets[0].data.length; i++) {
-  //            text.push('<li class="li-container <%=shapes[i]%>"><span style="background-color:' + colors[i] + '">');
-  //            text.push("hello")
-  //            text.push('</span></li>');
-  //   }
-  //   text.push('</ul>');
-  //   return text.join("");
-  // },
-            title: {
-                display: true,
-                fontSize: 18,
-                text: "סטאטוס"
+                display: false
             },
             scales: {
                 xAxes: [{
@@ -305,7 +331,7 @@
                     ticks: {
                         beginAtZero: true,
                         suggestedMin: 0,
-                        suggestedMax: 8,
+                        suggestedMax: 10,
                         callback: function (value) {
                             return yLabels[value];
                         }
@@ -314,23 +340,42 @@
             },
         }
     });
+    // Makes the tooltips to be always shown
+    Chart.pluginService.register({
+        beforeRender: function (chart) {
+            if (chart.config.options.showAllTooltips) {
+                chart.pluginTooltips = [];
+                chart.config.data.datasets.forEach(function (dataset, i) {
+                    if (i == 1) { // only Medications tooltips
+                        chart.getDatasetMeta(i).data.forEach(function (sector, j) {
+                            chart.pluginTooltips.push(new Chart.Tooltip({
+                                _chart: chart.chart,
+                                _chartInstance: chart,
+                                _data: chart.data,
+                                _options: chart.options.tooltips,
+                                _active: [sector]
+                            }, chart));
+                        });
+                    }
+                });
+                chart.options.tooltips.enabled = false;
+            }
+        },
+        afterDraw: function (chart, easing) {
+            if (chart.config.options.showAllTooltips) {
+                chart.options.tooltips.enabled = true;
+                Chart.helpers.each(chart.pluginTooltips, function (tooltip) {
+                    tooltip.initialize();
+                    tooltip.update();
+                    tooltip.pivot();
+                    tooltip.transition(easing).draw();
+                });
+                chart.options.tooltips.enabled = false;
+            }
+        }
+    });
 
-
-
-    med_reports = []
-    {% for med in medication_reports %}
-    report = {
-        x: '{{med.label}}',
-        y: 6,
-        id: '{{med.name}}'
-    }
-    med_reports.push(report)
-    {% endfor %}
-
-
-
-    myChart.data.datasets[1].data = med_reports;
-
+    updateMedReports({{medication_reports|safe}},myChart);
     // Setting the date picker date to today and preventing future dates
     today = formatDate(true);
     let date_picker = document.getElementById('filter_dates');
@@ -348,11 +393,11 @@
 
         {% for value in reports %}
         new_label = '{{value.label}}';
-        new_hallucination = '{{value.hallucinations}}'=='True' ? "עם הזיות" :"ללא הזיות";
+        new_hallucination = '{{value.hallucinations}}' == 'True' ? "עם הזיות" : "ללא הזיות";
         new_value = '{{value.value}}';
         new_label = new_label.split(' ')
 
-        if('{{value.hallucinations}}' === 'True'){
+        if ('{{value.hallucinations}}' === 'True') {
             pointsStyles.push('triangle')
             pointsColors.push('rgb(255,82,82)')
         } else {
@@ -405,7 +450,6 @@
     document.getElementById('filter_btn').addEventListener('click', filterDatesAndLabels.bind(null, false));
 
 </script>
-<script type="text/javascript" src="{% static 'dashboard/scripts.js' %}"></script>
 
 {% endblock %}
 
