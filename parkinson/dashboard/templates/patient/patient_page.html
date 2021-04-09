@@ -340,114 +340,16 @@
             },
         }
     });
-    // Makes the tooltips to be always shown
-    Chart.pluginService.register({
-        beforeRender: function (chart) {
-            if (chart.config.options.showAllTooltips) {
-                chart.pluginTooltips = [];
-                chart.config.data.datasets.forEach(function (dataset, i) {
-                    if (i == 1) { // only Medications tooltips
-                        chart.getDatasetMeta(i).data.forEach(function (sector, j) {
-                            chart.pluginTooltips.push(new Chart.Tooltip({
-                                _chart: chart.chart,
-                                _chartInstance: chart,
-                                _data: chart.data,
-                                _options: chart.options.tooltips,
-                                _active: [sector]
-                            }, chart));
-                        });
-                    }
-                });
-                chart.options.tooltips.enabled = false;
-            }
-        },
-        afterDraw: function (chart, easing) {
-            if (chart.config.options.showAllTooltips) {
-                chart.options.tooltips.enabled = true;
-                Chart.helpers.each(chart.pluginTooltips, function (tooltip) {
-                    tooltip.initialize();
-                    tooltip.update();
-                    tooltip.pivot();
-                    tooltip.transition(easing).draw();
-                });
-                chart.options.tooltips.enabled = false;
-            }
-        }
-    });
-
+    // Getting data of med times and put it on graph
     updateMedReports({{medication_reports|safe}},myChart);
     // Setting the date picker date to today and preventing future dates
     today = formatDate(true);
     let date_picker = document.getElementById('filter_dates');
     date_picker.value = today;
     document.getElementById('filter_dates').setAttribute('max', today);
-
-    function filterDatesAndLabels(isDefault) {
-        status_reports = []
-        let pointsStyles = []
-        let pointsColors = []
-        if (isDefault)
-            formated_today = formatDate(false)
-        else
-            formated_today = formatDate(false, date_picker.value)
-
-        {% for value in reports %}
-        new_label = '{{value.label}}';
-        new_hallucination = '{{value.hallucinations}}' == 'True' ? "עם הזיות" : "ללא הזיות";
-        new_value = '{{value.value}}';
-        new_label = new_label.split(' ')
-
-        if ('{{value.hallucinations}}' === 'True') {
-            pointsStyles.push('triangle')
-            pointsColors.push('rgb(255,82,82)')
-        } else {
-            pointsStyles.push('circle')
-            pointsColors.push('rgb(39,65,181)')
-        }
-
-        myChart.data.datasets[0].pointStyle = pointsStyles
-        myChart.data.datasets[0].pointBorderColor = pointsColors
-
-        if (new_label[0] === formated_today) {
-            report = {
-                x: new_label[1],
-                y: parseInt(new_value),
-                hallucination: new_hallucination
-            }
-            status_reports.push(report)
-        }
-        {% endfor %}
-
-        myChart.data.datasets[0].data = status_reports;
-
-        myChart.update();
-        // $("#do_legend").html(myChart.generateLegend());
-
-    }
-
-    function formatDate(formated, date = null) {
-        var dtToday;
-        if (!date)
-            dtToday = new Date()
-        else
-            dtToday = new Date(date)
-
-        var month = dtToday.getMonth() + 1;
-        var day = dtToday.getDate();
-        var year = dtToday.getFullYear();
-        if (month < 10)
-            month = '0' + month.toString();
-        if (day < 10)
-            day = '0' + day.toString();
-
-        if (formated)
-            return [year, month, day].join('-'); // for init the date picker
-        else
-            return [day, month, year].join('-'); // for filter dates
-    }
-
-    window.onload = filterDatesAndLabels(true)
-    document.getElementById('filter_btn').addEventListener('click', filterDatesAndLabels.bind(null, false));
+    // Getting data of reports and put it on graph
+    filterDatesAndLabels(true, {{reports|safe}})
+    document.getElementById('filter_btn').addEventListener('click', filterDatesAndLabels.bind(null, false, {{reports|safe}}));
 
 </script>
 

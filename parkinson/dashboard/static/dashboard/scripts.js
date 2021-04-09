@@ -156,7 +156,6 @@ $('#add_medicine_btn').click(function () {
         $(this).data("medicine-key", '')
     })
     trLast.after(trNew);
-    console.log($('table tbody tr').length)
 })
 
 $('#notify_patient_medications').click(function (){
@@ -211,6 +210,27 @@ function GrowlCall(msg,type){
     });
 }
 
+function formatDate(formated, date = null) {
+    var dtToday;
+    if (!date)
+        dtToday = new Date()
+    else
+        dtToday = new Date(date)
+
+    var month = dtToday.getMonth() + 1;
+    var day = dtToday.getDate();
+    var year = dtToday.getFullYear();
+    if (month < 10)
+        month = '0' + month.toString();
+    if (day < 10)
+        day = '0' + day.toString();
+
+    if (formated)
+        return [year, month, day].join('-'); // for init the date picker
+    else
+        return [day, month, year].join('-'); // for filter dates
+}
+
 function updateMedReports(medication_reports,mychart) {
     med_reports = []
     for (const reportee of medication_reports) {
@@ -221,7 +241,80 @@ function updateMedReports(medication_reports,mychart) {
         }
         med_reports.push(report)
     }
-    console.log(med_reports)
     mychart.data.datasets[1].data = med_reports;
     mychart.update();
 }
+
+function filterDatesAndLabels(isDefault, reports) {
+    status_reports = []
+    let pointsStyles = []
+    let pointsColors = []
+    if (isDefault)
+        formated_today = formatDate(false)
+    else
+        formated_today = formatDate(false, date_picker.value)
+
+    for (const reportee of reports) {
+        new_label = reportee.label;
+        new_hallucination = reportee.hallucinations == 'True' ? "עם הזיות" : "ללא הזיות";
+        new_value = reportee.value;
+        new_label = new_label.split(' ')
+
+        if (reportee.hallucinations === 'True') {
+            pointsStyles.push('triangle')
+            pointsColors.push('rgb(255,82,82)')
+        } else {
+            pointsStyles.push('circle')
+            pointsColors.push('rgb(39,65,181)')
+        }
+
+        myChart.data.datasets[0].pointStyle = pointsStyles
+        myChart.data.datasets[0].pointBorderColor = pointsColors
+
+        if (new_label[0] === formated_today) {
+            report = {
+                x: new_label[1],
+                y: parseInt(new_value),
+                hallucination: new_hallucination
+            }
+            status_reports.push(report)
+        }
+    }
+    myChart.data.datasets[0].data = status_reports;
+    myChart.update();
+}
+
+// Makes the tooltips to be always shown
+Chart.pluginService.register({
+    beforeRender: function (chart) {
+        if (chart.config.options.showAllTooltips) {
+            chart.pluginTooltips = [];
+            chart.config.data.datasets.forEach(function (dataset, i) {
+                if (i == 1) { // only Medications tooltips
+                    chart.getDatasetMeta(i).data.forEach(function (sector, j) {
+                        chart.pluginTooltips.push(new Chart.Tooltip({
+                            _chart: chart.chart,
+                            _chartInstance: chart,
+                            _data: chart.data,
+                            _options: chart.options.tooltips,
+                            _active: [sector]
+                        }, chart));
+                    });
+                }
+            });
+            chart.options.tooltips.enabled = false;
+        }
+    },
+    afterDraw: function (chart, easing) {
+        if (chart.config.options.showAllTooltips) {
+            chart.options.tooltips.enabled = true;
+            Chart.helpers.each(chart.pluginTooltips, function (tooltip) {
+                tooltip.initialize();
+                tooltip.update();
+                tooltip.pivot();
+                tooltip.transition(easing).draw();
+            });
+            chart.options.tooltips.enabled = false;
+        }
+    }
+});

@@ -122,6 +122,7 @@ def patient_detail(request):
         patient_medications = db.child('Patients').child(patient.key()).child("medicine_list").get()
         patient_reports = db.child('Patients').child(patient.key()).child("reports").get()
         patient_token = patient_details['token']
+        request.session['patient_token'] = patient_token
 
         # Data for the charts
         reports = status_data_for_chart(patient_reports)
@@ -168,6 +169,7 @@ def update_medicine(request):
         data['id']).update(data)
 
     if check:
+        PushService.send_medicine_notification(request.session.get('patient_token'))
         return HttpResponse("True")
     else:
         return HttpResponse("False")
@@ -180,6 +182,7 @@ def delete_medicine(request):
         .child(key_to_delete).remove()
 
     if check is None:
+        PushService.send_medicine_notification(request.session.get('patient_token'))
         return HttpResponse("True")
     else:
         return HttpResponse("False")
