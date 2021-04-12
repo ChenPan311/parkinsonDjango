@@ -5,7 +5,10 @@
 <html dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Patient Page{% endblock %} </title>
+    <title>{% block title %}
+        {{patient_details.first_name}} {{patient_details.last_name}} | Parkinson
+        {% endblock %}
+    </title>
 
 </head>
 <body>
