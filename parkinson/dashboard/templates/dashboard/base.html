@@ -26,7 +26,9 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="top-navbar">
-            <span class="navbar-brand">Parkinson</span>
+            <span class="navbar-brand">Parkinson
+                <img style="width: 40px" src="{% static "dashboard/favicon-p.png" %}">
+            </span>
             <ul class="navbar-nav mx-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="/home"><i class="fas fa-desktop"></i><span> בית</span></a>
@@ -42,9 +44,9 @@
                 </li>
             </ul>
         </div>
-        <div>
+        <div class="navbar-brand">
             <a href="/logout" class="logout_btn btn btn-outline-light">התנתק</a>
-            <span class="navbar-brand px-2">ד"ר {{request.session.name}}</span>
+            <span class="navbar-text px-2">ד"ר {{request.session.name}}</span>
         </div>
     </div>
 </nav>

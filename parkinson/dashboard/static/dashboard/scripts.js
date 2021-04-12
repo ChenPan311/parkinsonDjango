@@ -158,44 +158,44 @@ $('#add_medicine_btn').click(function () {
     trLast.after(trNew);
 })
 
-$('#notify_patient_medications').click(function (){
-    token = $(this).data("token")
-    const csrf_tok = $('input[name="csrfmiddlewaretoken"]').attr('value');
-        $.post({
-        url: "/patient_detail/send_medication_notif",
-        data: {data : token},
-        headers: {
-            "X-CSRFToken": csrf_tok
-        },
-        success: function (result) {
-            if (result === "False") {  //If something went wrong
-                GrowlCall("אירעה שגיאה",'danger')
-            } else {
-                GrowlCall("התראה נשלחה!",'success')
-            }
-        }
-    })
+// $('#notify_patient_medications').click(function (){
+//     token = $(this).data("token")
+//     const csrf_tok = $('input[name="csrfmiddlewaretoken"]').attr('value');
+//         $.post({
+//         url: "/patient_detail/send_medication_notif",
+//         data: {data : token},
+//         headers: {
+//             "X-CSRFToken": csrf_tok
+//         },
+//         success: function (result) {
+//             if (result === "False") {  //If something went wrong
+//                 GrowlCall("אירעה שגיאה",'danger')
+//             } else {
+//                 GrowlCall("התראה נשלחה!",'success')
+//             }
+//         }
+//     })
+//
+// })
 
-})
-
-$('#notify_patient_questionnaire').click(function (){
-    token = $(this).data("token")
-    const csrf_tok = $('input[name="csrfmiddlewaretoken"]').attr('value');
-        $.post({
-        url: "/patient_detail/send_questionnaire_notif",
-        data: {data : token},
-        headers: {
-            "X-CSRFToken": csrf_tok
-        },
-        success: function (result) {
-            if (result === "False") {  //If something went wrong
-                GrowlCall("אירעה שגיאה",'danger')
-            } else {
-                GrowlCall("התראה נשלחה!",'success')
-            }
-        }
-    })
-})
+// $('#notify_patient_questionnaire').click(function (){
+//     token = $(this).data("token")
+//     const csrf_tok = $('input[name="csrfmiddlewaretoken"]').attr('value');
+//         $.post({
+//         url: "/patient_detail/send_questionnaire_notif",
+//         data: {data : token},
+//         headers: {
+//             "X-CSRFToken": csrf_tok
+//         },
+//         success: function (result) {
+//             if (result === "False") {  //If something went wrong
+//                 GrowlCall("אירעה שגיאה",'danger')
+//             } else {
+//                 GrowlCall("התראה נשלחה!",'success')
+//             }
+//         }
+//     })
+// })
 
 function GrowlCall(msg,type){
     $(".bootstrap-growl").remove();

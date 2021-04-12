@@ -25,6 +25,10 @@ body {
     background: #24417B;
 }
 
+.btn-outline-primary{
+    border-color: #24417B;
+}
+
 .btn-blue {
     color: #fdfdfd;
     background: rgba(36, 65, 123, 0.9);
@@ -33,6 +37,10 @@ body {
 .btn-blue:hover {
     color: #fdfdfd;
     background: rgba(36, 65, 123, 1);
+}
+
+.container-fluid img{
+    margin-right: 10px;
 }
 
 .col-lg span, .q_title {

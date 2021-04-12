@@ -6,3 +6,7 @@ body{
 h1{
     color: white;
 }
+
+.accordion-button:not(.collapsed) {
+    background-color: #dee2e6;
+}

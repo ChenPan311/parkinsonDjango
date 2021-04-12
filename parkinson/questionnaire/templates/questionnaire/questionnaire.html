@@ -133,7 +133,11 @@
         <h5>תשובות : </h5>
         <div class="answers">
             {% for answer in question.choices %}
+            {% if forloop.last %}
+            <span class="mb-1">{{answer}}</span>
+            {% else %}
             <span class="mb-1">{{answer}},</span>
+            {% endif %}
             {% endfor %}
         </div>
         {% endif %}
