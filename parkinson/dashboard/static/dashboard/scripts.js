@@ -1,4 +1,15 @@
-const MSG = " מטופל לא נמצא"
+function setTimepickerOptions(e) {
+    e.timepicker({
+        'timeFormat': 'H:i',
+        'minTime': '05:00am',
+        'maxTime': '04:30am',
+        'step': 30,
+        'lang': {
+            mins: 'min',
+            hrs: 'hr'
+        }
+    })
+}
 
 $('#search_btn').click(function () {
     let patient_id = $('#patient_input')[0].value
@@ -12,16 +23,7 @@ $('#search_btn').click(function () {
         },
         success: function (result) {
             if (result === "False") {  //If medicine already exist
-                $(".bootstrap-growl").remove();  //Nice looking alert
-                $.bootstrapGrowl(MSG, {
-                    ele: 'body',
-                    type: 'danger',
-                    offset: {from: 'top', amount: 10},
-                    align: 'center',
-                    width: 'auto',
-                    delay: 2000,
-                    allow_dismiss: false,
-                });
+                GrowlCall(" מטופל לא נמצא",'danger');
             } else {
                 $('<input type="submit">').hide().appendTo(form).click().remove();
             }
@@ -53,7 +55,7 @@ function handleSaveEdits(e) {
             category_id = $('#' + medicine_id).data('category')
             medicine_name = $(this).children("option").filter(":selected").text()
         } else {
-            dosage = $(this)[0].value
+            dosage = $(this).children("option").filter(":selected").text()
         }
     })
 
@@ -79,30 +81,12 @@ function handleSaveEdits(e) {
         },
         success: function (result) {
             if (result === "False") {  //If something went wrong
-                $(".bootstrap-growl").remove();
-                $.bootstrapGrowl("עדכון לא הצליח", {
-                    ele: '.header-nb',
-                    type: 'danger',
-                    offset: {from: 'top', amount: 10},
-                    align: 'center',
-                    width: 'auto',
-                    delay: 2000,
-                    allow_dismiss: false,
-                });
+                GrowlCall("עדכון לא הצליח",'danger')
             } else {
                 e.data("medicine-key", medicine_id) // updating the data-medicine-key to the new medcine key
                 row.find('.edit_row_btn, .delete_row_btn, .submit_delete_row_btn').data("medicine-key", medicine_id)
                 handleAttrs(e)
-                $(".bootstrap-growl").remove();
-                $.bootstrapGrowl("עודכן בהצלחה!", {
-                    ele: '.header-nb',
-                    type: 'success',
-                    offset: {from: 'top', amount: 20},
-                    align: 'center',
-                    width: 'auto',
-                    delay: 2000,
-                    allow_dismiss: false,
-                });
+                GrowlCall("עודכן בהצלחה!",'success')
             }
         }
     })
@@ -119,10 +103,10 @@ $('table').on('click', '.save_row_btn', function () {
 $('table').on('click', '.add_time_btn', function () {
     cell = $(this).closest('td')
     newInput = $('<input required class="row-time-data" type="time">')
+    setTimepickerOptions(newInput)
     cell.append(newInput).append(" ")
 
 })
-
 
 function delete_data(e) {
     med_key = e.data('medicine-key')
@@ -141,15 +125,7 @@ function delete_data(e) {
             },
             success: function (result) {
                 if (result === "False") {  //If something went wrong
-                    $(".bootstrap-growl").remove();
-                    $.bootstrapGrowl("עדכון לא הצליח", {
-                        type: 'danger',
-                        offset: {from: 'top', amount: 10},
-                        align: 'center',
-                        width: 'auto',
-                        delay: 2000,
-                        allow_dismiss: false,
-                    });
+                    GrowlCall("עדכון לא הצליח",'danger')
                 } else {
                     row.fadeOut(1000, function () {
                         row.remove();
@@ -188,88 +164,171 @@ $('#add_medicine_btn').click(function () {
         $(this).remove()
     })
     trNew.find('.row-data').each(function () {
-        $(this).hasClass('name') ? $(this).prop('selectedIndex', 1) : $(this).val("").attr('value', '')
+        $(this).hasClass('name') ? $(this).prop('selectedIndex', 1) : $(this).prop('selectedIndex', 0)
     })
     trNew.find('.edit_row_btn, .save_row_btn ,delete_row_btn, .submit_delete_row_btn').each(function () {
         $(this).data("medicine-key", '')
     })
     trLast.after(trNew);
-    console.log($('table tbody tr').length)
 })
 
-$('#notify_patient_medications').click(function (){
-    token = $(this).data("token")
-    const csrf_tok = $('input[name="csrfmiddlewaretoken"]').attr('value');
-        $.post({
-        url: "/patient_detail/send_medication_notif",
-        data: {data : token},
-        headers: {
-            "X-CSRFToken": csrf_tok
-        },
-        success: function (result) {
-            if (result === "False") {  //If something went wrong
-                $(".bootstrap-growl").remove();
-                $.bootstrapGrowl("אירעה שגיאה", {
-                    ele: '.header-nb',
-                    type: 'danger',
-                    offset: {from: 'top', amount: 10},
-                    align: 'center',
-                    width: 'auto',
-                    delay: 2000,
-                    allow_dismiss: false,
-                });
-            } else {
-                $(".bootstrap-growl").remove();
-                $.bootstrapGrowl("התראה נשלחה!", {
-                    ele: '.header-nb',
-                    type: 'success',
-                    offset: {from: 'top', amount: 20},
-                    align: 'center',
-                    width: 'auto',
-                    delay: 2000,
-                    allow_dismiss: false,
-                });
-            }
+// $('#notify_patient_medications').click(function (){
+//     token = $(this).data("token")
+//     const csrf_tok = $('input[name="csrfmiddlewaretoken"]').attr('value');
+//         $.post({
+//         url: "/patient_detail/send_medication_notif",
+//         data: {data : token},
+//         headers: {
+//             "X-CSRFToken": csrf_tok
+//         },
+//         success: function (result) {
+//             if (result === "False") {  //If something went wrong
+//                 GrowlCall("אירעה שגיאה",'danger')
+//             } else {
+//                 GrowlCall("התראה נשלחה!",'success')
+//             }
+//         }
+//     })
+//
+// })
+
+// $('#notify_patient_questionnaire').click(function (){
+//     token = $(this).data("token")
+//     const csrf_tok = $('input[name="csrfmiddlewaretoken"]').attr('value');
+//         $.post({
+//         url: "/patient_detail/send_questionnaire_notif",
+//         data: {data : token},
+//         headers: {
+//             "X-CSRFToken": csrf_tok
+//         },
+//         success: function (result) {
+//             if (result === "False") {  //If something went wrong
+//                 GrowlCall("אירעה שגיאה",'danger')
+//             } else {
+//                 GrowlCall("התראה נשלחה!",'success')
+//             }
+//         }
+//     })
+// })
+
+function GrowlCall(msg,type){
+    $(".bootstrap-growl").remove();
+    $.bootstrapGrowl(msg, {
+        ele: 'nav',
+        type: type,
+        offset: {from: 'top', amount: 20},
+        align: 'center',
+        width: 'auto',
+        delay: 2000,
+        allow_dismiss: false,
+    });
+}
+
+function formatDate(formated, date = null) {
+    var dtToday;
+    if (!date)
+        dtToday = new Date()
+    else
+        dtToday = new Date(date)
+
+    var month = dtToday.getMonth() + 1;
+    var day = dtToday.getDate();
+    var year = dtToday.getFullYear();
+    if (month < 10)
+        month = '0' + month.toString();
+    if (day < 10)
+        day = '0' + day.toString();
+
+    if (formated)
+        return [year, month, day].join('-'); // for init the date picker
+    else
+        return [day, month, year].join('-'); // for filter dates
+}
+
+function updateMedReports(medication_reports,mychart) {
+    med_reports = []
+    for (const reportee of medication_reports) {
+        report = {
+            x: reportee.label,
+            y: 8,
+            id: reportee.name
         }
-    })
+        med_reports.push(report)
+    }
+    mychart.data.datasets[1].data = med_reports;
+    mychart.update();
+}
 
-})
+function filterDatesAndLabels(isDefault, reports) {
+    status_reports = []
+    let pointsStyles = []
+    let pointsColors = []
+    if (isDefault)
+        formated_today = formatDate(false)
+    else
+        formated_today = formatDate(false, date_picker.value)
 
-$('#notify_patient_questionnaire').click(function (){
-    token = $(this).data("token")
-    const csrf_tok = $('input[name="csrfmiddlewaretoken"]').attr('value');
-        $.post({
-        url: "/patient_detail/send_questionnaire_notif",
-        data: {data : token},
-        headers: {
-            "X-CSRFToken": csrf_tok
-        },
-        success: function (result) {
-            if (result === "False") {  //If something went wrong
-                $(".bootstrap-growl").remove();
-                $.bootstrapGrowl("אירעה שגיאה", {
-                    ele: '.header-nb',
-                    type: 'danger',
-                    offset: {from: 'top', amount: 10},
-                    align: 'center',
-                    width: 'auto',
-                    delay: 2000,
-                    allow_dismiss: false,
-                });
-            } else {
-                $(".bootstrap-growl").remove();
-                $.bootstrapGrowl("התראה נשלחה!", {
-                    ele: '.header-nb',
-                    type: 'success',
-                    offset: {from: 'top', amount: 20},
-                    align: 'center',
-                    width: 'auto',
-                    delay: 2000,
-                    allow_dismiss: false,
-                });
-            }
+    for (const reportee of reports) {
+        new_label = reportee.label;
+        new_hallucination = reportee.hallucinations == 'True' ? "עם הזיות" : "ללא הזיות";
+        new_value = reportee.value;
+        new_label = new_label.split(' ')
+
+        if (reportee.hallucinations === 'True') {
+            pointsStyles.push('triangle')
+            pointsColors.push('rgb(255,82,82)')
+        } else {
+            pointsStyles.push('circle')
+            pointsColors.push('rgb(39,65,181)')
         }
-    })
 
-})
+        myChart.data.datasets[0].pointStyle = pointsStyles
+        myChart.data.datasets[0].pointBorderColor = pointsColors
 
+        if (new_label[0] === formated_today) {
+            report = {
+                x: new_label[1],
+                y: parseInt(new_value),
+                hallucination: new_hallucination
+            }
+            status_reports.push(report)
+        }
+    }
+    myChart.data.datasets[0].data = status_reports;
+    myChart.update();
+}
+
+// Makes the tooltips to be always shown
+Chart.pluginService.register({
+    beforeRender: function (chart) {
+        if (chart.config.options.showAllTooltips) {
+            chart.pluginTooltips = [];
+            chart.config.data.datasets.forEach(function (dataset, i) {
+                if (i == 1) { // only Medications tooltips
+                    chart.getDatasetMeta(i).data.forEach(function (sector, j) {
+                        chart.pluginTooltips.push(new Chart.Tooltip({
+                            _chart: chart.chart,
+                            _chartInstance: chart,
+                            _data: chart.data,
+                            _options: chart.options.tooltips,
+                            _active: [sector]
+                        }, chart));
+                    });
+                }
+            });
+            chart.options.tooltips.enabled = false;
+        }
+    },
+    afterDraw: function (chart, easing) {
+        if (chart.config.options.showAllTooltips) {
+            chart.options.tooltips.enabled = true;
+            Chart.helpers.each(chart.pluginTooltips, function (tooltip) {
+                tooltip.initialize();
+                tooltip.update();
+                tooltip.pivot();
+                tooltip.transition(easing).draw();
+            });
+            chart.options.tooltips.enabled = false;
+        }
+    }
+});

@@ -12,6 +12,8 @@ ON = 4
 OFF = 2
 HALLUCINATION = 0
 
+DOSAGES = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]
+
 
 # Create your views here.
 
@@ -122,6 +124,7 @@ def patient_detail(request):
         patient_medications = db.child('Patients').child(patient.key()).child("medicine_list").get()
         patient_reports = db.child('Patients').child(patient.key()).child("reports").get()
         patient_token = patient_details['token']
+        request.session['patient_token'] = patient_token
 
         # Data for the charts
         reports = status_data_for_chart(patient_reports)
@@ -134,6 +137,7 @@ def patient_detail(request):
                                                              'reports': reports,
                                                              'medications': medications,
                                                              'medication_reports': report_list,
+                                                             'dosages': DOSAGES,
                                                              'token': patient_token})
 
 
@@ -168,6 +172,7 @@ def update_medicine(request):
         data['id']).update(data)
 
     if check:
+        PushService.send_medicine_notification(request.session.get('patient_token'))
         return HttpResponse("True")
     else:
         return HttpResponse("False")
@@ -180,22 +185,23 @@ def delete_medicine(request):
         .child(key_to_delete).remove()
 
     if check is None:
+        PushService.send_medicine_notification(request.session.get('patient_token'))
         return HttpResponse("True")
     else:
         return HttpResponse("False")
 
 
-def send_medication_notif(request):
-    result = PushService.send_medicine_notification(request.POST.get('data'))
-    if result['success'] == 1:
-        return HttpResponse('True')
-    else:
-        return HttpResponse('False')
-
-
-def send_questionnaire_notif(request):
-    result = PushService.send_questionnaire_notification(request.POST.get('data'))
-    if result['success'] == 1:
-        return HttpResponse('True')
-    else:
-        return HttpResponse('False')
+# def send_medication_notif(request):
+#     result = PushService.send_medicine_notification(request.POST.get('data'))
+#     if result['success'] == 1:
+#         return HttpResponse('True')
+#     else:
+#         return HttpResponse('False')
+#
+#
+# def send_questionnaire_notif(request):
+#     result = PushService.send_questionnaire_notification(request.POST.get('data'))
+#     if result['success'] == 1:
+#         return HttpResponse('True')
+#     else:
+#         return HttpResponse('False')

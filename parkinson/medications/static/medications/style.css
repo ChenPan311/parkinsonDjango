@@ -1,8 +1,12 @@
 body{
-    background-image: linear-gradient(120deg, #6B82BF 0%, #24417B 100%);
+    background-image: linear-gradient(120deg, #868F96 0%, #596164 100%);
     padding: 6rem;
 }
 
 h1{
     color: white;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #dee2e6;
 }
