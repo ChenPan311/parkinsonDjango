@@ -1,3 +1,16 @@
+function setTimepickerOptions(e) {
+    e.timepicker({
+        'timeFormat': 'H:i',
+        'minTime': '05:00am',
+        'maxTime': '04:30am',
+        'step': 30,
+        'lang': {
+            mins: 'min',
+            hrs: 'hr'
+        }
+    })
+}
+
 $('#search_btn').click(function () {
     let patient_id = $('#patient_input')[0].value
     let form = $('#search_form')
@@ -42,7 +55,7 @@ function handleSaveEdits(e) {
             category_id = $('#' + medicine_id).data('category')
             medicine_name = $(this).children("option").filter(":selected").text()
         } else {
-            dosage = $(this)[0].value
+            dosage = $(this).children("option").filter(":selected").text()
         }
     })
 
@@ -90,6 +103,7 @@ $('table').on('click', '.save_row_btn', function () {
 $('table').on('click', '.add_time_btn', function () {
     cell = $(this).closest('td')
     newInput = $('<input required class="row-time-data" type="time">')
+    setTimepickerOptions(newInput)
     cell.append(newInput).append(" ")
 
 })
@@ -150,7 +164,7 @@ $('#add_medicine_btn').click(function () {
         $(this).remove()
     })
     trNew.find('.row-data').each(function () {
-        $(this).hasClass('name') ? $(this).prop('selectedIndex', 1) : $(this).val("").attr('value', '')
+        $(this).hasClass('name') ? $(this).prop('selectedIndex', 1) : $(this).prop('selectedIndex', 0)
     })
     trNew.find('.edit_row_btn, .save_row_btn ,delete_row_btn, .submit_delete_row_btn').each(function () {
         $(this).data("medicine-key", '')

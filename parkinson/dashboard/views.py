@@ -12,6 +12,8 @@ ON = 4
 OFF = 2
 HALLUCINATION = 0
 
+DOSAGES = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]
+
 
 # Create your views here.
 
@@ -135,6 +137,7 @@ def patient_detail(request):
                                                              'reports': reports,
                                                              'medications': medications,
                                                              'medication_reports': report_list,
+                                                             'dosages': DOSAGES,
                                                              'token': patient_token})
 
 
@@ -188,17 +191,17 @@ def delete_medicine(request):
         return HttpResponse("False")
 
 
-def send_medication_notif(request):
-    result = PushService.send_medicine_notification(request.POST.get('data'))
-    if result['success'] == 1:
-        return HttpResponse('True')
-    else:
-        return HttpResponse('False')
-
-
-def send_questionnaire_notif(request):
-    result = PushService.send_questionnaire_notification(request.POST.get('data'))
-    if result['success'] == 1:
-        return HttpResponse('True')
-    else:
-        return HttpResponse('False')
+# def send_medication_notif(request):
+#     result = PushService.send_medicine_notification(request.POST.get('data'))
+#     if result['success'] == 1:
+#         return HttpResponse('True')
+#     else:
+#         return HttpResponse('False')
+#
+#
+# def send_questionnaire_notif(request):
+#     result = PushService.send_questionnaire_notification(request.POST.get('data'))
+#     if result['success'] == 1:
+#         return HttpResponse('True')
+#     else:
+#         return HttpResponse('False')

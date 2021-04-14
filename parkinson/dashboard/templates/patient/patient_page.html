@@ -9,7 +9,6 @@
         {{patient_details.first_name}} {{patient_details.last_name}} | Parkinson
         {% endblock %}
     </title>
-
 </head>
 <body>
 
@@ -142,8 +141,13 @@
                                 {% endfor %}
                             </select>
                         </td>
-                        <td><input required disabled class="row-data dosage form-control" style="max-width: 100px"
-                                   type="text"></td>
+                        <td>
+                            <select required disabled class="row-data dosage form-select">
+                                {% for dos in dosages %}
+                                <option value="{{dos}}">{{dos}}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
                         <td style="max-width: 300px">
                             <button type="button" class="add_time_btn btn btn-outline-success btn-sm" disabled>+</button>
                         </td>
@@ -192,8 +196,17 @@
                                 {% endfor %}
                             </select>
                         </td>
-                        <td><input required disabled class="row-data dosage form-control" style="max-width: 100px"
-                                   type="text" value={{medicine.val.dosage}}></td>
+                        <td>
+                            <select required disabled class="row-data dosage form-select">
+                                {% for dos in dosages %}
+                                {% if dos == medicine.val.dosage %}
+                                <option selected value="{{dos}}">{{dos}}</option>
+                                {% else %}
+                                <option value="{{dos}}">{{dos}}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                        </td>
                         <td style="max-width: 300px">
                             <button type="button" class="add_time_btn btn btn-outline-success btn-sm" disabled>+</button>
                             {% for time in medicine.val.hoursArr %}
@@ -343,6 +356,8 @@
             },
         }
     });
+
+    setTimepickerOptions($('.row-time-data'))
     // Getting data of med times and put it on graph
     updateMedReports({{medication_reports|safe}}, myChart);
     // Setting the date picker date to today and preventing future dates

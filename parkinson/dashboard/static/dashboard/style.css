@@ -52,6 +52,9 @@ body {
     font-weight: bold;
 }
 
+.form-control{
+    border-color: black;
+}
 #do_legend {
     list-style: none;
     margin: 0;
