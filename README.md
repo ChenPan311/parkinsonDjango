@@ -3,8 +3,6 @@
 
 ## Setup 
 
-``cd`` to Source root in your IDE
-go to your terminal and write ```venv\Scripts\activate``` and you are ready to go.
-
-
-
+``cd`` to Source root in the IDE terimnal and then write ```venv\Scripts\activate``` to activate the env.
+Then write in the terminal ``cd parkinson`` and then ``python manage.py runserver`` in order to launch the server.
+You are ready to go.
