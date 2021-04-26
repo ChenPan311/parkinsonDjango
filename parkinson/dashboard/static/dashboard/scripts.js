@@ -260,7 +260,7 @@ function updateMedReports(medication_reports,mychart) {
 }
 
 function filterDatesAndLabels(isDefault, reports) {
-    status_reports = []
+    let status_reports = []
     let pointsStyles = []
     let pointsColors = []
     if (isDefault)
@@ -274,18 +274,14 @@ function filterDatesAndLabels(isDefault, reports) {
         new_value = reportee.value;
         new_label = new_label.split(' ')
 
-        if (reportee.hallucinations === 'True') {
-            pointsStyles.push('triangle')
-            pointsColors.push('rgb(255,82,82)')
-        } else {
-            pointsStyles.push('circle')
-            pointsColors.push('rgb(39,65,181)')
-        }
-
-        myChart.data.datasets[0].pointStyle = pointsStyles
-        myChart.data.datasets[0].pointBorderColor = pointsColors
-
         if (new_label[0] === formated_today) {
+            if (reportee.hallucinations === 'True') {
+                pointsStyles.push('triangle')
+                pointsColors.push('rgb(255,82,82)')
+            } else {
+                pointsStyles.push('circle')
+                pointsColors.push('rgb(39,65,181)')
+            }
             report = {
                 x: new_label[1],
                 y: parseInt(new_value),
@@ -294,6 +290,8 @@ function filterDatesAndLabels(isDefault, reports) {
             status_reports.push(report)
         }
     }
+    myChart.data.datasets[0].pointStyle = pointsStyles
+    myChart.data.datasets[0].pointBorderColor = pointsColors
     myChart.data.datasets[0].data = status_reports;
     myChart.update();
 }

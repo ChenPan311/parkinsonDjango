@@ -111,6 +111,26 @@ def medications_data_for_charts(medications):
     return report_list
 
 
+def medications_reports(medications, patient_medications):
+    keys = []
+    data = []
+    for med_key in patient_medications.each():
+        keys.append(med_key.key())  # Creating keys arr for existing medications keys
+    if medications.val() is not None:
+        for med_report in medications.each():
+            for med in med_report.val():
+                key = med.get('medicineId')
+                if key in keys:
+                    med_name = patient_medications.val().get(key).get('name')
+                    report_object = {
+                        'label': prettydate(med.get('takenTime')),
+                        'value': 8,
+                        'name': med_name
+                    }
+                    data.append(report_object)
+    return data
+
+
 # @cache_control(no_cache=False, must_revalidate=True, no_store=True)
 def patient_detail(request):
     patient_id = request.POST.get("patient_id", 0)
@@ -122,6 +142,7 @@ def patient_detail(request):
         patient_details = patient.val().get("user_details")
         patient_questionnaire = patient.val().get("questionnaire")
         patient_medications = db.child('Patients').child(patient.key()).child("medicine_list").get()
+        patient_medications_reports = db.child('Patients').child(patient.key()).child("Medicine Reports").get()
         patient_reports = db.child('Patients').child(patient.key()).child("reports").get()
         patient_token = patient_details['token']
         request.session['patient_token'] = patient_token
@@ -129,6 +150,7 @@ def patient_detail(request):
         # Data for the charts
         reports = status_data_for_chart(patient_reports)
         report_list = medications_data_for_charts(patient_medications)
+        medications_reports(patient_medications_reports, patient_medications)
 
         medications = get_medications()
         return render(request, "patient/patient_page.html", {'patient_details': patient_details,
@@ -189,7 +211,6 @@ def delete_medicine(request):
         return HttpResponse("True")
     else:
         return HttpResponse("False")
-
 
 # def send_medication_notif(request):
 #     result = PushService.send_medicine_notification(request.POST.get('data'))
