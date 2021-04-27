@@ -10,8 +10,7 @@ from django.http import HttpResponse
 DYSKINESIA = 6
 ON = 4
 OFF = 2
-HALLUCINATION = 0
-
+HALLUCINATION = 8
 DOSAGES = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]
 
 
@@ -66,12 +65,13 @@ def user_logout(request):
 
 def prettydate(ms):
     date = datetime.fromtimestamp(ms / 1000.0)
-    date = date.strftime('%d-%m-%Y %H:%M:%S')
+    date = date.strftime('%d-%m-%Y %H:%M')
     return date
 
 
 def status_data_for_chart(reports):
     reports_list = []
+
     if reports.val() is not None:
         for report in reports.each():
             label = prettydate(report.val()['reportTime'])
@@ -79,6 +79,10 @@ def status_data_for_chart(reports):
                 hallucination = 'True'
             else:
                 hallucination = 'False'
+            if report.val()['falls']:
+                falls='True'
+            else:
+                falls='False'
             if report.val()['status'] == "On":
                 data = ON
             elif report.val()['status'] == "Off":
@@ -89,35 +93,36 @@ def status_data_for_chart(reports):
             report_object = {
                 'label': label,
                 'value': data,
-                'hallucinations': hallucination
+                'hallucinations': hallucination,
+                'falls':falls
             }
             reports_list.append(report_object)
     return reports_list
 
 
-def medications_data_for_charts(medications):
-    report_list = []
-    if medications.val() is not None:
-        for medication in medications.each():
-            for time in medication.val()['hoursArr']:
-                hour = str(time['hour']).rjust(2, '0')
-                minutes = str(time['minutes']).rjust(2, '0')
-                report_object = {
-                    'label': hour + ":" + minutes,
-                    'value': 8,
-                    'name': medication.val()['name']
-                }
-                report_list.append(report_object)
-    return report_list
+# def medications_data_for_charts(medications):
+#     report_list = []
+#     if medications.val() is not None:
+#         for medication in medications.each():
+#             for time in medication.val()['hoursArr']:
+#                 hour = str(time['hour']).rjust(2, '0')
+#                 minutes = str(time['minutes']).rjust(2, '0')
+#                 report_object = {
+#                     'label': hour + ":" + minutes,
+#                     'value': 8,
+#                     'name': medication.val()['name']
+#                 }
+#                 report_list.append(report_object)
+#     return report_list
 
 
-def medications_reports(medications, patient_medications):
+def medications_reports(medications_reports, patient_medications):
     keys = []
     data = []
     for med_key in patient_medications.each():
         keys.append(med_key.key())  # Creating keys arr for existing medications keys
-    if medications.val() is not None:
-        for med_report in medications.each():
+    if medications_reports.val() is not None:
+        for med_report in medications_reports.each():
             for med in med_report.val():
                 key = med.get('medicineId')
                 if key in keys:
@@ -149,8 +154,8 @@ def patient_detail(request):
 
         # Data for the charts
         reports = status_data_for_chart(patient_reports)
-        report_list = medications_data_for_charts(patient_medications)
-        medications_reports(patient_medications_reports, patient_medications)
+        # report_list = medications_data_for_charts(patient_medications)
+        reports_medication_list=medications_reports(patient_medications_reports, patient_medications)
 
         medications = get_medications()
         return render(request, "patient/patient_page.html", {'patient_details': patient_details,
@@ -158,9 +163,10 @@ def patient_detail(request):
                                                              'patient_questionnaire': patient_questionnaire,
                                                              'reports': reports,
                                                              'medications': medications,
-                                                             'medication_reports': report_list,
+                                                             'medication_reports': reports_medication_list,
                                                              'dosages': DOSAGES,
-                                                             'token': patient_token})
+                                                             'token': patient_token,
+                                                             })
 
 
 def patient_detail_check(request):

@@ -243,6 +243,8 @@
                 <input type="date" id="filter_dates">
                 <button class="btn btn-dark" id="filter_btn">סנן</button>
                 <ul id="do_legend">
+                    <li class="cross li-container"></li>
+                    <li class="li-container">מוות קליני</li>
                     <li class="circle"></li>
                     <li class="li-container">ללא הזיות</li>
                     <li class="triangle-up"></li>
@@ -278,10 +280,11 @@
                 showLine: true,
                 fill: false,
                 borderColor: 'rgb(39,65,181)',
-                borderWidth: 3,
-                pointBorderWidth: 8,
-                pointHoverRadius: 8,
+                borderWidth: 1,
+                pointBorderWidth: 5,
+                pointHoverRadius: 5,
                 pointStyle: [],
+                radius:10,
                 pointBorderColor: [],
                 data: [],
 
@@ -359,7 +362,7 @@
 
     setTimepickerOptions($('.row-time-data'))
     // Getting data of med times and put it on graph
-    updateMedReports({{medication_reports|safe}}, myChart);
+    updateMedReports(true,{{medication_reports|safe}}, myChart);
     // Setting the date picker date to today and preventing future dates
     today = formatDate(true);
     let date_picker = document.getElementById('filter_dates');
@@ -368,6 +371,7 @@
     // Getting data of reports and put it on graph
     filterDatesAndLabels(true, {{reports|safe}})
     document.getElementById('filter_btn').addEventListener('click', filterDatesAndLabels.bind(null, false, {{reports|safe}}));
+    document.getElementById('filter_btn').addEventListener('click', updateMedReports.bind(null, false, {{medication_reports|safe}},myChart));
 
 </script>
 

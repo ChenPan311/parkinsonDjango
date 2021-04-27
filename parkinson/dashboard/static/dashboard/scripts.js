@@ -245,15 +245,25 @@ function formatDate(formated, date = null) {
         return [day, month, year].join('-'); // for filter dates
 }
 
-function updateMedReports(medication_reports,mychart) {
+function updateMedReports(isDefault,medication_reports,mychart) {
+
+    if (isDefault)
+        formated_today = formatDate(false)
+    else
+        formated_today = formatDate(false, date_picker.value)
+
     med_reports = []
     for (const reportee of medication_reports) {
-        report = {
-            x: reportee.label,
-            y: 8,
-            id: reportee.name
+        new_label = reportee.label;
+        new_label = new_label.split(' ')
+        if (new_label[0] === formated_today) {
+            report = {
+                x: new_label[1],
+                y: 8,
+                id: reportee.name
+            }
+            med_reports.push(report)
         }
-        med_reports.push(report)
     }
     mychart.data.datasets[1].data = med_reports;
     mychart.update();
@@ -270,22 +280,29 @@ function filterDatesAndLabels(isDefault, reports) {
 
     for (const reportee of reports) {
         new_label = reportee.label;
-        new_hallucination = reportee.hallucinations == 'True' ? "עם הזיות" : "ללא הזיות";
         new_value = reportee.value;
         new_label = new_label.split(' ')
 
         if (new_label[0] === formated_today) {
-            if (reportee.hallucinations === 'True') {
+            if(reportee.hallucinations === 'True' && reportee.falls==='True') {
+                pointsStyles.push('cross')
+                pointsColors.push('rgb(0,0,0)')
+            }
+            else if (reportee.hallucinations === 'True') {
                 pointsStyles.push('triangle')
                 pointsColors.push('rgb(255,82,82)')
-            } else {
+            }
+            else if(reportee.falls==='True'){
+                pointsStyles.push('rect')
+                pointsColors.push('rgb(255,232,44)')
+            }else {
                 pointsStyles.push('circle')
                 pointsColors.push('rgb(39,65,181)')
             }
             report = {
                 x: new_label[1],
                 y: parseInt(new_value),
-                hallucination: new_hallucination
+                //we can add hallucinations and falls if the tooltip will work seperately.
             }
             status_reports.push(report)
         }
@@ -293,6 +310,7 @@ function filterDatesAndLabels(isDefault, reports) {
     myChart.data.datasets[0].pointStyle = pointsStyles
     myChart.data.datasets[0].pointBorderColor = pointsColors
     myChart.data.datasets[0].data = status_reports;
+    myChart.data.datasets[0].pointBackgroundColor=pointsColors;
     myChart.update();
 }
 
