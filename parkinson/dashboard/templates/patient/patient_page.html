@@ -211,14 +211,15 @@
                             <button type="button" class="add_time_btn btn btn-outline-success btn-sm" disabled>+</button>
                             {% for time in medicine.val.hoursArr %}
                             <input required class="row-time-data" disabled type="time"
-                                   value={{time.hour|time_for_med}}:{{time.minutes|time_for_med}}>
+                                   value={{time.hour|time_for_med}}:{{time.minutes|time_for_med}}
+                                   onkeydown="return false">
                             {% endfor %}
                         </td>
                         <td>
                             <button type="button" class="edit_row_btn btn btn-outline-success"
                                     data-medicine-key={{medicine.key}}>ערוך
                             </button>
-                            <button type="button" hidden class="save_row_btn btn btn-outline-success"
+                            <button type="button" hidden class="save_row_btn btn btn-success"
                                     data-medicine-key={{medicine.key}}>שמור
                             </button>
                             <button type="button" class="delete_row_btn btn btn-outline-danger"
@@ -242,16 +243,20 @@
             <div class="card-body ">
                 <input type="date" id="filter_dates">
                 <button class="btn btn-dark" id="filter_btn">סנן</button>
-                <ul id="do_legend">
-                    <li class="cross li-container"></li>
-                    <li class="li-container">מוות קליני</li>
-                    <li class="circle"></li>
-                    <li class="li-container">ללא הזיות</li>
-                    <li class="triangle-up"></li>
-                    <li class="li-container"> הזיות</li>
-                    <img src="{% static "dashboard/medicine.png" %}">
-                    <li class="li-container"> תרופות</li>
-                </ul>
+                <div class="legend-container mt-2">
+                    <ul id="do_legend">
+                        <li class="circle"></li>
+                        <li class="li-container"> ללא תופעות</li>
+                        <li class="triangle-up"></li>
+                        <li class="li-container"> הזיות</li>
+                        <li class="square"></li>
+                        <li class="li-container"> נפילות</li>
+                        <li class="cross"></li>
+                        <li class="li-container"> הזיות ונפילות</li>
+                        <img src="{% static "dashboard/medicine.png" %}">
+                        <li class="li-container"> תרופות</li>
+                    </ul>
+                </div>
                 <canvas id="myChart" width="400" height="150"></canvas>
             </div>
         </div>
@@ -281,10 +286,10 @@
                 fill: false,
                 borderColor: 'rgb(39,65,181)',
                 borderWidth: 1,
-                pointBorderWidth: 5,
-                pointHoverRadius: 5,
+                pointBorderWidth: 3,
+                pointHoverRadius: 8,
                 pointStyle: [],
-                radius:10,
+                radius:8,
                 pointBorderColor: [],
                 data: [],
 

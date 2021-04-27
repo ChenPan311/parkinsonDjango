@@ -2,7 +2,7 @@ from datetime import datetime
 from django.views.decorators.cache import cache_control
 from django.contrib import auth
 from django.shortcuts import render, redirect
-from firebase_repo import auth_fb, db, get_medications
+from firebase_repo import auth_fb, db, get_medications, get_medication_by_id
 import PushService
 from .forms import Login
 from django.http import HttpResponse
@@ -74,18 +74,18 @@ def status_data_for_chart(reports):
 
     if reports.val() is not None:
         for report in reports.each():
-            label = prettydate(report.val()['reportTime'])
-            if report.val()['hallucinations']:
+            label = prettydate(report.val().get('reportTime'))
+            if report.val().get('hallucinations'):
                 hallucination = 'True'
             else:
                 hallucination = 'False'
-            if report.val()['falls']:
-                falls='True'
+            if report.val().get('falls'):
+                falls = 'True'
             else:
-                falls='False'
-            if report.val()['status'] == "On":
+                falls = 'False'
+            if report.val().get('status') == "On":
                 data = ON
-            elif report.val()['status'] == "Off":
+            elif report.val().get('status') == "Off":
                 data = OFF
             else:
                 data = DYSKINESIA
@@ -94,7 +94,7 @@ def status_data_for_chart(reports):
                 'label': label,
                 'value': data,
                 'hallucinations': hallucination,
-                'falls':falls
+                'falls': falls
             }
             reports_list.append(report_object)
     return reports_list
@@ -129,11 +129,23 @@ def medications_reports(medications_reports, patient_medications):
                     med_name = patient_medications.val().get(key).get('name')
                     report_object = {
                         'label': prettydate(med.get('takenTime')),
-                        'value': 8,
                         'name': med_name
                     }
                     data.append(report_object)
     return data
+
+
+# def medications_reports(medications_reports):
+#     data = []
+#     if medications_reports.val() is not None:
+#         for med_report in medications_reports.each():
+#             for med in med_report.val():
+#                 report_object = {
+#                     'label': prettydate(med.get('takenTime')),
+#                     'name': med.get('name')
+#                 }
+#                 data.append(report_object)
+#     return data
 
 
 # @cache_control(no_cache=False, must_revalidate=True, no_store=True)
@@ -155,7 +167,7 @@ def patient_detail(request):
         # Data for the charts
         reports = status_data_for_chart(patient_reports)
         # report_list = medications_data_for_charts(patient_medications)
-        reports_medication_list=medications_reports(patient_medications_reports, patient_medications)
+        reports_medication_list = medications_reports(patient_medications_reports, patient_medications)
 
         medications = get_medications()
         return render(request, "patient/patient_page.html", {'patient_details': patient_details,
@@ -180,14 +192,14 @@ def patient_detail_check(request):
 
 def update_medicine(request):
     data = request.POST.dict()
-    times = (data['hoursArr']).split(',')
+    times = (data.get('hoursArr')).split(',')
     time_dict = {}
     idx = 0
     for time in times:
-        if time != '':
-            hours = int(time.split(':')[0])
-            minutes = int(time.split(':')[1])
-            time_dict[idx] = {'hour': hours, 'minutes': minutes}
+        if time != "00:00" and time != '':
+            hours = time.split(':')[0]
+            minutes = time.split(':')[1]
+            time_dict[idx] = {'hour': int(hours), 'minutes': int(minutes)}
             idx += 1
 
     data['hoursArr'] = time_dict

@@ -1,8 +1,8 @@
 function setTimepickerOptions(e) {
     e.timepicker({
         'timeFormat': 'H:i',
-        'minTime': '05:00am',
-        'maxTime': '04:30am',
+        'minTime': '00:00am',
+        'maxTime': '23:30am',
         'step': 30,
         'lang': {
             mins: 'min',
@@ -35,6 +35,9 @@ function handleAttrs(e) {
     row = e.closest('tr') // finds closest <tr> element - row that contains the btn we clicked
     row.find('.row-data , .row-time-data, .add_time_btn').each(function () { // in this row find classes ... (inputs)
         $(this).attr('disabled') ? $(this).prop('disabled', false) : $(this).prop('disabled', true)
+        if ($(this).hasClass('row-time-data')){
+            $(this)[0].value === "00:00" || $(this)[0].value === '' ? $(this).remove() : null; // removing uninitalize time input
+        }
     })
     save_updates = row.find('.save_row_btn')
     delete_btn = row.find('.delete_row_btn')
@@ -102,7 +105,7 @@ $('table').on('click', '.save_row_btn', function () {
 
 $('table').on('click', '.add_time_btn', function () {
     cell = $(this).closest('td')
-    newInput = $('<input required class="row-time-data" type="time">')
+    newInput = $('<input required class="row-time-data" type="time" onkeydown="return false">')
     setTimepickerOptions(newInput)
     cell.append(newInput).append(" ")
 
@@ -284,7 +287,7 @@ function filterDatesAndLabels(isDefault, reports) {
         new_label = new_label.split(' ')
 
         if (new_label[0] === formated_today) {
-            if(reportee.hallucinations === 'True' && reportee.falls==='True') {
+            if(reportee.hallucinations === 'True' && reportee.falls === 'True') {
                 pointsStyles.push('cross')
                 pointsColors.push('rgb(0,0,0)')
             }
@@ -292,9 +295,9 @@ function filterDatesAndLabels(isDefault, reports) {
                 pointsStyles.push('triangle')
                 pointsColors.push('rgb(255,82,82)')
             }
-            else if(reportee.falls==='True'){
+            else if(reportee.falls === 'True'){
                 pointsStyles.push('rect')
-                pointsColors.push('rgb(255,232,44)')
+                pointsColors.push('rgb(231, 161, 0)')
             }else {
                 pointsStyles.push('circle')
                 pointsColors.push('rgb(39,65,181)')
@@ -310,7 +313,7 @@ function filterDatesAndLabels(isDefault, reports) {
     myChart.data.datasets[0].pointStyle = pointsStyles
     myChart.data.datasets[0].pointBorderColor = pointsColors
     myChart.data.datasets[0].data = status_reports;
-    myChart.data.datasets[0].pointBackgroundColor=pointsColors;
+    myChart.data.datasets[0].pointBackgroundColor = pointsColors;
     myChart.update();
 }
 

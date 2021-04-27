@@ -32,3 +32,11 @@ def get_medications_categories():  # Create a tuple of tuples for the use of Med
         cat = (category_key, category_name),
         MED_TYPE += cat
     return MED_TYPE
+
+
+def get_medication_by_id(id):
+    medications = get_medications()
+    for category in medications.each():
+        for key, val in category.val().get('medicationList').items():
+            if key == id:
+                return val.get('name')
