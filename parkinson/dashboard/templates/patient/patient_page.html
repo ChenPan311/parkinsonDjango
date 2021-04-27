@@ -292,7 +292,6 @@
                 radius:8,
                 pointBorderColor: [],
                 data: [],
-
             }, {
                 pointStyle: tooltipSh,
                 hitRadius: 10,
@@ -324,8 +323,7 @@
                     afterLabel: function (tooltipItem, data) {
                         let indice = tooltipItem.index;
                         if (tooltipItem.datasetIndex === 0) {
-                            return yLabels[data.datasets[0].data[indice].y] + ' ' +
-                                data.datasets[0].data[indice].hallucination
+                            return yLabels[data.datasets[0].data[indice].y]
                         } else {
                             return data.datasets[1].data[indice].id
                         }
