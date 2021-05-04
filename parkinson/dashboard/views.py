@@ -54,13 +54,16 @@ def home(request):
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def user_logout(request):
-    try:
-        del request.session['uid']
-        auth.current_user = None
-        request.session.clear()
+    if request.session.get('uid') is not None:
+        try:
+            del request.session['uid']
+            auth.current_user = None
+            request.session.clear()
+            return redirect("/")
+        except KeyError:
+            pass
+    else:
         return redirect("/")
-    except KeyError:
-        pass
 
 
 def prettydate(ms):
@@ -139,46 +142,53 @@ def medications_reports(medications_reports):
     data = []
     if medications_reports.val() is not None:
         for med_report in medications_reports.each():
+            name = ''
             for med in med_report.val():
-                report_object = {
-                    'label': prettydate(med.get('takenTime')),
-                    'name': med.get('medicineName')
-                }
-                data.append(report_object)
+                name += med.get('medicineName') + '\n'
+                label = prettydate(med.get('takenTime'))
+
+            report_object = {
+                'label': label,
+                'name': name
+            }
+            data.append(report_object)
     return data
 
 
-# @cache_control(no_cache=False, must_revalidate=True, no_store=True)
+@cache_control(no_cache=False, must_revalidate=True, no_store=True)
 def patient_detail(request):
-    patient_id = request.POST.get("patient_id", 0)
-    patients = db.child("Patients").order_by_child("id").equal_to(patient_id).get()
-    if not patients.val():
-        return render(request, "dashboard/dashboard.html", {'msg': "מטופל לא נמצא, נסה שנית"})
-    for patient in patients.each():  # order_by returns a list
-        request.session['patient_key'] = patient.key()
-        patient_details = patient.val().get("user_details")
-        patient_questionnaire = patient.val().get("questionnaire")
-        patient_medications = db.child('Patients').child(patient.key()).child("medicine_list").get()
-        patient_medications_reports = db.child('Patients').child(patient.key()).child("Medicine Reports").get()
-        patient_reports = db.child('Patients').child(patient.key()).child("reports").get()
-        patient_token = patient_details['token']
-        request.session['patient_token'] = patient_token
+    if request.session.get('uid') is not None:
+        patient_id = request.POST.get("patient_id", 0)
+        patients = db.child("Patients").order_by_child("id").equal_to(patient_id).get()
+        if not patients.val():
+            return render(request, "dashboard/dashboard.html", {'msg': "מטופל לא נמצא, נסה שנית"})
+        for patient in patients.each():  # order_by returns a list
+            request.session['patient_key'] = patient.key()
+            patient_details = patient.val().get("user_details")
+            patient_questionnaire = patient.val().get("questionnaire")
+            patient_medications = db.child('Patients').child(patient.key()).child("medicine_list").get()
+            patient_medications_reports = db.child('Patients').child(patient.key()).child("Medicine Reports").get()
+            patient_reports = db.child('Patients').child(patient.key()).child("reports").get()
+            patient_token = patient_details['token']
+            request.session['patient_token'] = patient_token
 
-        # Data for the charts
-        reports = status_data_for_chart(patient_reports)
-        # report_list = medications_data_for_charts(patient_medications)
-        reports_medication_list = medications_reports(patient_medications_reports)
+            # Data for the charts
+            reports = status_data_for_chart(patient_reports)
+            # report_list = medications_data_for_charts(patient_medications)
+            reports_medication_list = medications_reports(patient_medications_reports)
 
-        medications = get_medications()
-        return render(request, "patient/patient_page.html", {'patient_details': patient_details,
-                                                             'patient_medications': patient_medications,
-                                                             'patient_questionnaire': patient_questionnaire,
-                                                             'reports': reports,
-                                                             'medications': medications,
-                                                             'medication_reports': reports_medication_list,
-                                                             'dosages': DOSAGES,
-                                                             'token': patient_token,
-                                                             })
+            medications = get_medications()
+            return render(request, "patient/patient_page.html", {'patient_details': patient_details,
+                                                                 'patient_medications': patient_medications,
+                                                                 'patient_questionnaire': patient_questionnaire,
+                                                                 'reports': reports,
+                                                                 'medications': medications,
+                                                                 'medication_reports': reports_medication_list,
+                                                                 'dosages': DOSAGES,
+                                                                 'token': patient_token,
+                                                                 })
+    else:
+        return redirect("/")
 
 
 def patient_detail_check(request):

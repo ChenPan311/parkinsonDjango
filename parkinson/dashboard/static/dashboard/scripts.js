@@ -318,36 +318,37 @@ function filterDatesAndLabels(isDefault, reports) {
 }
 
 // Makes the tooltips to be always shown
-// Chart.pluginService.register({
-//     beforeRender: function (chart) {
-//         if (chart.config.options.showAllTooltips) {
-//             chart.pluginTooltips = [];
-//             chart.config.data.datasets.forEach(function (dataset, i) {
-//                 if (i == 1) { // only Medications tooltips
-//                     chart.getDatasetMeta(i).data.forEach(function (sector, j) {
-//                         chart.pluginTooltips.push(new Chart.Tooltip({
-//                             _chart: chart.chart,
-//                             _chartInstance: chart,
-//                             _data: chart.data,
-//                             _options: chart.options.tooltips,
-//                             _active: [sector]
-//                         }, chart));
-//                     });
-//                 }
-//             });
-//             chart.options.tooltips.enabled = false;
-//         }
-//     },
-//     afterDraw: function (chart, easing) {
-//         if (chart.config.options.showAllTooltips) {
-//             chart.options.tooltips.enabled = true;
-//             Chart.helpers.each(chart.pluginTooltips, function (tooltip) {
-//                 tooltip.initialize();
-//                 tooltip.update();
-//                 tooltip.pivot();
-//                 tooltip.transition(easing).draw();
-//             });
-//             chart.options.tooltips.enabled = false;
-//         }
-//     }
-// });
+Chart.pluginService.register({
+    beforeRender: function (chart) {
+        if (chart.config.options.showAllTooltips) {
+            chart.pluginTooltips = [];
+            chart.config.data.datasets.forEach(function (dataset, i) {
+                if (i == 1) { // only Medications tooltips
+                    chart.getDatasetMeta(i).data.forEach(function (sector, j) {
+                        chart.pluginTooltips.push(new Chart.Tooltip({
+                            _chart: chart.chart,
+                            _chartInstance: chart,
+                            _data: chart.data,
+                            _options: chart.options.tooltips,
+                            _active: [sector]
+                        }, chart));
+                    });
+                }
+            });
+            chart.options.tooltips.enabled = false;
+            chart.options.tooltips.displayColors = false;
+        }
+    },
+    afterDraw: function (chart, easing) {
+        if (chart.config.options.showAllTooltips) {
+            chart.options.tooltips.enabled = true;
+            Chart.helpers.each(chart.pluginTooltips, function (tooltip) {
+                tooltip.initialize();
+                tooltip.update();
+                tooltip.pivot();
+                tooltip.transition(easing).draw();
+            });
+            chart.options.tooltips.enabled = false;
+        }
+    }
+});

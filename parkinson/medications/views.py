@@ -8,11 +8,14 @@ from firebase_repo import get_medications, get_medications_categories, db
 
 
 def medication_page(request):
-    medications = get_medications()
-    med_categories = get_medications_categories()
-    medication_form = MedicationForm(med_categories)
-    return render(request, "medications/medications.html", {"medication_form": medication_form,
-                                                            "medications": medications})
+    if request.session.get('uid') is not None:
+        medications = get_medications()
+        med_categories = get_medications_categories()
+        medication_form = MedicationForm(med_categories)
+        return render(request, "medications/medications.html", {"medication_form": medication_form,
+                                                                "medications": medications})
+    else:
+        return redirect("/home", )
 
 
 def create_medicine(request):
@@ -26,7 +29,7 @@ def create_medicine(request):
             'name': medication_name,
         }
         med_key = db.child("Data").child('medicine_list').child(category).child("medicationList").push(data)['name']
-        db.child("Data").child('medicine_list').child(category).child("medicationList").child(med_key)\
+        db.child("Data").child('medicine_list').child(category).child("medicationList").child(med_key) \
             .update({'id': med_key})
 
         return redirect('/medications')  # Reload new medications and prevent resubmission

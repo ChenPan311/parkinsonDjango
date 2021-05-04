@@ -123,6 +123,7 @@ $('#edit-modal-bg').on('show.bs.modal', function (event) {
     } else {
         addBtn[1].style.display = 'none'
         removeBtn[1].style.display = 'none'
+        answers_p[1].style.display = 'none'
     }
     modal.find('#id_title').val(title) // Populate the form with data
     modal.find('#id_choice_type').val(type) // Populate the form with data

@@ -5,10 +5,13 @@ import time
 
 
 def questionnaire_page(request):
-    questionnaire = get_questionnaire()
-    form = Question()
-    return render(request, "questionnaire/questionnaire.html", {"question_form": form,
-                                                                "questionnaire": questionnaire})
+    if request.session.get('uid') is not None:
+        questionnaire = get_questionnaire()
+        form = Question()
+        return render(request, "questionnaire/questionnaire.html", {"question_form": form,
+                                                                    "questionnaire": questionnaire})
+    else:
+        return redirect("/home", )
 
 
 def create_question(request):

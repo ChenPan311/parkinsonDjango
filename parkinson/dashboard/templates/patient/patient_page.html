@@ -304,13 +304,21 @@
             layout: {
                 padding: {
                     left: 20,
-                    right: 20,
+                    right: 30,
                     bottom: 20,
                     top: 20
                 }
             },
             tooltips: {
-                yAlign: 'bottom', //placing the tooltip on top
+                yAlign: 'center', //placing the tooltip on top
+                xAlign: 'center',
+                bodySpacing: 1,
+                bodyAlign: 'center',
+                custom: function (tooltip) {
+                    if (!tooltip) return;
+                    // disable displaying the color box;
+                    tooltip.displayColors = false;
+                },
                 callbacks: {
                     label: function (tooltipItem, data) {
                         let indice = tooltipItem.index;
