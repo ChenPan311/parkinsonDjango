@@ -5,24 +5,63 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl"
           crossorigin="anonymous">
+
     <link rel="stylesheet" type="text/css" href="{% static 'registration/style.css' %}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-growl/1.0.0/jquery.bootstrap-growl.js"
+            integrity="sha512-4fpPq5LCcSAofCKmaM58RSbjpVRUqjx8nKAaBQVFay4MRo7FLafbt6bUNUfUbTZcSMzRNxZuVj3shwHA6ZeiOQ=="
+            crossorigin="anonymous"></script>
 </head>
 
 <body>
 <div class="registration-page">
     <div class="form">
-        <form method="POST" class="form-group" dir="rtl" lang="he" style="text-align:right;">
+        <form method="POST"  class="form-group" dir="rtl" lang="he" style="text-align:right;">
             <h1>הוסף מטופל</h1>
             {% csrf_token %}
             {{form|crispy}}
             {{ourform|crispy}}
-            <button type="submit" class="btn btn-success">הוסף</button>
+            <button id="register_patient_btn" type="button" class="btn btn-success">הוסף</button>
         </form>
     </div>
 </div>
 
 <script>
+
+    $("#id_email").on("blur",function (){
+         $(this).css('box-shadow',"");
+    })
+
+
+    $("#register_patient_btn").click(function () {
+        const email=$("#id_email")[0].value;
+        const password1=$("#id_password1")[0].value;
+        const password2=$("#id_password2")[0].value;
+        const token = $('input[name="csrfmiddlewaretoken"]').attr('value');
+        console.log()
+        $.post({
+            url: "/add_patient/validate_details",
+            data:{
+              email:email,
+              password1:password1,
+              password2:password2,
+            },
+            headers: {
+                "X-CSRFToken": token
+            },
+            success: function (result) {
+                if (result === "Password mismatch") {  //If something went wrong
+                    GrowlCall("הסיסמאות לא תואמות!", 'danger')
+                }else if(result==="Email Exists"){
+                    GrowlCall("המשתמש כבר קיים", 'danger')
+                    $("#id_email").focus();
+                    $("#id_email").css("box-shadow", "0 0 0 0.25rem rgb(255 0 0 / 25%)");
+                }
+            }
+        })
+    })
+
+
     $(function () {
         var dtToday = new Date();
 
@@ -37,6 +76,22 @@
         var maxDate = year + '-' + month + '-' + day;
         $('#id_date_of_birth').attr('max', maxDate);
     });
+
+    function GrowlCall(msg, type) {
+        console.log("test")
+        $(".bootstrap-growl").remove();
+        $.bootstrapGrowl(msg, {
+            ele: 'body',
+            type: type,
+            offset: {from: 'top', amount: 20},
+            align: 'center',
+            width: 'auto',
+            delay: 2000,
+            allow_dismiss: false,
+        });
+    }
+
+
 </script>
 
 </body>

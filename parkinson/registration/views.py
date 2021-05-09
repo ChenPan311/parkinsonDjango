@@ -44,20 +44,27 @@ def register_new_doctor(response):
 
 def register_new_patient(response):
     if response.method == "POST":
+        print(response.POST)
         django_form = RegisterForm(response.POST)  # django User
         patient_form = PatientRegisterForm(response.POST)  # our user
+        # print(django_form)
+        # print(patient_form)
         if django_form.is_valid() and patient_form.is_valid():
+            print("Valid")
             first_name = django_form.cleaned_data["first_name"]
             last_name = django_form.cleaned_data["last_name"]
             email = django_form.cleaned_data["email"]
             password = django_form.cleaned_data["password1"]
-
             gender = patient_form.cleaned_data["gender"]
             country = patient_form.cleaned_data["country"]
             mobile_phone = patient_form.cleaned_data["mobile_phone"]
             clinic = patient_form.cleaned_data["clinic"]
             date_of_birth = str(patient_form.cleaned_data['date_of_birth'])
-            patient = auth_fb.create_user_with_email_and_password(email=email, password=password)
+            try:
+               patient= auth_fb.create_user_with_email_and_password(email=email, password=password)
+            except:
+                print("Test")
+                return HttpResponse("Email Exists")
 
             epoch = datetime(1970, 1, 1)
             dt_obj = datetime.strptime(date_of_birth, '%Y-%m-%d')
@@ -92,3 +99,16 @@ def register_new_patient(response):
             return render(response, "register/add_new_patient.html", {'form': form, 'ourform': patient_form})
         else:
             return redirect("/")
+
+
+def validate_patient_details(response):
+    email=response.POST.get('email')
+    password1=response.POST.get('password1')
+    password2=response.POST.get('password2')
+
+    if password1!=password2:
+        return HttpResponse("Password mismatch")
+    try:
+       auth_fb.create_user_with_email_and_password(email=email, password=password1)
+    except:
+        return HttpResponse("Email Exists")
