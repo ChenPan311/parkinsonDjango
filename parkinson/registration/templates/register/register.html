@@ -7,6 +7,10 @@
           integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl"
           crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="{% static 'registration/style.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-growl/1.0.0/jquery.bootstrap-growl.js"
+            integrity="sha512-4fpPq5LCcSAofCKmaM58RSbjpVRUqjx8nKAaBQVFay4MRo7FLafbt6bUNUfUbTZcSMzRNxZuVj3shwHA6ZeiOQ=="
+            crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -17,10 +21,63 @@
             {% csrf_token %}
             {{form|crispy}}
             {{ourform|crispy}}
-            <button type="submit" class="btn btn-success">הרשם</button>
+            <button id="register_btn" type="button" class="btn btn-success">הרשם</button>
         </form>
     </div>
 </div>
+
+<script>
+
+    $("#id_email, #id_password1").on("blur", function () {
+        $(this).css('box-shadow', "");
+    })
+
+    $("#register_btn").click(function () {
+        const email = $("#id_email")[0].value;
+        const token = $('input[name="csrfmiddlewaretoken"]').attr('value');
+        console.log()
+        $.post({
+            url: "/add_patient/validate_email",
+            data: {
+                email: email,
+                isPatient: false
+            },
+            headers: {
+                "X-CSRFToken": token
+            },
+            success: function (result) {
+                if (result === "Valid") {  //If something went wrong
+                    $('<input type="submit">').hide().appendTo($('form')).click().remove();
+                } else if (result === "EmailExists") {
+                    GrowlCall("המשתמש כבר קיים", 'danger')
+                    $("#id_email").focus().css("box-shadow", "0 0 0 0.25rem rgb(255 0 0 / 25%)");
+                } else if (result === "FillEmail") {
+                    $("#id_email").focus().css("box-shadow", "0 0 0 0.25rem rgb(255 0 0 / 25%)");
+                } else if (result === "FillPassword") {
+                    $("#id_password1").focus().css("box-shadow", "0 0 0 0.25rem rgb(255 0 0 / 25%)");
+                }
+            }
+        })
+    })
+
+    function GrowlCall(msg, type) {
+        console.log("test")
+        $(".bootstrap-growl").remove();
+        $.bootstrapGrowl(msg, {
+            ele: 'body',
+            type: type,
+            offset: {from: 'top', amount: 20},
+            align: 'center',
+            width: 'auto',
+            delay: 2000,
+            allow_dismiss: false,
+        });
+    }
+
+
+</script>
 </body>
+
+
 
 

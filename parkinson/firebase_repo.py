@@ -40,3 +40,19 @@ def get_medication_by_id(id):
         for key, val in category.val().get('medicationList').items():
             if key == id:
                 return val.get('name')
+
+
+def check_if_patient_exists(email):
+    patients = db.child('Patients').get()
+    for patient in patients.each():
+        if email == patient.val().get('user_details').get('email'):
+            return True
+    return False
+
+
+def check_if_doctor_exists(email):
+    doctors = db.child('Doctors').get()
+    for doctor in doctors.each():
+        if email == doctor.val().get('details').get('email'):
+            return True
+    return False

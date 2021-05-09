@@ -11,12 +11,14 @@ class RegisterForm(UserCreationForm):  # django registration form
         super().__init__(*args, **kwargs)
         self.fields['password1'].label = 'סיסמא'
         self.fields['password2'].label = 'אישור סיסמא'
-        self.fields[
-            'password1'].help_text = "<li>הסיסמה שלך לא יכולה להיות דומה מדי למידע האישי האחר שלך.</li>" \
-                                     "<li>הסיסמה שלך חייבת להכיל לפחות 8 תווים.</li>" \
-                                     "<li>הסיסמה שלך לא יכולה להיות סיסמה נפוצה.</li>" \
-                                     "<li>הסיסמה שלך חייבת להכיל אותיות ומספרים לחלוטין.</li>"
+        self.fields['password1'].help_text = "<li>הסיסמה שלך לא יכולה להיות דומה מדי למידע האישי האחר שלך.</li>" \
+                                             "<li>הסיסמה שלך חייבת להכיל לפחות 8 תווים.</li>" \
+                                             "<li>הסיסמה שלך לא יכולה להיות סיסמה נפוצה.</li>" \
+                                             "<li>הסיסמה שלך חייבת להכיל אותיות ומספרים לחלוטין.</li>"
         self.fields['password2'].help_text = '<li>אנא הזן סיסמא בשנית.</li>'
+        self.fields['email'].required = True
+        self.fields['first_name'].required = True
+        self.fields['last_name'].required = True
 
     class Meta:
         model = User

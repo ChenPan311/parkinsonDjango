@@ -5,7 +5,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl"
           crossorigin="anonymous">
-
     <link rel="stylesheet" type="text/css" href="{% static 'registration/style.css' %}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-growl/1.0.0/jquery.bootstrap-growl.js"
@@ -28,34 +27,33 @@
 
 <script>
 
-    $("#id_email").on("blur",function (){
+    $("#id_email, #id_password1").on("blur",function (){
          $(this).css('box-shadow',"");
     })
 
-
     $("#register_patient_btn").click(function () {
-        const email=$("#id_email")[0].value;
-        const password1=$("#id_password1")[0].value;
-        const password2=$("#id_password2")[0].value;
+        const email = $("#id_email")[0].value;
         const token = $('input[name="csrfmiddlewaretoken"]').attr('value');
         console.log()
         $.post({
-            url: "/add_patient/validate_details",
-            data:{
-              email:email,
-              password1:password1,
-              password2:password2,
+            url: "/add_patient/validate_email",
+            data: {
+                email: email,
+                isPatient: true
             },
             headers: {
                 "X-CSRFToken": token
             },
             success: function (result) {
-                if (result === "Password mismatch") {  //If something went wrong
-                    GrowlCall("הסיסמאות לא תואמות!", 'danger')
-                }else if(result==="Email Exists"){
+                if (result === "Valid") {  //If something went wrong
+                    $('<input type="submit">').hide().appendTo($('form')).click().remove();
+                } else if (result === "EmailExists") {
                     GrowlCall("המשתמש כבר קיים", 'danger')
-                    $("#id_email").focus();
-                    $("#id_email").css("box-shadow", "0 0 0 0.25rem rgb(255 0 0 / 25%)");
+                    $("#id_email").focus().css("box-shadow", "0 0 0 0.25rem rgb(255 0 0 / 25%)");
+                } else if (result === "FillEmail") {
+                    $("#id_email").focus().css("box-shadow", "0 0 0 0.25rem rgb(255 0 0 / 25%)");
+                } else if (result === "FillPassword") {
+                    $("#id_password1").focus().css("box-shadow", "0 0 0 0.25rem rgb(255 0 0 / 25%)");
                 }
             }
         })
@@ -63,17 +61,17 @@
 
 
     $(function () {
-        var dtToday = new Date();
+        const dtToday = new Date();
 
-        var month = dtToday.getMonth() + 1;
-        var day = dtToday.getDate();
-        var year = dtToday.getFullYear();
+        let month = dtToday.getMonth() + 1;
+        let day = dtToday.getDate();
+        let year = dtToday.getFullYear();
         if (month < 10)
             month = '0' + month.toString();
         if (day < 10)
             day = '0' + day.toString();
 
-        var maxDate = year + '-' + month + '-' + day;
+        let maxDate = year + '-' + month + '-' + day;
         $('#id_date_of_birth').attr('max', maxDate);
     });
 

@@ -39,8 +39,8 @@ def postsign(request):
             request.session['email'] = user['email']
             return redirect("/home")
         except:
-            message = "invalid cerediantials"
-            return render(request, "register/login.html", {'msg': message, 'form': form})
+            form.add_error('password', "אימייל או סיסמא אינם מתאימים!")
+            return render(request, "register/login.html", {'form': form})
 
 
 @cache_control(no_cache=False, must_revalidate=True, no_store=True)
@@ -169,7 +169,7 @@ def patient_detail(request):
             patient_medications = db.child('Patients').child(patient.key()).child("medicine_list").get()
             patient_medications_reports = db.child('Patients').child(patient.key()).child("Medicine Reports").get()
             patient_reports = db.child('Patients').child(patient.key()).child("reports").get()
-            patient_token = patient_details['token']
+            patient_token = patient_details.get('token')
             request.session['patient_token'] = patient_token
 
             # Data for the charts
@@ -188,7 +188,7 @@ def patient_detail(request):
                                                                  'token': patient_token,
                                                                  })
     else:
-        return redirect("/")
+        return redirect("/home")
 
 
 def patient_detail_check(request):
