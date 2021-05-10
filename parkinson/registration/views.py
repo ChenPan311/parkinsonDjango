@@ -92,13 +92,10 @@ def register_new_patient(response):
 
 def validate_email(request):
     email = request.POST.get('email')
-    is_patient = request.POST.get('isPatient') == 'true'
+    print(email)
     if email == '':
         return HttpResponse("FillEmail")
-    if is_patient:
-        if check_if_patient_exists(email):
-            return HttpResponse("EmailExists")
-    else:
-        if check_if_doctor_exists(email):
-            return HttpResponse("EmailExists")
+    if check_if_patient_exists(email) or check_if_doctor_exists(email):
+        print("Exists")
+        return HttpResponse("EmailExists")
     return HttpResponse("Valid")

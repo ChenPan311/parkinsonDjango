@@ -40,7 +40,6 @@
             url: "/add_patient/validate_email",
             data: {
                 email: email,
-                isPatient: false
             },
             headers: {
                 "X-CSRFToken": token
@@ -53,8 +52,6 @@
                     $("#id_email").focus().css("box-shadow", "0 0 0 0.25rem rgb(255 0 0 / 25%)");
                 } else if (result === "FillEmail") {
                     $("#id_email").focus().css("box-shadow", "0 0 0 0.25rem rgb(255 0 0 / 25%)");
-                } else if (result === "FillPassword") {
-                    $("#id_password1").focus().css("box-shadow", "0 0 0 0.25rem rgb(255 0 0 / 25%)");
                 }
             }
         })
