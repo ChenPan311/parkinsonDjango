@@ -1,9 +1,12 @@
 from django.shortcuts import render, redirect
+from django.views.decorators.cache import cache_control
+
 from firebase_repo import db, get_questionnaire, get_medications
 from questionnaire.forms import Question
 import time
 
 
+@cache_control(no_cache=False, must_revalidate=True, no_store=True)
 def questionnaire_page(request):
     if request.session.get('uid') is not None:
         questionnaire = get_questionnaire()

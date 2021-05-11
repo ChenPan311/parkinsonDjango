@@ -14,15 +14,11 @@ function setTimepickerOptions(e) {
 $('#search_btn').click(function () {
     let patient_id = $('#patient_input')[0].value
     let form = $('#search_form')
-    const token = $('input[name="csrfmiddlewaretoken"]').attr('value');
-    $.post({
+    $.get({
         url: "/patient_detail/check",
         data: {data: patient_id},
-        headers: {
-            "X-CSRFToken": token
-        },
         success: function (result) {
-            if (result === "False") {  //If medicine already exist
+            if (result === "False") {  //If patient already exist
                 GrowlCall(" מטופל לא נמצא",'danger');
             } else {
                 $('<input type="submit">').hide().appendTo(form).click().remove();
@@ -137,9 +133,6 @@ function delete_data(e) {
             }
         })
     }
-    // $('table tbody tr').length === 1 ?
-    // console.log($('table tbody tr').length)
-    // $('#alert').attr('hidden') ? $('#trhead').prop('hidden', false) : null
 }
 
 $('table').on('click', '.delete_row_btn', function () {
@@ -305,7 +298,6 @@ function filterDatesAndLabels(isDefault, reports) {
             report = {
                 x: new_label[1],
                 y: parseInt(new_value),
-                //we can add hallucinations and falls if the tooltip will work seperately.
             }
             status_reports.push(report)
         }

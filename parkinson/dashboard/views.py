@@ -158,7 +158,7 @@ def medications_reports(medications_reports):
 @cache_control(no_cache=False, must_revalidate=True, no_store=True)
 def patient_detail(request):
     if request.session.get('uid') is not None:
-        patient_id = request.POST.get("patient_id", 0)
+        patient_id = request.GET.get("patient_id", 0)
         patients = db.child("Patients").order_by_child("id").equal_to(patient_id).get()
         if not patients.val():
             return render(request, "dashboard/dashboard.html", {'msg': "מטופל לא נמצא, נסה שנית"})
@@ -192,7 +192,7 @@ def patient_detail(request):
 
 
 def patient_detail_check(request):
-    patient_id = request.POST.get('data')
+    patient_id = request.GET.get('data')
     exist = db.child("Patients").order_by_child('id').equal_to(patient_id).get()
     if exist.val():
         return HttpResponse("True")

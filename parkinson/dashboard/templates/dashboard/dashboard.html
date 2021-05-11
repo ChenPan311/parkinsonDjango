@@ -15,8 +15,7 @@
         <div class="form-container">
             <h5 class="card-title">זהו דף הבית, ניתן לחפש מטופלים</h5>
             <p class="card-text">על מנת לחפש מטופל אנא הכנס את מספרו.</p>
-            <form method="POST" action="/patient_detail/" id="search_form">
-                {% csrf_token %}
+            <form method="GET" action="/patient_detail/" id="search_form">
                 <div class="row g-1">
                     <div class="col-8">
                         <input id="patient_input" required name="patient_id" type="text" class="form-control"
@@ -35,23 +34,6 @@
 <div>
 
 </div>
-<!--<div class="jumbotron">-->
-<!--    <h1 class="display-4">שלום {{name}}</h1>-->
-<!--    <p class="lead">זהו דף הבית, ניתן לחפש מטופלים</p>-->
-<!--    <hr class="my-4">-->
-<!--    <p>על מנת לחפש מטופל אנא הכנס את מספרו.</p>-->
-<!--    <form method="POST" action="/patient_detail/" id="search_form" >-->
-<!--        {% csrf_token %}-->
-<!--        <div class="input-group mb-3">-->
-<!--            <input id="patient_input" required name="patient_id" type="text" class="form-control" placeholder="מספר מטופל" aria-label="Search"-->
-<!--                   aria-describedby="basic-addon1" style="max-width: 20%">-->
-<!--            <div class="input-group-prepend">-->
-<!--                <button id="search_btn" class="btn btn-primary" type="button">חפש<i class="fas fa-search" aria-hidden="true"></i></button>-->
-<!--            </div>-->
-
-<!--        </div>-->
-<!--    </form>-->
-<!--</div>-->
 
 <script type="text/javascript" src="{% static 'dashboard/scripts.js' %}"></script>
 

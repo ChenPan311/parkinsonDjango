@@ -1,18 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Alef&display=swap');
-
 body {
     background: #dedede;
     margin: 0;
     padding: 0;
-    font-family: "Alef", serif;
-    font-size: 18px;
+    font-size: 15px;
 }
 
 .nav-item {
-    /*border-radius: 3px;*/
     padding-left: 30px;
     padding-right: 30px;
-    font-size: 18px;
+    font-size: 16px;
     border-left: 1px solid silver;
     border-right: 1px solid silver;
 }
@@ -23,10 +19,6 @@ body {
 
 .nav-item:hover {
     background: #24417B;
-}
-
-.btn-outline-primary{
-    border-color: #24417B;
 }
 
 .btn-blue {
@@ -61,9 +53,6 @@ body {
     padding: 0;
     text-align: center;
 }
-
-
-
 
 #do_legend li {
     display: inline-table;
@@ -132,4 +121,3 @@ body {
   height: 15px;
   background: rgb(231, 161, 0);
 }
-

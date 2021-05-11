@@ -1,11 +1,14 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from django.views.decorators.cache import cache_control
+
 from firebase_repo import auth_fb, db, check_if_patient_exists, check_if_doctor_exists
 from datetime import datetime
 from .forms import RegisterForm, DoctorRegisterForm, PatientRegisterForm
 
 
 # Create your views here.
+@cache_control(no_cache=False, must_revalidate=True, no_store=True)
 def register_new_doctor(response):
     if response.method == "POST":
         django_form = RegisterForm(response.POST)  # django User
@@ -40,6 +43,7 @@ def register_new_doctor(response):
     return render(response, "register/register.html", {'form': form, 'ourform': doctor_form})
 
 
+@cache_control(no_cache=False, must_revalidate=True, no_store=True)
 def register_new_patient(response):
     if response.method == "POST":
         django_form = RegisterForm(response.POST)  # django User

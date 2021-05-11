@@ -1,5 +1,3 @@
-@import url(https://fonts.googleapis.com/css?family=Roboto:300);
-
 .registration-page {
     width: 80%;
     padding: 2% 0 0;
@@ -19,7 +17,6 @@
 }
 
 .form input {
-    font-family: "Roboto", sans-serif;
     outline: 0;
     background: #f2f2f2;
     width: 100%;
@@ -36,7 +33,6 @@
 }
 
 .form button {
-    font-family: "Roboto", sans-serif;
     text-transform: uppercase;
     outline: 0;
     background: #24417B;
@@ -55,8 +51,6 @@
 
 body {
     background-image: linear-gradient(120deg, #868F96 0%, #596164 100%);
-    /* fallback for old browsers */
-    font-family: "Roboto", sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }

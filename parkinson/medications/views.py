@@ -1,12 +1,14 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from django.views.decorators.cache import cache_control
+
 from medications.forms import MedicationForm
 from firebase_repo import get_medications, get_medications_categories, db
 
 
 # Create your views here.
 
-
+@cache_control(no_cache=False, must_revalidate=True, no_store=True)
 def medication_page(request):
     if request.session.get('uid') is not None:
         medications = get_medications()

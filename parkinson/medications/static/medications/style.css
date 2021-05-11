@@ -1,6 +1,11 @@
 body{
     background-image: linear-gradient(120deg, #868F96 0%, #596164 100%);
-    padding: 6rem;
+}
+
+.content{
+    padding-right: 6rem;
+    padding-left: 6rem;
+    padding-top: 30px;
 }
 
 h1{
