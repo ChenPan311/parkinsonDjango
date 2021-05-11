@@ -222,6 +222,8 @@ def update_medicine(request):
         data['id']).update(data)
 
     if check:
+        db.child("Patients").child(request.session.get('patient_key')).child('user_details').child(
+            "needToUpdateMedicine").set(False)
         PushService.send_medicine_notification(request.session.get('patient_token'))
         return HttpResponse("True")
     else:
@@ -235,6 +237,10 @@ def delete_medicine(request):
         .child(key_to_delete).remove()
 
     if check is None:
+        is_empty = db.child("Patients").child(request.session.get('patient_key')).child('medicine_list').get()
+        if is_empty:
+            db.child("Patients").child(request.session.get('patient_key')).child('user_details').child(
+            "needToUpdateMedicine").set(True)
         PushService.send_medicine_notification(request.session.get('patient_token'))
         return HttpResponse("True")
     else:
