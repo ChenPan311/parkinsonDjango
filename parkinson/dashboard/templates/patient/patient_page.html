@@ -112,7 +112,7 @@
 <!--                            class="fas fa-bell fa-lg"></i>שלח התראה-->
 <!--                    </button>-->
                 </div>
-                <table class="table table-striped table-sm table-responsive table-bordered">
+                <table class="table table-sm table-responsive table-bordered">
                     {% csrf_token %}
                     {% if patient_medications.val == None %}
                     <div id="alert" class="alert alert-warning" role="alert">
@@ -310,15 +310,12 @@
                 }
             },
             tooltips: {
-                yAlign: 'center', //placing the tooltip on top
+                yAlign: 'bottom', //placing the tooltip on top
                 xAlign: 'center',
                 bodySpacing: 1,
                 bodyAlign: 'center',
-                custom: function (tooltip) {
-                    if (!tooltip) return;
-                    // disable displaying the color box;
-                    tooltip.displayColors = false;
-                },
+                caretPadding: -40,
+                caretSize: 20,
                 callbacks: {
                     label: function (tooltipItem, data) {
                         let indice = tooltipItem.index;
