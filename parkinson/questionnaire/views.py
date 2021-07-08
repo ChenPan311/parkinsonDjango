@@ -6,6 +6,7 @@ from questionnaire.forms import Question
 import time
 
 
+# Rendering questionnaire page
 @cache_control(no_cache=False, must_revalidate=True, no_store=True)
 def questionnaire_page(request):
     if request.session.get('uid') is not None:
@@ -17,6 +18,7 @@ def questionnaire_page(request):
         return redirect("/home", )
 
 
+# Creating new question
 def create_question(request):
     if request.method == "POST":
         answers = {}
@@ -46,12 +48,14 @@ def create_question(request):
             return redirect('/questionnaire')  # Reload new questionnaire and prevent resubmission
 
 
+# Deleting medicine from the db
 def delete_question(request):
     question_to_delete = request.POST.get('key_to_delete', 0)
     db.child("Data").child('questionnaire_follow_up').child("questionList").child(question_to_delete).remove()
     return redirect('/questionnaire')
 
 
+# Editing medicine from the db
 def edit_question(request):
     question_to_edit = request.POST.get('key_to_edit', 0)
     if request.method == "POST":

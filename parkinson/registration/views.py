@@ -8,6 +8,8 @@ from .forms import RegisterForm, DoctorRegisterForm, PatientRegisterForm
 
 
 # Create your views here.
+
+# Handling registering new doctor
 @cache_control(no_cache=False, must_revalidate=True, no_store=True)
 def register_new_doctor(response):
     if response.method == "POST":
@@ -43,6 +45,7 @@ def register_new_doctor(response):
     return render(response, "register/register.html", {'form': form, 'ourform': doctor_form})
 
 
+# Handling registering new patient
 @cache_control(no_cache=False, must_revalidate=True, no_store=True)
 def register_new_patient(response):
     if response.method == "POST":
@@ -94,6 +97,7 @@ def register_new_patient(response):
             return redirect("/")
 
 
+# Checking if user(doctor or patient) already exist
 def validate_email(request):
     email = request.POST.get('email')
     if email == '':

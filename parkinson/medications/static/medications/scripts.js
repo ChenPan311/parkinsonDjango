@@ -1,5 +1,6 @@
 const MSG = "   התרופה כבר קיימת! בחר שם אחר"
 
+// Handling edit existing medicine
 $('#edit-modal-bg').on('show.bs.modal', function (event) {
     const button = $(event.relatedTarget); // Button that triggered the modal
     const key_to_edit = button.data('key-to-edit');
@@ -12,6 +13,7 @@ $('#edit-modal-bg').on('show.bs.modal', function (event) {
     modal.find('#update_btn').attr('name', 'key_to_edit')
 })
 
+// Handling adding new medicine
 $('#submit_btn').click(function () {
     let med_name = $('#id_medication_name')[0].value
     let category = $('#id_category')[0].value

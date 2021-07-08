@@ -1,3 +1,4 @@
+// Init the timepicker for the medicine hours to be from 00:00 to 23:00 with jumps of 30 minutes
 function setTimepickerOptions(e) {
     e.timepicker({
         'timeFormat': 'H:i',
@@ -11,6 +12,7 @@ function setTimepickerOptions(e) {
     })
 }
 
+// Checking if a patient exists
 $('#search_btn').click(function () {
     let patient_id = $('#patient_input')[0].value
     let form = $('#search_form')
@@ -27,6 +29,7 @@ $('#search_btn').click(function () {
     })
 })
 
+// When click 'ערוך' in the medicine table, able/disable the edit functionallity
 function handleAttrs(e) {
     row = e.closest('tr') // finds closest <tr> element - row that contains the btn we clicked
     row.find('.row-data , .row-time-data, .add_time_btn').each(function () { // in this row find classes ... (inputs)
@@ -42,6 +45,7 @@ function handleAttrs(e) {
 
 }
 
+// When clicking 'שמור' gather all data enterd and send it to the view function that handle adding/editing medicine
 function handleSaveEdits(e) {
     row = e.closest('tr')
     hours_arr = ""
@@ -91,14 +95,17 @@ function handleSaveEdits(e) {
     })
 }
 
+// Handling edits of existing medicines of a patient
 $('table').on('click', '.edit_row_btn', function () {
     handleAttrs($(this))
 })
 
+// Handling saving of new/exist medicine of a patient
 $('table').on('click', '.save_row_btn', function () {
     handleSaveEdits($(this))
 })
 
+// Handling clicking on the add time button, adding new time input
 $('table').on('click', '.add_time_btn', function () {
     cell = $(this).closest('td')
     newInput = $('<input required class="row-time-data" type="time" onkeydown="return false">')
@@ -107,6 +114,7 @@ $('table').on('click', '.add_time_btn', function () {
 
 })
 
+// When clicking 'מחק', deleting the medicine from the patient
 function delete_data(e) {
     med_key = e.data('medicine-key')
     if (med_key === '') {
@@ -135,6 +143,7 @@ function delete_data(e) {
     }
 }
 
+// Handling click on 'מחק' button
 $('table').on('click', '.delete_row_btn', function () {
     row = $(this).closest('tr')
     edit_btn = row.find('.edit_row_btn')
@@ -149,6 +158,7 @@ $('table').on('click', '.delete_row_btn', function () {
     })
 })
 
+// When clicking on 'הוסף', adding new row to the medicine table
 $('#add_medicine_btn').click(function () {
     $('#trhead').attr('hidden') ? $('#trhead').prop('hidden', false) : null
     $('#alert').prop('hidden', true)
@@ -207,6 +217,7 @@ $('#add_medicine_btn').click(function () {
 //     })
 // })
 
+// Showing nice alert of given message and type
 function GrowlCall(msg,type){
     $(".bootstrap-growl").remove();
     $.bootstrapGrowl(msg, {
@@ -220,6 +231,7 @@ function GrowlCall(msg,type){
     });
 }
 
+// returning formatted date
 function formatDate(formated, date = null) {
     var dtToday;
     if (!date)
@@ -241,8 +253,8 @@ function formatDate(formated, date = null) {
         return [day, month, year].join('-'); // for filter dates
 }
 
+// Taking the relvant reports
 function updateMedReports(isDefault,medication_reports,mychart) {
-
     if (isDefault)
         formated_today = formatDate(false)
     else
@@ -265,6 +277,7 @@ function updateMedReports(isDefault,medication_reports,mychart) {
     mychart.update();
 }
 
+// Making the data for the chart
 function filterDatesAndLabels(isDefault, reports) {
     let status_reports = []
     let pointsStyles = []

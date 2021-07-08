@@ -8,6 +8,7 @@ from firebase_repo import get_medications, get_medications_categories, db
 
 # Create your views here.
 
+# Rendering medication page
 @cache_control(no_cache=False, must_revalidate=True, no_store=True)
 def medication_page(request):
     if request.session.get('uid') is not None:
@@ -20,6 +21,7 @@ def medication_page(request):
         return redirect("/home", )
 
 
+# Handling creating new medicine
 def create_medicine(request):
     medicine_form = MedicationForm(med_categories=get_medications_categories(), data=request.POST)
     if medicine_form.is_valid():
@@ -37,6 +39,7 @@ def create_medicine(request):
         return redirect('/medications')  # Reload new medications and prevent resubmission
 
 
+# Checking if medicine already exist
 def check_if_med_exist(request):
     data = str(request.POST.get('data'))
     category = data.split(',')[0]
@@ -50,6 +53,7 @@ def check_if_med_exist(request):
         return HttpResponse("False")
 
 
+# Deleting medicine from the db
 def delete_medicine(request):
     med_to_delete = request.POST.get('key_to_delete', 0)
     category_key = str(med_to_delete).split(',')[0]
@@ -58,6 +62,7 @@ def delete_medicine(request):
     return redirect('/medications')
 
 
+# Editing medicine from the db
 def edit_medicine(request):
     medicine_form = MedicationForm(med_categories=get_medications_categories(), data=request.POST)
 

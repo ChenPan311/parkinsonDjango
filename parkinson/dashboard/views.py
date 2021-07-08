@@ -16,6 +16,7 @@ DOSAGES = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]
 
 # Create your views here.
 
+# Handles login users
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def postsign(request):
     form = Login()
@@ -43,6 +44,7 @@ def postsign(request):
             return render(request, "register/login.html", {'form': form})
 
 
+# Rendering home page
 @cache_control(no_cache=False, must_revalidate=True, no_store=True)
 def home(request):
     if request.method == "GET":
@@ -52,6 +54,7 @@ def home(request):
             return redirect("/")
 
 
+# Handles user logout
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def user_logout(request):
     if request.session.get('uid') is not None:
@@ -66,12 +69,14 @@ def user_logout(request):
         return redirect("/")
 
 
+# Formatting the date given in ms
 def prettydate(ms):
     date = datetime.fromtimestamp(ms / 1000.0)
     date = date.strftime('%d-%m-%Y %H:%M')
     return date
 
 
+# Returns a list of reports objects
 def status_data_for_chart(reports):
     reports_list = []
 
@@ -138,6 +143,7 @@ def status_data_for_chart(reports):
 #     return data
 
 
+# Returning a list of medicine reports object
 def medications_reports(medications_reports):
     data = []
     if medications_reports.val() is not None:
@@ -155,6 +161,7 @@ def medications_reports(medications_reports):
     return data
 
 
+# Patient page view, collecting all data
 @cache_control(no_cache=False, must_revalidate=True, no_store=True)
 def patient_detail(request):
     if request.session.get('uid') is not None:
@@ -174,7 +181,6 @@ def patient_detail(request):
 
             # Data for the charts
             reports = status_data_for_chart(patient_reports)
-            # report_list = medications_data_for_charts(patient_medications)
             reports_medication_list = medications_reports(patient_medications_reports)
 
             medications = get_medications()
@@ -190,7 +196,7 @@ def patient_detail(request):
     else:
         return redirect("/home")
 
-
+# Checking if patient is exist
 def patient_detail_check(request):
     patient_id = request.GET.get('data')
     exist = db.child("Patients").order_by_child('id').equal_to(patient_id).get()
@@ -200,6 +206,7 @@ def patient_detail_check(request):
         return HttpResponse("False")
 
 
+# Updating patient's medicine from his data
 def update_medicine(request):
     data = request.POST.dict()
     times = (data.get('hoursArr')).split(',')
@@ -230,6 +237,7 @@ def update_medicine(request):
         return HttpResponse("False")
 
 
+# Deleting patient's medicine from his data
 def delete_medicine(request):
     key_to_delete = request.POST.get('data')
 

@@ -8,7 +8,9 @@ const editNumberOfAnswers = document.getElementById("edit_number_of_answers")
 const answersContainer = document.getElementById("answers_container")
 const editAnswersContainer = document.getElementById("edit_answers_container")
 
-function handleOptions(toAdd) { // Handling changes in options select, toAdd(boolean) - Add modal/Edit modal
+
+// Handling changes in options select, toAdd(boolean) - Add modal/Edit modal
+function handleOptions(toAdd) {
     if (toAdd) {
         if (option[0].value === 'OpenQuestion') {
             addBtn[0].style.display = 'none'
@@ -40,7 +42,8 @@ function handleOptions(toAdd) { // Handling changes in options select, toAdd(boo
     }
 }
 
-function removeAnswers(toAdd) { // Handling removing answers' input to both modals, toAdd(boolean) - Add modal/Edit modal
+// Handling removing answers' input to both modals, toAdd(boolean) - Add modal/Edit modal
+function removeAnswers(toAdd) {
     if (toAdd) {
         if (answersContainer.hasChildNodes()) {
             answersContainer.removeChild(answersContainer.lastChild);
@@ -54,7 +57,8 @@ function removeAnswers(toAdd) { // Handling removing answers' input to both moda
     }
 }
 
-function addAnswers(toAdd) { // Handling adding answers' input to both modals, toAdd(boolean) - Add modal/Edit modal
+// Handling adding answers' input to both modals, toAdd(boolean) - Add modal/Edit modal
+function addAnswers(toAdd) {
     const answer = document.createElement("input");
     answer.type = "text";
     answer.name = i;
@@ -85,7 +89,8 @@ removeBtn[1].addEventListener('click', removeAnswers.bind(null, false))
 option[0].addEventListener('change', handleOptions.bind(null, true))
 option[1].addEventListener('change', handleOptions.bind(null, false))
 
-$('#add-modal-bg').on('hidden.bs.modal', function () { // Handling closing the modal, remove all inputs
+// Handling closing the modal, remove all inputs
+$('#add-modal-bg').on('hidden.bs.modal', function () {
     while (answersContainer.hasChildNodes()) {
         answersContainer.removeChild(answersContainer.lastChild);
     }
